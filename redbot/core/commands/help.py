@@ -31,6 +31,7 @@ import abc
 import asyncio
 from collections import namedtuple
 from dataclasses import dataclass, asdict as dc_asdict
+from enum import Enum
 from typing import Union, List, AsyncIterator, Iterable, cast
 
 import discord
@@ -39,6 +40,7 @@ from discord.ext import commands as dpy_commands
 from . import commands
 from .context import Context
 from ..i18n import Translator
+from ..utils.views import SimpleMenu
 from ..utils import can_user_react_in, menus
 from ..utils.mod import mass_purge
 from ..utils._internal_utils import fuzzy_command_search, format_fuzzy_results
@@ -65,6 +67,14 @@ EmbedField = namedtuple("EmbedField", "name value inline")
 EMPTY_STRING = "\N{ZERO WIDTH SPACE}"
 
 
+class HelpMenuSetting(Enum):
+    disabled = 0
+    reactions = 1
+    buttons = 2
+    select = 3
+    selectonly = 4
+
+
 @dataclass(frozen=True)
 class HelpSettings:
     """
@@ -72,13 +82,13 @@ class HelpSettings:
 
     .. warning::
 
-        This class is provisional.
+        This class is `provisional <developer-guarantees-exclusions>`.
 
     """
 
     page_char_limit: int = 1000
     max_pages_in_guild: int = 2
-    use_menus: bool = False
+    use_menus: HelpMenuSetting = HelpMenuSetting(0)
     show_hidden: bool = False
     show_aliases: bool = True
     verify_checks: bool = True
@@ -103,7 +113,8 @@ class HelpSettings:
         Get the HelpSettings for the current context
         """
         settings = await context.bot._config.help.all()
-        return cls(**settings)
+        menus = settings.pop("use_menus", 0)
+        return cls(**settings, use_menus=HelpMenuSetting(menus))
 
     @property
     def pretty(self):
@@ -129,6 +140,14 @@ class HelpSettings:
             tagline_info = ""
 
         data["tagline_info"] = tagline_info
+        menus_str = {
+            HelpMenuSetting.disabled: _("No"),
+            HelpMenuSetting.reactions: _("Yes, reactions"),
+            HelpMenuSetting.buttons: _("Yes, buttons"),
+            HelpMenuSetting.select: _("Yes, buttons with select menu"),
+            HelpMenuSetting.selectonly: _("Yes, select menu only"),
+        }
+        data["use_menus"] = menus_str[self.use_menus]
 
         return _(
             "Maximum characters per page: {page_char_limit}"
@@ -171,7 +190,7 @@ class HelpFormatterABC(abc.ABC):
 
     .. warning::
 
-        This class is documented but provisional with expected changes.
+        This class is documented but `provisional <developer-guarantees-exclusions>` with expected changes.
 
         In the future, this class will receive changes to support
         invoking the help command without context.
@@ -290,6 +309,12 @@ class RedHelpFormatter(HelpFormatterABC):
         )
 
     @staticmethod
+    def format_tagline(ctx: Context, tagline: str):
+        if not tagline:
+            return
+        return tagline.replace("[p]", ctx.clean_prefix)
+
+    @staticmethod
     def get_command_signature(ctx: Context, command: commands.Command) -> str:
         parent = command.parent
         entries = []
@@ -326,12 +351,11 @@ class RedHelpFormatter(HelpFormatterABC):
 
         description = command.description or ""
 
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
-        signature = _("Syntax: {command_signature}").format(
-            command_signature=self.get_command_signature(ctx, command)
-        )
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
+        signature = self.get_command_signature(ctx, command)
 
         aliases = command.aliases
+        sig_description = bold(_("Syntax:\n")) + box(signature)
         if help_settings.show_aliases and aliases:
             alias_fmt = _("Aliases") if len(command.aliases) > 1 else _("Alias")
             aliases = sorted(aliases, key=len)
@@ -361,7 +385,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     aliases_content = _("{aliases} and one more alias.").format(
                         aliases=aliases_formatted_list
                     )
-            signature += f"\n{alias_fmt}: {aliases_content}"
+            sig_description += bold(f"{alias_fmt}:") + box(f"{aliases_content}")
 
         subcommands = None
         if hasattr(command, "all_commands"):
@@ -375,17 +399,22 @@ class RedHelpFormatter(HelpFormatterABC):
                 emb["embed"]["title"] = f"*{description[:250]}*"
 
             emb["footer"]["text"] = tagline
-            emb["embed"]["description"] = box(signature)
+            emb["embed"]["description"] = sig_description
 
             command_help = command.format_help_for_context(ctx)
             if command_help:
-                splitted = command_help.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:250], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, command_help.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:250], value[:1024], False)
+                    emb["fields"].append(field)
 
             if subcommands:
 
@@ -411,7 +440,6 @@ class RedHelpFormatter(HelpFormatterABC):
             await self.make_and_send_embeds(ctx, emb, help_settings=help_settings)
 
         else:  # Code blocks:
-
             subtext = None
             subtext_header = None
             if subcommands:
@@ -491,7 +519,7 @@ class RedHelpFormatter(HelpFormatterABC):
         offset += len(embed_dict["embed"]["title"])
 
         # In order to only change the size of embeds when necessary for this rather
-        # than change the existing behavior for people uneffected by this
+        # than change the existing behavior for people unaffected by this
         # we're only modifying the page char limit should they be impacted.
         # We could consider changing this to always just subtract the offset,
         # But based on when this is being handled (very end of 3.2 release)
@@ -500,7 +528,7 @@ class RedHelpFormatter(HelpFormatterABC):
             # This is still necessary with the max interaction above
             # While we could subtract 100% of the time the offset from page_char_limit
             # the intent here is to shorten again
-            # *only* when necessary, by the exact neccessary amount
+            # *only* when necessary, by the exact necessary amount
             # To retain a visual match with prior behavior.
             page_char_limit = 5500 - offset
         elif page_char_limit < 250:
@@ -546,20 +574,25 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = obj.format_help_for_context(ctx)
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
             emb["footer"]["text"] = tagline
             if description:
-                splitted = description.split("\n\n")
-                name = splitted[0]
-                value = "\n\n".join(splitted[1:])
-                if not value:
-                    value = EMPTY_STRING
-                field = EmbedField(name[:252], value[:1024], False)
-                emb["fields"].append(field)
+                splitted = filter(None, description.split("\n\n"))
+                try:
+                    name = next(splitted)
+                except StopIteration:
+                    # all parts are empty
+                    pass
+                else:
+                    value = "\n\n".join(splitted)
+                    if not value:
+                        value = EMPTY_STRING
+                    field = EmbedField(name[:252], value[:1024], False)
+                    emb["fields"].append(field)
 
             if coms:
 
@@ -614,7 +647,7 @@ class RedHelpFormatter(HelpFormatterABC):
             return
 
         description = ctx.bot.description or ""
-        tagline = (help_settings.tagline) or self.get_default_tagline(ctx)
+        tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(ctx)
 
         if await self.embed_requested(ctx):
             emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
@@ -735,7 +768,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -748,7 +783,9 @@ class RedHelpFormatter(HelpFormatterABC):
                     name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                     icon_url=ctx.me.display_avatar,
                 )
-                tagline = help_settings.tagline or self.get_default_tagline(ctx)
+                tagline = self.format_tagline(
+                    ctx, help_settings.tagline
+                ) or self.get_default_tagline(ctx)
                 ret.set_footer(text=tagline)
                 await ctx.send(embed=ret)
             else:
@@ -767,7 +804,9 @@ class RedHelpFormatter(HelpFormatterABC):
                 name=_("{ctx.me.display_name} Help Menu").format(ctx=ctx),
                 icon_url=ctx.me.display_avatar,
             )
-            tagline = help_settings.tagline or self.get_default_tagline(ctx)
+            tagline = self.format_tagline(ctx, help_settings.tagline) or self.get_default_tagline(
+                ctx
+            )
             ret.set_footer(text=tagline)
             await ctx.send(embed=ret)
         else:
@@ -813,7 +852,40 @@ class RedHelpFormatter(HelpFormatterABC):
         """
         Sends pages based on settings.
         """
-        if not (can_user_react_in(ctx.me, ctx.channel) and help_settings.use_menus):
+        if help_settings.use_menus.value >= HelpMenuSetting.buttons.value:
+            use_select = help_settings.use_menus.value == 3
+            select_only = help_settings.use_menus.value == 4
+            menu = SimpleMenu(
+                pages,
+                timeout=help_settings.react_timeout,
+                use_select_menu=use_select,
+                use_select_only=select_only,
+            )
+            # Send menu to DMs if max pages is 0
+            if help_settings.max_pages_in_guild == 0:
+                await menu.start_dm(ctx.author)
+            else:
+                await menu.start(ctx)
+
+        elif (
+            can_user_react_in(ctx.me, ctx.channel)
+            and help_settings.use_menus is HelpMenuSetting.reactions
+        ):
+            use_DMs = help_settings.max_pages_in_guild == 0
+            destination = ctx.author if use_DMs else ctx.channel
+            # Specifically ensuring the menu's message is sent prior to returning
+            m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
+            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
+            # Allow other things to happen during menu timeout/interaction.
+            asyncio.create_task(
+                menus.menu(
+                    ctx, pages, c, user=ctx.author, message=m, timeout=help_settings.react_timeout
+                )
+            )
+            # menu needs reactions added manually since we fed it a message
+            menus.start_adding_reactions(m, c.keys())
+
+        else:
             max_pages_in_guild = help_settings.max_pages_in_guild
             use_DMs = len(pages) > max_pages_in_guild
             destination = ctx.author if use_DMs else ctx.channel
@@ -842,12 +914,17 @@ class RedHelpFormatter(HelpFormatterABC):
             if (
                 not use_DMs  # we're not in DMs
                 and delete_delay > 0  # delete delay is enabled
-                and ctx.channel.permissions_for(ctx.me).manage_messages  # we can manage messages
+                and ctx.bot_permissions.manage_messages  # we can manage messages
             ):
                 # We need to wrap this in a task to not block after-sending-help interactions.
                 # The channel has to be TextChannel or Thread as we can't bulk-delete from DMs
                 async def _delete_delay_help(
-                    channel: Union[discord.TextChannel, discord.Thread],
+                    channel: Union[
+                        discord.TextChannel,
+                        discord.VoiceChannel,
+                        discord.StageChannel,
+                        discord.Thread,
+                    ],
                     messages: List[discord.Message],
                     delay: int,
                 ):
@@ -855,16 +932,6 @@ class RedHelpFormatter(HelpFormatterABC):
                     await mass_purge(messages, channel)
 
                 asyncio.create_task(_delete_delay_help(destination, messages, delete_delay))
-        else:
-            # Specifically ensuring the menu's message is sent prior to returning
-            m = await (ctx.send(embed=pages[0]) if embed else ctx.send(pages[0]))
-            c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
-            # Allow other things to happen during menu timeout/interaction.
-            asyncio.create_task(
-                menus.menu(ctx, pages, c, message=m, timeout=help_settings.react_timeout)
-            )
-            # menu needs reactions added manually since we fed it a message
-            menus.start_adding_reactions(m, c.keys())
 
 
 @commands.command(name="help", hidden=True, i18n=_)

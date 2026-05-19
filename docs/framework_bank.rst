@@ -7,9 +7,6 @@
 Bank
 ====
 
-Bank has now been separated from Economy for V3. New to bank is support for
-having a global bank.
-
 ***********
 Basic Usage
 ***********
@@ -21,9 +18,7 @@ Basic Usage
 
     class MyCog(commands.Cog):
         @commands.command()
-        async def balance(self, ctx, user: discord.Member = None):
-            if user is None:
-                user = ctx.author
+        async def balance(self, ctx, user: discord.Member = commands.Author):
             bal = await bank.get_balance(user)
             currency = await bank.get_currency_name(ctx.guild)
             await ctx.send(

@@ -38,7 +38,9 @@ class IssueDiagnoserBase:
         self,
         bot: Red,
         original_ctx: commands.Context,
-        channel: Union[discord.TextChannel, discord.Thread],
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
         author: discord.Member,
         command: commands.Command,
     ) -> None:
@@ -143,7 +145,7 @@ class DetailedGlobalCallOnceChecksMixin(IssueDiagnoserBase):
 
     # While the following 2 checks could show even more precise error message,
     # it would require a usage of private attribute rather than the public API
-    # which increases maintanance burden for not that big of benefit.
+    # which increases maintenance burden for not that big of benefit.
     async def _check_ignored_issues(self) -> CheckResult:
         label = _("Check if the channel and the server aren't set to be ignored")
         if await self.bot.ignored_channel_or_guild(self.message):
@@ -483,9 +485,7 @@ class DetailedCommandChecksMixin(IssueDiagnoserBase):
         return await self._check_requires(_("Permissions verification"), self.ctx.command)
 
     async def _check_requires_cog(self) -> CheckResult:
-        label = _("Permissions verification for {cog} cog").format(
-            cog=inline(self.ctx.cog.qualified_name)
-        )
+        label = _("Cog permissions verification")
         if self.ctx.cog is None:
             return CheckResult(True, label)
         return await self._check_requires(label, self.ctx.cog)
@@ -816,7 +816,7 @@ class RootDiagnosersMixin(
     async def _check_global_call_once_checks_issues(self) -> CheckResult:
         label = _("Global 'call once' checks")
         # To avoid running core's global checks twice, we just run them all regularly
-        # and if it turns out that invokation would end here, we go back and check each of
+        # and if it turns out that invocation would end here, we go back and check each of
         # core's global check individually to give more precise error message.
         try:
             can_run = await self.bot.can_run(self.ctx, call_once=True)
@@ -937,7 +937,7 @@ class IssueDiagnoser(RootDiagnosersMixin, IssueDiagnoserBase):
                 if subresult.success
                 else _("Failed") + " \N{NO ENTRY}\N{VARIATION SELECTOR-16}"
             )
-            lines.append(f"{prefix}{idx}. {subresult.label}: {status}")
+            lines.append(f"\u200b{prefix}{idx}. {subresult.label}: {status}")
             lines.extend(
                 self._get_message_from_check_result(subresult, prefix=f"  {prefix}{idx}.")
             )

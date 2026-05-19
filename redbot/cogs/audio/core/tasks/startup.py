@@ -138,7 +138,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                             if not (perms.connect and perms.speak):
                                 vc = None
                                 break
-                            player = await lavalink.connect(vc, deafen=auto_deafen)
+                            player = await lavalink.connect(vc, self_deaf=auto_deafen)
                             player.store("notify_channel", notify_channel_id)
                             break
                         except NodeNotFound:
@@ -222,7 +222,7 @@ class StartUpTasks(MixinMeta, metaclass=CompositeMetaClass):
                         if not (perms.connect and perms.speak):
                             vc = None
                             break
-                        player = await lavalink.connect(vc, deafen=auto_deafen)
+                        player = await lavalink.connect(vc, self_deaf=auto_deafen)
                         player.store("notify_channel", notify_channel_id)
                         break
                     except NodeNotFound:

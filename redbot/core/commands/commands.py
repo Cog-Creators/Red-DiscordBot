@@ -14,15 +14,16 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    ClassVar,
     Dict,
     List,
     Literal,
     Optional,
     Tuple,
+    TypeVar,
     Union,
     MutableMapping,
     TYPE_CHECKING,
-    cast,
 )
 
 import discord
@@ -33,34 +34,57 @@ from discord.ext.commands import (
     DisabledCommand,
     command as dpy_command_deco,
     Command as DPYCommand,
+    GroupCog as DPYGroupCog,
+    HybridCommand as DPYHybridCommand,
+    HybridGroup as DPYHybridGroup,
     Cog as DPYCog,
     CogMeta as DPYCogMeta,
     Group as DPYGroup,
     Greedy,
 )
 
-from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
+from .. import app_commands
 from ..i18n import Translator
+
+_T = TypeVar("_T")
+_CogT = TypeVar("_CogT", bound="Cog")
+
 
 if TYPE_CHECKING:
     # circular import avoidance
     from .context import Context
+    from typing_extensions import ParamSpec, Concatenate
+    from discord.ext.commands._types import ContextT, Coro
+
+    _P = ParamSpec("_P")
+
+    CommandCallback = Union[
+        Callable[Concatenate[_CogT, ContextT, _P], Coro[_T]],
+        Callable[Concatenate[ContextT, _P], Coro[_T]],
+    ]
+else:
+    _P = TypeVar("_P")
 
 
-__all__ = [
+__all__ = (
     "Cog",
     "CogMixin",
     "CogCommandMixin",
     "CogGroupMixin",
     "Command",
     "Group",
+    "GroupCog",
     "GroupMixin",
+    "HybridCommand",
+    "HybridGroup",
     "command",
     "group",
+    "hybrid_command",
+    "hybrid_group",
     "RESERVED_COMMAND_NAMES",
     "RedUnhandledAPI",
-]
+)
 
 #: The following names are reserved for various reasons
 RESERVED_COMMAND_NAMES = (
@@ -68,7 +92,6 @@ RESERVED_COMMAND_NAMES = (
 )
 
 _ = Translator("commands.commands", __file__)
-DisablerDictType = MutableMapping[discord.Guild, Callable[["Context"], Awaitable[bool]]]
 
 
 class RedUnhandledAPI(Exception):
@@ -287,9 +310,10 @@ class Command(CogCommandMixin, DPYCommand):
 
     def __init__(self, *args, **kwargs):
         self.ignore_optional_for_conversion = kwargs.pop("ignore_optional_for_conversion", False)
-        super().__init__(*args, **kwargs)
+        self._disabled_in: discord.utils.SnowflakeList = discord.utils.SnowflakeList([])
         self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
+        super().__init__(*args, **kwargs)
         if self.parent is None:
             for name in (self.name, *self.aliases):
                 if name in RESERVED_COMMAND_NAMES:
@@ -437,10 +461,41 @@ class Command(CogCommandMixin, DPYCommand):
             if not change_permission_state:
                 ctx.permission_state = original_state
 
+    def is_enabled(self, guild: Optional[discord.abc.Snowflake] = None) -> bool:
+        """
+        Check if the command is enabled globally or in a guild.
+
+        When guild is provided, this method checks whether
+        the command is enabled both globally and in the guild.
+
+        This is generally set by the settings managed with
+        the ``[p]command enable/disable global/server`` commands.
+
+        Parameters
+        ----------
+        guild : discord.abc.Snowflake, optional
+            The guild to check that the command is enabled in.
+            If this is ``None``, this will check whether
+            the command is enabled globally.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command is enabled.
+        """
+        if not self.enabled:
+            return False
+        if guild is not None:
+            if self._disabled_in.has(guild.id):
+                return False
+
+        return True
+
     async def prepare(self, ctx, /):
         ctx.command = self
 
-        if not self.enabled:
+        cmd_enabled = self.is_enabled(ctx.guild)
+        if not cmd_enabled:
             raise DisabledCommand(f"{self.name} command is disabled")
 
         if not await self.can_run(ctx, change_permission_state=True):
@@ -496,7 +551,15 @@ class Command(CogCommandMixin, DPYCommand):
         return True
 
     def disable_in(self, guild: discord.Guild) -> bool:
-        """Disable this command in the given guild.
+        """
+        Disable this command in the given guild.
+
+        This is generally called by the settings managed with
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
+        reload and may also be affected when either of those commands
+        is called on this command. It is not recommended to rely on
+        this method, if you want a consistent behavior.
 
         Parameters
         ----------
@@ -507,17 +570,22 @@ class Command(CogCommandMixin, DPYCommand):
         -------
         bool
             ``True`` if the command wasn't already disabled.
-
         """
-        disabler = get_command_disabler(guild)
-        if disabler in self.checks:
+        if self._disabled_in.has(guild.id):
             return False
-        else:
-            self.checks.append(disabler)
-            return True
+
+        self._disabled_in.add(guild.id)
+        return True
 
     def enable_in(self, guild: discord.Guild) -> bool:
         """Enable this command in the given guild.
+
+        This is generally called by the settings managed with
+        the ``[p]command disable global/server`` commands.
+        Any changes made outside of that will not persist after cog
+        reload and may also be affected when either of those commands
+        is called on this command. It is not recommended to rely on
+        this method, if you want a consistent behavior.
 
         Parameters
         ----------
@@ -528,15 +596,13 @@ class Command(CogCommandMixin, DPYCommand):
         -------
         bool
             ``True`` if the command wasn't already enabled.
-
         """
-        disabler = get_command_disabler(guild)
         try:
-            self.checks.remove(disabler)
+            self._disabled_in.remove(guild.id)
         except ValueError:
             return False
-        else:
-            return True
+
+        return True
 
     def allow_for(self, model_id: Union[int, str], guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
@@ -774,7 +840,7 @@ class CogMixin(CogGroupMixin, CogCommandMixin):
 
         .. note::
 
-            This method is documented provisionally
+            This method is documented `provisionally <developer-guarantees-exclusions>`
             and may have minor changes made to it.
             It is not expected to undergo major changes,
             but nothing utilizes this method yet and the inclusion of this method
@@ -984,6 +1050,131 @@ class Cog(CogMixin, DPYCog, metaclass=DPYCogMeta):
         return {cmd.name: cmd for cmd in self.__cog_commands__}
 
 
+class GroupCog(Cog, DPYGroupCog):
+    """
+    Red's Cog base class with app commands group as the base.
+
+    This class inherits from `Cog` and `discord.ext.commands.GroupCog`
+    """
+
+
+class HybridCommand(Command, DPYHybridCommand[_CogT, _P, _T]):
+    """HybridCommand class for Red.
+
+    This should not be created directly, and instead via the decorator.
+
+    This class inherits from `Command` and `discord.ext.commands.HybridCommand`.
+
+    .. warning::
+
+        This class is not intended to be subclassed.
+    """
+
+
+class HybridGroup(Group, DPYHybridGroup[_CogT, _P, _T]):
+    """HybridGroup command class for Red.
+
+    This should not be created directly, and instead via the decorator.
+
+    This class inherits from `Group` and `discord.ext.commands.HybridGroup`.
+
+    .. note::
+        Red's HybridGroups differ from `discord.ext.commands.HybridGroup`
+        by setting `discord.ext.commands.Group.invoke_without_command` to be `False` by default.
+        If `discord.ext.commands.HybridGroup.fallback` is provided then
+        `discord.ext.commands.Group.invoke_without_command` is
+        set to `True`.
+
+    .. warning::
+
+        This class is not intended to be subclassed.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        fallback = "fallback" in kwargs and kwargs["fallback"] is not None
+        invoke_without_command = kwargs.pop("invoke_without_command", False) or fallback
+        kwargs["invoke_without_command"] = invoke_without_command
+        super().__init__(*args, **kwargs)
+        self.invoke_without_command = invoke_without_command
+
+    @property
+    def callback(self):
+        return self._callback
+
+    @callback.setter
+    def callback(self, function):
+        # Below should be mostly the same as discord.py
+        super(__class__, __class__).callback.__set__(self, function)
+
+        if not self.invoke_without_command and self.params:
+            raise TypeError(
+                "You cannot have a group command with callbacks and `invoke_without_command` set to False."
+            )
+
+    def command(self, name: str = discord.utils.MISSING, *args: Any, **kwargs: Any):
+        def decorator(func):
+            kwargs.setdefault("parent", self)
+            result = hybrid_command(name=name, *args, **kwargs)(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+    def group(
+        self,
+        name: str = discord.utils.MISSING,
+        *args: Any,
+        **kwargs: Any,
+    ):
+        def decorator(func):
+            kwargs.setdefault("parent", self)
+            result = hybrid_group(name=name, *args, **kwargs)(func)
+            self.add_command(result)
+            return result
+
+        return decorator
+
+
+def hybrid_command(
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+    *,
+    with_app_command: bool = True,
+    **attrs: Any,
+) -> Callable[[CommandCallback[_CogT, ContextT, _P, _T]], HybridCommand[_CogT, _P, _T]]:
+    """A decorator which transforms an async function into a `HybridCommand`.
+
+    Same interface as `discord.ext.commands.hybrid_command`.
+    """
+
+    def decorator(func: CommandCallback[_CogT, ContextT, _P, _T]) -> HybridCommand[_CogT, _P, _T]:
+        if isinstance(func, Command):
+            raise TypeError("callback is already a command.")
+        attrs["help_override"] = attrs.pop("help", None)
+        return HybridCommand(func, name=name, with_app_command=with_app_command, **attrs)
+
+    return decorator
+
+
+def hybrid_group(
+    name: Union[str, app_commands.locale_str] = discord.utils.MISSING,
+    *,
+    with_app_command: bool = True,
+    **attrs: Any,
+) -> Callable[[CommandCallback[_CogT, ContextT, _P, _T]], HybridGroup[_CogT, _P, _T]]:
+    """A decorator which transforms an async function into a `HybridGroup`.
+
+    Same interface as `discord.ext.commands.hybrid_group`.
+    """
+
+    def decorator(func: CommandCallback[_CogT, ContextT, _P, _T]):
+        if isinstance(func, Command):
+            raise TypeError("callback is already a command.")
+        attrs["help_override"] = attrs.pop("help", None)
+        return HybridGroup(func, name=name, with_app_command=with_app_command, **attrs)
+
+    return decorator
+
+
 def command(name=None, cls=Command, **attrs):
     """A decorator which transforms an async function into a `Command`.
 
@@ -1000,28 +1191,6 @@ def group(name=None, cls=Group, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return dpy_command_deco(name, cls, **attrs)
-
-
-__command_disablers: DisablerDictType = weakref.WeakValueDictionary()
-
-
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
-    """Get the command disabler for a guild.
-
-    A command disabler is a simple check predicate which returns
-    ``False`` if the context is within the given guild.
-    """
-    try:
-        return __command_disablers[guild.id]
-    except KeyError:
-
-        async def disabler(ctx: "Context") -> bool:
-            if ctx.guild is not None and ctx.guild.id == guild.id:
-                raise DisabledCommand()
-            return True
-
-        __command_disablers[guild.id] = disabler
-        return disabler
 
 
 # The below are intentionally left out of `__all__`

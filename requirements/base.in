@@ -1,0 +1,30 @@
+aiohttp<3.10
+aiohttp-json-rpc
+apsw
+babel
+click
+discord.py
+markdown
+packaging
+platformdirs
+psutil
+python-dateutil
+python-discovery
+PyYAML
+rapidfuzz
+Red-Commons
+Red-Lavalink
+redbot-update
+rich
+schema
+textual
+typing_extensions
+yarl
+distro; sys_platform == "linux"
+# https://github.com/MagicStack/uvloop/issues/702
+uvloop; sys_platform != "win32" and platform_python_implementation == "CPython"
+
+# Used by discord.py[speedup]. See Pull request #6587 for more info.
+Brotli
+orjson
+zstandard

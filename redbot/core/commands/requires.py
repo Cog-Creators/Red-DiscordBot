@@ -40,7 +40,6 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CheckPredicate",
-    "DM_PERMS",
     "GlobalPermissionModel",
     "GuildPermissionModel",
     "PermissionModel",
@@ -74,7 +73,9 @@ _T = TypeVar("_T")
 GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
     discord.Guild,
@@ -82,29 +83,15 @@ GlobalPermissionModel = Union[
 GuildPermissionModel = Union[
     discord.Member,
     discord.VoiceChannel,
+    discord.StageChannel,
     discord.TextChannel,
+    discord.ForumChannel,
     discord.CategoryChannel,
     discord.Role,
     discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
-
-# Here we are trying to model DM permissions as closely as possible. The only
-# discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so it's left as False.
-# This is also the same as the permissions returned when `permissions_for` is used in DM.
-DM_PERMS = discord.Permissions.none()
-DM_PERMS.update(
-    add_reactions=True,
-    attach_files=True,
-    embed_links=True,
-    external_emojis=True,
-    mention_everyone=True,
-    read_message_history=True,
-    read_messages=True,
-    send_messages=True,
-)
 
 
 class PrivilegeLevel(enum.IntEnum):
@@ -370,6 +357,7 @@ class Requires:
                 if user_perms is None:
                     func.__requires_user_perms__ = None
                 else:
+                    _validate_perms_dict(user_perms)
                     if getattr(func, "__requires_user_perms__", None) is None:
                         func.__requires_user_perms__ = discord.Permissions.none()
                     func.__requires_user_perms__.update(**user_perms)
@@ -520,15 +508,11 @@ class Requires:
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
-        if ctx.guild is None:
-            bot_user = ctx.bot.user
-        else:
-            bot_user = ctx.guild.me
-            cog = ctx.cog
-            if cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
-                raise discord.ext.commands.DisabledCommand()
+        cog = ctx.cog
+        if ctx.guild is not None and cog and await ctx.bot.cog_disabled_in_guild(cog, ctx.guild):
+            raise discord.ext.commands.DisabledCommand()
 
-        bot_perms = ctx.channel.permissions_for(bot_user)
+        bot_perms = ctx.bot_permissions
         if not (bot_perms.administrator or bot_perms >= self.bot_perms):
             raise BotMissingPermissions(missing=self._missing_perms(self.bot_perms, bot_perms))
 
@@ -574,7 +558,7 @@ class Requires:
             return False
 
         if self.user_perms is not None:
-            user_perms = ctx.channel.permissions_for(ctx.author)
+            user_perms = ctx.permissions
             if user_perms.administrator or user_perms >= self.user_perms:
                 return True
 
@@ -634,17 +618,6 @@ class Requires:
         return await discord.utils.async_all(check(ctx) for check in self.checks)
 
     @staticmethod
-    def _get_perms_for(ctx: "Context", user: discord.abc.User) -> discord.Permissions:
-        if ctx.guild is None:
-            return DM_PERMS
-        else:
-            return ctx.channel.permissions_for(user)
-
-    @classmethod
-    def _get_bot_perms(cls, ctx: "Context") -> discord.Permissions:
-        return cls._get_perms_for(ctx, ctx.guild.me if ctx.guild else ctx.bot.user)
-
-    @staticmethod
     def _missing_perms(
         required: discord.Permissions, actual: discord.Permissions
     ) -> discord.Permissions:
@@ -655,13 +628,6 @@ class Requires:
         #   complement/difference of A with respect to R.
         relative_complement = required.value & ~actual.value
         return discord.Permissions(relative_complement)
-
-    @staticmethod
-    def _member_as_user(member: discord.abc.User) -> discord.User:
-        if isinstance(member, discord.Member):
-            # noinspection PyProtectedMember
-            return member._user
-        return member
 
     def __repr__(self) -> str:
         return (
@@ -795,7 +761,7 @@ def bot_can_react() -> Callable[[_T], _T]:
 
 
 def _can_manage_channel_deco(
-    privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
+    *, privilege_level: Optional[PrivilegeLevel] = None, allow_thread_owner: bool = False
 ) -> Callable[[_T], _T]:
     async def predicate(ctx: "Context") -> bool:
         if utils.can_user_manage_channel(
@@ -837,7 +803,7 @@ def can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[_T], _T
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(allow_thread_owner)
+    return _can_manage_channel_deco(allow_thread_owner=allow_thread_owner)
 
 
 def is_owner():
@@ -871,7 +837,9 @@ def guildowner_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Cal
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.GUILD_OWNER, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.GUILD_OWNER, allow_thread_owner=allow_thread_owner
+    )
 
 
 def guildowner():
@@ -905,7 +873,9 @@ def admin_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.ADMIN, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.ADMIN, allow_thread_owner=allow_thread_owner
+    )
 
 
 def admin():
@@ -939,7 +909,9 @@ def mod_or_can_manage_channel(*, allow_thread_owner: bool = False) -> Callable[[
         as that, in addition to members with manage channel/threads permission,
         can also be done by the thread owner.
     """
-    return _can_manage_channel_deco(PrivilegeLevel.MOD, allow_thread_owner)
+    return _can_manage_channel_deco(
+        privilege_level=PrivilegeLevel.MOD, allow_thread_owner=allow_thread_owner
+    )
 
 
 def mod():

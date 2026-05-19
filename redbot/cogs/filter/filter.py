@@ -2,9 +2,9 @@ import asyncio
 import discord
 import re
 from datetime import timezone
-from typing import Union, Set, Literal, Optional
+from typing import Union, Set, Literal, Optional, Iterable, Dict, Any
 
-from redbot.core import checks, Config, modlog, commands
+from redbot.core import Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n, set_contextual_locales_from_guild
 from redbot.core.utils.predicates import MessagePredicate
@@ -80,7 +80,7 @@ class Filter(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_guild=True)
+    @commands.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
         """Base command to manage filter settings."""
         pass
@@ -95,7 +95,7 @@ class Filter(commands.Cog):
         The default name used is *John Doe*.
 
         Example:
-            - `[p]filterset defaultname Missingno`
+        - `[p]filterset defaultname Missingno`
 
         **Arguments:**
 
@@ -115,8 +115,8 @@ class Filter(commands.Cog):
         Set both to zero to disable autoban.
 
         Examples:
-            - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
-            - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
+        - `[p]filterset ban 5 5` - Ban users who say 5 filtered words in 5 seconds.
+        - `[p]filterset ban 2 20` - Ban users who say 2 filtered words in 20 seconds.
 
         **Arguments:**
 
@@ -144,7 +144,7 @@ class Filter(commands.Cog):
 
     @commands.group(name="filter")
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_messages=True)
+    @commands.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
         """Base command to add or remove words from the server filter.
 
@@ -251,28 +251,27 @@ class Filter(commands.Cog):
             await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command(name="add", require_var_positional=True)
-    async def filter_channel_add(self, ctx: commands.Context, *words: str):
+    async def filter_channel_add(
+        self,
+        ctx: commands.Context,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
+        *words: str,
+    ):
         """Add words to the filter.
 
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter channel add word1 word2 word3`
-            - `[p]filter channel add "This is a sentence"`
+        - `[p]filter channel add #channel word1 word2 word3`
+        - `[p]filter channel add #channel "This is a sentence"`
 
         **Arguments:**
 
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to filter.
         """
-        channel = ctx.channel
-        if isinstance(channel, discord.Thread):
-            await ctx.send(
-                _(
-                    "Threads can't have a filter list set up. If you want to add words to"
-                    " the list of the parent channel, send the command in that channel."
-                )
-            )
-            return
         added = await self.add_to_filter(channel, words)
         if added:
             self.invalidate_cache(ctx.guild, ctx.channel)
@@ -281,28 +280,27 @@ class Filter(commands.Cog):
             await ctx.send(_("Words already in the filter."))
 
     @_filter_channel.command(name="delete", aliases=["remove", "del"], require_var_positional=True)
-    async def filter_channel_remove(self, ctx: commands.Context, *words: str):
+    async def filter_channel_remove(
+        self,
+        ctx: commands.Context,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.ForumChannel
+        ],
+        *words: str,
+    ):
         """Remove words from the filter.
 
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter channel remove word1 word2 word3`
-            - `[p]filter channel remove "This is a sentence"`
+        - `[p]filter channel remove #channel word1 word2 word3`
+        - `[p]filter channel remove #channel "This is a sentence"`
 
         **Arguments:**
 
+        - `<channel>` The text, voice, stage, or forum channel to add filtered words to.
         - `[words...]` The words or sentences to no longer filter.
         """
-        channel = ctx.channel
-        if isinstance(channel, discord.Thread):
-            await ctx.send(
-                _(
-                    "Threads can't have a filter list set up. If you want to remove words from"
-                    " the list of the parent channel, send the command in that channel."
-                )
-            )
-            return
         removed = await self.remove_from_filter(channel, words)
         if removed:
             await ctx.send(_("Words removed from filter."))
@@ -317,8 +315,8 @@ class Filter(commands.Cog):
         Use double quotes to add sentences.
 
         Examples:
-            - `[p]filter add word1 word2 word3`
-            - `[p]filter add "This is a sentence"`
+        - `[p]filter add word1 word2 word3`
+        - `[p]filter add "This is a sentence"`
 
         **Arguments:**
 
@@ -339,8 +337,8 @@ class Filter(commands.Cog):
         Use double quotes to remove sentences.
 
         Examples:
-            - `[p]filter remove word1 word2 word3`
-            - `[p]filter remove "This is a sentence"`
+        - `[p]filter remove word1 word2 word3`
+        - `[p]filter remove "This is a sentence"`
 
         **Arguments:**
 
@@ -371,7 +369,16 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will now be filtered."))
 
     def invalidate_cache(
-        self, guild: discord.Guild, channel: Optional[discord.TextChannel] = None
+        self,
+        guild: discord.Guild,
+        channel: Optional[
+            Union[
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.ForumChannel,
+            ]
+        ] = None,
     ) -> None:
         """Invalidate a cached pattern"""
         self.pattern_cache.pop((guild.id, channel and channel.id), None)
@@ -381,7 +388,15 @@ class Filter(commands.Cog):
                     self.pattern_cache.pop(keyset, None)
 
     async def add_to_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+        self,
+        server_or_channel: Union[
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
+        ],
+        words: list,
     ) -> bool:
         added = False
         if isinstance(server_or_channel, discord.Guild):
@@ -391,7 +406,7 @@ class Filter(commands.Cog):
                         cur_list.append(w.lower())
                         added = True
 
-        elif isinstance(server_or_channel, discord.TextChannel):
+        else:
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() not in cur_list and w:
@@ -401,7 +416,15 @@ class Filter(commands.Cog):
         return added
 
     async def remove_from_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+        self,
+        server_or_channel: Union[
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.ForumChannel,
+        ],
+        words: list,
     ) -> bool:
         removed = False
         if isinstance(server_or_channel, discord.Guild):
@@ -411,7 +434,7 @@ class Filter(commands.Cog):
                         cur_list.remove(w.lower())
                         removed = True
 
-        elif isinstance(server_or_channel, discord.TextChannel):
+        else:
             async with self.config.channel(server_or_channel).filter() as cur_list:
                 for w in words:
                     if w.lower() in cur_list:
@@ -422,8 +445,14 @@ class Filter(commands.Cog):
 
     async def filter_hits(
         self,
-        text: str,
-        server_or_channel: Union[discord.Guild, discord.TextChannel, discord.Thread],
+        server_or_channel: Union[
+            discord.Guild,
+            discord.TextChannel,
+            discord.VoiceChannel,
+            discord.StageChannel,
+            discord.Thread,
+        ],
+        *texts: str,
     ) -> Set[str]:
         if isinstance(server_or_channel, discord.Guild):
             guild = server_or_channel
@@ -454,7 +483,8 @@ class Filter(commands.Cog):
             self.pattern_cache[(guild.id, channel and channel.id)] = pattern
 
         if pattern:
-            hits |= set(pattern.findall(text))
+            for text in texts:
+                hits |= set(pattern.findall(text))
         return hits
 
     async def check_filter(self, message: discord.Message):
@@ -477,7 +507,31 @@ class Filter(commands.Cog):
                         user_count = 0
                         member_data["filter_count"] = user_count
 
-        hits = await self.filter_hits(message.content, message.channel)
+        texts = [message.content]
+        poll = message.poll
+        if poll is not None:
+            texts.append(poll.question or "")
+            for answer in poll.answers:
+                texts.append(answer.text or "")
+        for attachment in message.attachments:
+            texts.append(attachment.description or "")
+
+        if (
+            message.reference is not None
+            and message.reference.type is discord.MessageReferenceType.forward
+        ):
+            # unlike user messages, forwards can include things that bots can send
+            # since you can forward a bot's message
+            for snapshot in message.message_snapshots:
+                texts.append(snapshot.content)
+                for attachment in snapshot.attachments:
+                    texts.append(attachment.description or "")
+                for embed in snapshot.embeds:
+                    texts.extend(_extract_string_values(embed.to_dict().values()))
+                for component in _walk_all_components(snapshot.components):
+                    texts.extend(_extract_string_values_from_component(component))
+
+        hits = await self.filter_hits(message.channel, *texts)
 
         if hits:
             # modlog doesn't accept PartialMessageable
@@ -578,7 +632,7 @@ class Filter(commands.Cog):
 
         await set_contextual_locales_from_guild(self.bot, guild)
 
-        if await self.filter_hits(member.display_name, member.guild):
+        if await self.filter_hits(member.guild, member.display_name):
             name_to_use = guild_data["filter_default_name"]
             reason = _("Filtered nickname") if member.nick else _("Filtered name")
             try:
@@ -586,3 +640,73 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             return
+
+
+_ChildComponent = Union[
+    discord.Button,
+    discord.CheckboxComponent,
+    discord.CheckboxGroupComponent,
+    discord.FileComponent,
+    discord.FileUploadComponent,
+    discord.LabelComponent,
+    discord.MediaGalleryComponent,
+    discord.RadioGroupComponent,
+    discord.SelectMenu,
+    discord.SeparatorComponent,
+    discord.TextDisplay,
+    discord.TextInput,
+    discord.ThumbnailComponent,
+]
+
+
+def _extract_string_values_from_component(component: _ChildComponent) -> Iterable[str]:
+    for value in _extract_values_from_component(component):
+        if value:
+            yield value
+
+
+def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optional[str]]:
+    if isinstance(component, discord.Button):
+        yield component.url
+        yield component.label
+    elif isinstance(component, discord.MediaGalleryComponent):
+        for item in component.items:
+            yield item.description
+    elif isinstance(component, discord.SelectMenu):
+        yield component.placeholder
+    elif isinstance(component, discord.TextDisplay):
+        yield component.content
+    elif isinstance(component, discord.ThumbnailComponent):
+        yield component.description
+    # The following do not have any user-provided text fields
+    # - FileComponent
+    # - SeparatorComponent
+    # The following are modal-only components:
+    # - CheckboxComponent
+    # - CheckboxGroupComponent
+    # - FileUploadComponent
+    # - LabelComponent
+    # - TextInput
+
+
+def _walk_all_components(components: Iterable[discord.Component]) -> Iterable[_ChildComponent]:
+    for item in components:
+        if isinstance(item, discord.ActionRow):
+            yield from item.children
+        elif isinstance(item, discord.Container):
+            yield from _walk_all_components(item.children)
+        elif isinstance(item, discord.SectionComponent):
+            yield from item.children
+            yield item.accessory
+        else:
+            yield item
+
+
+def _extract_string_values(data: Iterable[Any]) -> Iterable[str]:
+    for value in data:
+        if isinstance(value, str):
+            yield value
+        elif isinstance(value, list):
+            yield from _extract_string_values(value)
+        elif isinstance(value, dict):
+            yield from _extract_string_values(value.values())

@@ -50,7 +50,9 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 return await self.send_embed_msg(
                     ctx,
                     title=_("Unable To Play Tracks"),
-                    description=_("That URL is not allowed."),
+                    description=_(
+                        "That URL is not allowed.\n\nThe bot owner can remove this restriction by using ``{prefix}audioset restrict``."
+                    ).format(prefix=ctx.clean_prefix),
                 )
         elif not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
             return await self.send_embed_msg(
@@ -85,7 +87,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -193,7 +195,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -456,7 +458,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -572,7 +574,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(
@@ -697,7 +699,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     )
                 await lavalink.connect(
                     ctx.author.voice.channel,
-                    deafen=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             except AttributeError:
                 return await self.send_embed_msg(

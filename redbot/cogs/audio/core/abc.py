@@ -85,7 +85,7 @@ class MixinMeta(ABC):
     _disconnected_shard: Set[int]
 
     @abstractmethod
-    async def command_llsetup(self, ctx: commands.Context):
+    async def command_llset(self, ctx: commands.Context):
         raise NotImplementedError()
 
     @commands.command()
@@ -196,7 +196,15 @@ class MixinMeta(ABC):
     async def is_query_allowed(
         self,
         config: Config,
-        ctx_or_channel: Optional[Union[Context, discord.TextChannel, discord.Thread]],
+        ctx_or_channel: Optional[
+            Union[
+                Context,
+                discord.TextChannel,
+                discord.VoiceChannel,
+                discord.StageChannel,
+                discord.Thread,
+            ]
+        ],
         query: str,
         query_obj: Query,
     ) -> bool:
@@ -250,7 +258,12 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def _has_notify_perms(self, channel: Union[discord.TextChannel, discord.Thread]) -> bool:
+    def _has_notify_perms(
+        self,
+        channel: Union[
+            discord.TextChannel, discord.VoiceChannel, discord.StageChannel, discord.Thread
+        ],
+    ) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

@@ -25,10 +25,11 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.core.modlog")
 
-__all__ = [
+__all__ = (
     "Case",
     "CaseType",
     "get_case",
+    "get_latest_case",
     "get_all_cases",
     "get_cases_for_member",
     "create_case",
@@ -39,7 +40,7 @@ __all__ = [
     "get_modlog_channel",
     "set_modlog_channel",
     "reset_cases",
-]
+)
 
 _config: Optional[Config] = None
 _bot_ref: Optional[Red] = None
@@ -97,8 +98,11 @@ async def _init(bot: Red):
     await _migrate_config(from_version=await _config.schema_version(), to_version=_SCHEMA_VERSION)
     await register_casetypes(all_generics)
 
-    async def on_member_ban(guild: discord.Guild, member: discord.Member):
-        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
+    async def on_audit_log_entry_create(entry: discord.AuditLogEntry):
+        guild = entry.guild
+        if guild.unavailable:
+            return
+        if entry.action not in (discord.AuditLogAction.ban, discord.AuditLogAction.unban):
             return
 
         try:
@@ -106,82 +110,17 @@ async def _init(bot: Red):
         except RuntimeError:
             return  # No modlog channel so no point in continuing
 
-        when = datetime.now(timezone.utc)
-        before = when + timedelta(minutes=1)
-        after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
-
-        attempts = 0
-        # wait up to an hour to find a matching case
-        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
-            attempts += 1
-            try:
-                entry = await discord.utils.find(
-                    lambda e: e.target.id == member.id and after < e.created_at < before,
-                    guild.audit_logs(
-                        action=discord.AuditLogAction.ban, before=before, after=after
-                    ),
-                )
-            except discord.Forbidden:
-                break
-            except discord.HTTPException:
-                pass
-            else:
-                if entry:
-                    if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own bans, cogs do this.
-                        mod, reason = entry.user, entry.reason
-                        date = entry.created_at
-                        await create_case(_bot_ref, guild, date, "ban", member, mod, reason)
-                    return
-
-            await asyncio.sleep(300)
-
-    async def on_member_unban(guild: discord.Guild, user: discord.User):
-        if guild.unavailable or not guild.me.guild_permissions.view_audit_log:
+        # Don't create modlog entires for the bot's own bans, cogs do this.
+        if entry.user_id == guild.me.id:
             return
 
-        try:
-            await get_modlog_channel(guild)
-        except RuntimeError:
-            return  # No modlog channel so no point in continuing
+        mod, reason, date = entry.user, entry.reason, entry.created_at
+        await create_case(_bot_ref, guild, date, entry.action.name, entry.target, mod, reason)
 
-        when = datetime.now(timezone.utc)
-        before = when + timedelta(minutes=1)
-        after = when - timedelta(minutes=1)
-        await asyncio.sleep(10)  # prevent small delays from causing a 5 minute delay on entry
-
-        attempts = 0
-        # wait up to an hour to find a matching case
-        while attempts < 12 and guild.me.guild_permissions.view_audit_log:
-            attempts += 1
-            try:
-                entry = await discord.utils.find(
-                    lambda e: e.target.id == user.id and after < e.created_at < before,
-                    guild.audit_logs(
-                        action=discord.AuditLogAction.unban, before=before, after=after
-                    ),
-                )
-            except discord.Forbidden:
-                break
-            except discord.HTTPException:
-                pass
-            else:
-                if entry:
-                    if entry.user.id != guild.me.id:
-                        # Don't create modlog entires for the bot's own unbans, cogs do this.
-                        mod, reason = entry.user, entry.reason
-                        date = entry.created_at
-                        await create_case(_bot_ref, guild, date, "unban", user, mod, reason)
-                    return
-
-            await asyncio.sleep(300)
-
-    bot.add_listener(on_member_ban)
-    bot.add_listener(on_member_unban)
+    bot.add_listener(on_audit_log_entry_create)
 
 
-async def handle_auditype_key():
+async def _handle_audit_type_key():
     all_casetypes = {
         casetype_name: {
             inner_key: inner_value
@@ -223,7 +162,7 @@ async def _migrate_config(from_version: int, to_version: int):
             )
 
     if from_version < 3 <= to_version:
-        await handle_auditype_key()
+        await _handle_audit_type_key()
         await _config.schema_version.set(3)
 
     if from_version < 4 <= to_version:
@@ -242,6 +181,8 @@ class Case:
     Case()
 
     A single mod log case
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -303,8 +244,8 @@ class Case:
         (note: it might not exist regardless of whether this attribute is `None`)
         or if it has never been created.
     last_known_username: Optional[str]
-        The last known username of the user.
-        `None` if the username of the user was never saved
+        The last known user handle (``username`` / ``username#1234``) of the user.
+        `None` if the handle of the user was never saved
         or if their data had to be anonymized.
     """
 
@@ -349,12 +290,12 @@ class Case:
         self.message = message
 
     @property
-    def parent_channel(self) -> Optional[discord.TextChannel]:
+    def parent_channel(self) -> Optional[Union[discord.TextChannel, discord.ForumChannel]]:
         """
-        The parent text channel of the thread in `channel`.
+        The parent text/forum channel of the thread in `channel`.
 
         This will be `None` if `channel` is not a thread
-        and when the parent text channel is not in cache (probably due to removal).
+        and when the parent text/forum channel is not in cache (probably due to removal).
         """
         if self.parent_channel_id is None:
             return None
@@ -390,9 +331,9 @@ class Case:
             else:
                 setattr(self, item, value)
 
-        # update last known username
+        # update last known user handle
         if not isinstance(self.user, int):
-            self.last_known_username = f"{self.user.name}#{self.user.discriminator}"
+            self.last_known_username = str(self.user)
 
         if isinstance(self.channel, discord.Thread):
             self.parent_channel_id = self.channel.parent_id
@@ -500,7 +441,15 @@ class Case:
                 # can't use _() inside f-string expressions, see bpo-36310 and red#3818
                 translated = _("Unknown or Deleted User")
                 user = f"[{translated}] ({self.user})"
+            # Handle pomelo usernames stored before we updated our implementation
+            elif self.last_known_username.endswith("#0"):
+                user = f"{self.last_known_username[:-2]} ({self.user})"
+            # New usernames can't contain `#` and old usernames couldn't either.
+            elif len(self.last_known_username) <= 5 or self.last_known_username[-5] != "#":
+                user = f"{self.last_known_username} ({self.user})"
+            # Last known user handle is a legacy username with a discriminator
             else:
+                # isolate the name so that the direction of the discriminator and ID aren't changed
                 # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
                 name = self.last_known_username[:-5]
                 discriminator = self.last_known_username[-4:]
@@ -508,8 +457,10 @@ class Case:
                     f"\N{FIRST STRONG ISOLATE}{name}"
                     f"\N{POP DIRECTIONAL ISOLATE}#{discriminator} ({self.user})"
                 )
+        elif self.user.discriminator == "0":
+            user = f"{self.user} ({self.user.id})"
         else:
-            # isolate the name so that the direction of the discriminator and ID do not get changed
+            # isolate the name so that the direction of the discriminator and ID aren't changed
             # See usage explanation here: https://www.unicode.org/reports/tr9/#Formatting
             user = escape_spoilers(
                 filter_invites(
@@ -645,13 +596,18 @@ class Case:
 
     @classmethod
     async def from_json(
-        cls, mod_channel: discord.TextChannel, bot: Red, case_number: int, data: dict, **kwargs
+        cls,
+        mod_channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel],
+        bot: Red,
+        case_number: int,
+        data: dict,
+        **kwargs,
     ):
         """Get a Case object from the provided information
 
         Parameters
         ----------
-        mod_channel: discord.TextChannel
+        mod_channel: `discord.TextChannel` or `discord.VoiceChannel`, `discord.StageChannel`
             The mod log channel for the guild
         bot: Red
             The bot's instance. Needed to get the target user
@@ -684,7 +640,8 @@ class Case:
         if message is None:
             message_id = data.get("message")
             if message_id is not None:
-                message = mod_channel.get_partial_message(message_id)
+                if mod_channel is not None:
+                    message = mod_channel.get_partial_message(message_id)
 
         user_objects = {"user": None, "moderator": None, "amended_by": None}
         for user_key in tuple(user_objects):
@@ -723,6 +680,8 @@ class Case:
 class CaseType:
     """
     A single case type
+
+    This class should ONLY be instantiated by the modlog itself.
 
     Attributes
     ----------
@@ -853,8 +812,11 @@ async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     case = await _config.custom(_CASES, str(guild.id), str(case_number)).all()
     if not case:
         raise RuntimeError("That case does not exist for guild {}".format(guild.name))
-    mod_channel = await get_modlog_channel(guild)
-    return await Case.from_json(mod_channel, bot, case_number, case)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
+    return await Case.from_json(mod_channel, bot, case_number, case, guild=guild)
 
 
 async def get_latest_case(guild: discord.Guild, bot: Red) -> Optional[Case]:
@@ -896,9 +858,12 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
     """
     cases = await _config.custom(_CASES, str(guild.id)).all()
-    mod_channel = await get_modlog_channel(guild)
+    try:
+        mod_channel = await get_modlog_channel(guild)
+    except RuntimeError:
+        mod_channel = None
     return [
-        await Case.from_json(mod_channel, bot, case_number, case_data)
+        await Case.from_json(mod_channel, bot, case_number, case_data, guild=guild)
         for case_number, case_data in cases.items()
     ]
 
@@ -1002,24 +967,29 @@ async def create_case(
     channel: Optional[Union[discord.abc.GuildChannel, discord.Thread]]
         The channel the action was taken in
     last_known_username: Optional[str]
-        The last known username of the user
+        The last known user handle (``username`` / ``username#1234``) of the user
         Note: This is ignored if a Member or User object is provided
         in the user field
 
     Raises
     ------
+    ValueError
+        If the action type is not a valid action type.
+    RuntimeError
+        If user is the bot itself.
     TypeError
         If ``channel`` is of type `discord.PartialMessageable`.
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
-        return
+        raise ValueError(f"{action_type} is not a valid action type.")
 
     if not await case_type.is_enabled():
         return
 
-    if user == bot.user:
-        return
+    user_id = user if isinstance(user, int) else user.id
+    if user_id == bot.user.id:
+        raise RuntimeError("The bot itself can not be the target of a modlog entry.")
 
     if isinstance(channel, discord.PartialMessageable):
         raise TypeError("Can't use PartialMessageable as the channel for a modlog case.")
@@ -1228,7 +1198,9 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
+async def get_modlog_channel(
+    guild: discord.Guild,
+) -> Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel]:
     """
     Get the current modlog channel.
 
@@ -1239,7 +1211,7 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
 
     Returns
     -------
-    `discord.TextChannel`
+    `discord.TextChannel`, `discord.VoiceChannel`, or `discord.StageChannel`
         The channel object representing the modlog channel.
 
     Raises
@@ -1259,7 +1231,8 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
 
 
 async def set_modlog_channel(
-    guild: discord.Guild, channel: Union[discord.TextChannel, None]
+    guild: discord.Guild,
+    channel: Union[discord.TextChannel, discord.VoiceChannel, discord.StageChannel, None],
 ) -> bool:
     """
     Changes the modlog channel
@@ -1268,7 +1241,7 @@ async def set_modlog_channel(
     ----------
     guild: `discord.Guild`
         The guild to set a mod log channel for
-    channel: `discord.TextChannel` or `None`
+    channel: `discord.TextChannel`, `discord.VoiceChannel`, `discord.StageChannel`, or `None`
         The channel to be set as modlog channel
 
     Returns

@@ -7,8 +7,7 @@ permissions:
   issues: write
 
 jobs:
-  build:
-
+  apply_triage_label_to_issues:
     runs-on: ubuntu-latest
     steps:
       - name: Apply Triage Label
