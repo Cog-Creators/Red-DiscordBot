@@ -4557,7 +4557,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
     async def helpset_maxpages_guild(self, ctx: commands.Context, pages: int):
         """Set the maximum number of help pages sent in a server channel.
 
-        Note: This setting does not apply to menu help.
         To use the global value for maxpages instead, use `-1`.
 
         If a help message contains more pages than this value, the help message will
@@ -4567,11 +4566,11 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         The default value is 2 pages.
 
         **Examples:**
-            - `[p]helpset maxpages guild 50` - Basically never send help to DMs.
-            - `[p]helpset maxpages guild 0` - Always send help to DMs.
+        - `[p]helpset maxpages guild 50` - Basically never send help to DMs.
+        - `[p]helpset maxpages guild 0` - Always send help to DMs.
 
         **Arguments:**
-            - `<limit>` - The max pages allowed to send per help in a server.
+        - `<limit>` - The max pages allowed to send per help in a server.
         """
         if pages < 0:
             await ctx.send(
