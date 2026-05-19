@@ -643,7 +643,6 @@ async def get_leaderboard_position(
         If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
-
     if await is_global():
         guild = None
     else:
@@ -658,7 +657,7 @@ async def get_leaderboard_position(
             return_pos = None
         else:
             return_pos = pos[0]
-    if return_lb_size is True:
+    if return_lb_size:
         return return_pos, len(leaderboard)
     else:
         return return_pos
