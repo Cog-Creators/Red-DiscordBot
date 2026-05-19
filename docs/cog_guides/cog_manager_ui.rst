@@ -13,7 +13,7 @@ find detailed docs about usage and commands.
     included in the cogs paths and it cannot be unloaded. It contains needed
     commands for cog management.
 
-.. _cogmanaerui-usage:
+.. _cogmanagerui-usage:
 
 -----
 Usage
@@ -243,7 +243,7 @@ Shows the install path, or sets a new one.
 If you want to set a new path, the same rules as for
 :ref:`addpath <cogmanagerui-command-addpath>` apply
 
-.. warning:: If you edit the install path, the cogs won't be transfered.
+.. warning:: If you edit the install path, the cogs won't be transferred.
 
 **Arguments**
 

@@ -27,6 +27,10 @@ class InvalidYoutubeCredentials(StreamsError):
     pass
 
 
+class InvalidKickCredentials(StreamsError):
+    pass
+
+
 class YoutubeQuotaExceeded(StreamsError):
     pass
 

@@ -7,6 +7,18 @@ from .i18n import Translator
 
 _ = Translator(__name__, __file__)
 
+__all__ = (
+    "RedError",
+    "PackageAlreadyLoaded",
+    "CogLoadError",
+    "BankError",
+    "BalanceTooHigh",
+    "BankPruneError",
+    "ConfigError",
+    "StoredTypeError",
+    "CannotSetSubfield",
+)
+
 
 class RedError(Exception):
     """Base error class for Red-related errors."""
@@ -53,10 +65,6 @@ class BalanceTooHigh(BankError, OverflowError):
 
 class BankPruneError(BankError):
     """Raised when trying to prune a local bank and no server is specified."""
-
-
-class MissingExtraRequirements(RedError):
-    """Raised when an extra requirement is missing but required."""
 
 
 class ConfigError(RedError):
