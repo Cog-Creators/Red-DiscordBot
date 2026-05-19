@@ -300,7 +300,10 @@ class Updater:
         interpreter_info = self.options.new_python_interpreter or PythonInfo.current_system()
         with self.console.status("Checking latest version..."):
             available_versions = await fetch_available_red_versions(
-                include_prereleases=common.get_current_red_version().is_prerelease
+                include_prereleases=(
+                    self.options.red_version.is_prerelease
+                    or common.get_current_red_version().is_prerelease
+                )
             )
             latest_major = available_versions[0]
 
