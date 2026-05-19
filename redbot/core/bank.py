@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Union, List, Optional, TYPE_CHECKING, Literal, Tuple
+from typing import Union, List, Optional, TYPE_CHECKING, Literal, Tuple, overload
 from functools import wraps
 
 import discord
@@ -603,34 +603,44 @@ async def get_leaderboard(positions: int = None, guild: discord.Guild = None) ->
         return sorted_acc[:positions]
 
 
+@overload
+async def get_leaderboard_position(
+    member: Union[discord.User, discord.Member], *, return_lb_size: Literal[True]
+) -> Tuple[Optional[int], int]:
+    ...
+
+
+@overload
+async def get_leaderboard_position(
+    member: Union[discord.User, discord.Member], *, return_lb_size: Literal[False] = False
+) -> Optional[int]:
+    ...
+
+
 async def get_leaderboard_position(
     member: Union[discord.User, discord.Member], *, return_lb_size: bool = False
 ) -> Union[Optional[int], Tuple[Optional[int], int]]:
     """
-     Get the leaderboard position for the specified user
+    Get the leaderboard position for the specified user
 
-     Parameters
-     ----------
-     member : `discord.User` or `discord.Member`
-         The user to get the leaderboard position of
+    Parameters
+    ----------
+    member : `discord.User` or `discord.Member`
+        The user to get the leaderboard position of.
+    return_lb_size : bool
+        Whether to return a tuple with the position and size of the leaderboard.
 
-     return_lb_size : bool
-         Whether or not to return a tuple with position and size of leaderboard
+    Returns
+    -------
+    Optional[`int`] or Tuple[Optional[`int`], `int`]
+        The position of the user on the leaderboard, if ``return_lb_size`` is ``False`` (default)
+        or a tuple of the position of the user and the total leaderboard size.
+        The position may be ``None``, if the user is not on the leaderboard.
 
-
-     Returns
-     -------
-     `int`
-         The position of the user on the leaderboard
-
-    Tuple[Optional[int], int]
-         The position of the user on the leaderboard followed
-         by the size of the leaderboard
-
-     Raises
-     ------
-     TypeError
-         If the bank is currently guild-specific and a `discord.User` object was passed in
+    Raises
+    ------
+    TypeError
+        If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
 
