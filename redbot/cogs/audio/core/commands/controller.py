@@ -33,17 +33,20 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
 
+        player = lavalink.get_player(ctx.guild.id)
+        channel = player.channel
+        if not channel:
+            return await self.send_embed_msg(
+                ctx, title=_("The bot is not connected to a voice channel.")
+            )
+
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        player = lavalink.get_player(ctx.guild.id)
         can_skip = await self._can_instaskip(ctx, ctx.author)
-        if (
-            (vote_enabled or (vote_enabled and dj_enabled))
-            and not can_skip
-            and not await self.is_requester_alone(ctx)
-        ):
+        is_alone = await self.is_requester_alone(ctx, channel)
+        if (vote_enabled or (vote_enabled and dj_enabled)) and not can_skip and not is_alone:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Disconnect"),
@@ -54,6 +57,18 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx,
                 title=_("Unable To Disconnect"),
                 description=_("You need the DJ role to disconnect."),
+            )
+        if (
+            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
+            and not channel.permissions_for(ctx.author).connect
+            and not is_alone
+        ):
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_(
+                    "There are other people listening in a voice channel you cannot access."
+                ),
             )
 
         await self.send_embed_msg(ctx, title=_("Disconnecting..."))
