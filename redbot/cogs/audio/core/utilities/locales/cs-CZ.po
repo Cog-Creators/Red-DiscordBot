@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-05-11 20:55+0000\n"
+"POT-Creation-Date: 2025-09-26 17:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -46,14 +46,14 @@ msgid "Connection to Lavalink node has not yet been established."
 msgstr "Spojení s Lavalink uzlem ještě nebylo navázáno."
 
 #: redbot/cogs/audio/core/utilities/formatting.py:116
+msgid "Unable To Play Tracks"
+msgstr "Skladby Nelze Přehrát"
+
+#: redbot/cogs/audio/core/utilities/formatting.py:116
 #: redbot/cogs/audio/core/utilities/player.py:442
 #: redbot/cogs/audio/core/utilities/player.py:524
 msgid "Queue size limit reached."
 msgstr "Dosaženo limitu velikosti fronty."
-
-#: redbot/cogs/audio/core/utilities/formatting.py:116
-msgid "Unable To Play Tracks"
-msgstr "Skladby Nelze Přehrát"
 
 #: redbot/cogs/audio/core/utilities/formatting.py:154
 #: redbot/cogs/audio/core/utilities/player.py:599
@@ -297,7 +297,7 @@ msgstr "Počkejte prosím, hledám skladby..."
 
 #: redbot/cogs/audio/core/utilities/player.py:629
 msgid "Getting track {num}/{total}..."
-msgstr "Záskávám skladby {num}/{total}..."
+msgstr "Získávám skladby {num}/{total}..."
 
 #: redbot/cogs/audio/core/utilities/player.py:630
 msgid "Matching track {num}/{total}..."
@@ -483,11 +483,11 @@ msgstr "Náhodně"
 msgid "Repeat"
 msgstr "Opakovat"
 
-#: redbot/cogs/audio/core/utilities/queue.py:159
+#: redbot/cogs/audio/core/utilities/queue.py:161
 msgid "Matching Tracks:"
 msgstr "Odpovídající skladby:"
 
-#: redbot/cogs/audio/core/utilities/queue.py:162
+#: redbot/cogs/audio/core/utilities/queue.py:164
 msgid "Page {page_num}/{total_pages} | {num_tracks} tracks"
 msgstr ""
 

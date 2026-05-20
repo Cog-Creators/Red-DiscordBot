@@ -25,9 +25,9 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core._cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags, new_event_loop
 from redbot.setup import get_data_dir, get_name, save_config
-from redbot.core import data_manager, _drivers
+from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
 
@@ -182,32 +182,10 @@ async def _edit_owner(red, owner, no_prompt):
 
 def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
     if new_name:
-        name = new_name
-        if name in _get_instance_names() and not confirm_overwrite:
-            name = old_name
-            print(
-                "An instance with this name already exists.\n"
-                "If you want to remove the existing instance and replace it with this one,"
-                " run this command with --overwrite-existing-instance flag."
-            )
+        name = get_name(new_name, confirm_overwrite=confirm_overwrite)
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name("")
-        if name in _get_instance_names():
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not confirm(
-                "Are you absolutely certain you want to continue with this instance name?",
-                default=False,
-            ):
-                print("Instance name will remain unchanged.")
-                name = old_name
-            else:
-                print("Instance name updated.")
-        else:
-            print("Instance name updated.")
-        print()
+        name = get_name(confirm_overwrite=confirm_overwrite)
+        print("Instance name updated.\n")
     else:
         name = old_name
     return name
@@ -272,7 +250,7 @@ def early_exit_runner(
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.new_event_loop()
+    loop = new_event_loop()
     asyncio.set_event_loop(loop)
     try:
         if not cli_flags.instance_name:
@@ -281,7 +259,7 @@ def early_exit_runner(
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
         driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
@@ -317,19 +295,23 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     redbot.logging.init_logging(
         level=cli_flags.logging_level,
         location=data_manager.core_data_path() / "logs",
-        cli_flags=cli_flags,
+        rich_logging=cli_flags.rich_logging,
+        rich_tracebacks=cli_flags.rich_tracebacks,
+        rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
+        rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
     log.debug("Storage Type: %s", data_manager.storage_type())
 
+    await _downloader._init(red)
+
     # lib folder has to be in sys.path before trying to load any 3rd-party cog (GH-3061)
     # We might want to change handling of requirements in Downloader at later date
-    LIB_PATH = data_manager.cog_data_path(raw_name="Downloader") / "lib"
-    LIB_PATH.mkdir(parents=True, exist_ok=True)
-    if str(LIB_PATH) not in sys.path:
-        sys.path.append(str(LIB_PATH))
+    lib_path = str(_downloader.LIB_PATH)
+    if lib_path not in sys.path:
+        sys.path.append(lib_path)
 
         # "It's important to note that the global `working_set` object is initialized from
         # `sys.path` when `pkg_resources` is first imported, but is only updated if you do
@@ -339,7 +321,7 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         # Source: https://setuptools.readthedocs.io/en/latest/pkg_resources.html#workingset-objects
         pkg_resources = sys.modules.get("pkg_resources")
         if pkg_resources is not None:
-            pkg_resources.working_set.add_entry(str(LIB_PATH))
+            pkg_resources.working_set.add_entry(lib_path)
     sys.meta_path.insert(0, SharedLibImportWarner())
 
     if cli_flags.token:
@@ -397,7 +379,8 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
             "With that out of the way, depending on who you want to be considered as owner,"
             " you can:\n"
             "a) pass --team-members-are-owners when launching Red"
-            " - in this case Red will treat all members of the bot application's team as owners\n"
+            " - in this case Red will treat members of the bot application's team as owners,"
+            " if their team role is Owner, Admin, or Developer\n"
             f"b) set owner manually with `redbot --edit {cli_flags.instance_name}`\n"
             "c) pass owner ID(s) when launching Red with --owner"
             " (and --co-owner if you need more than one) flag\n"
@@ -421,20 +404,13 @@ def handle_early_exit_flags(cli_flags: Namespace):
         sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
 
-async def shutdown_handler(red, signal_type=None, exit_code=None):
-    if signal_type:
-        log.info("%s received. Quitting...", signal_type.name)
-        # Do not collapse the below line into other logic
-        # We need to renter this function
-        # after it interrupts the event loop.
-        sys.exit(ExitCodes.SHUTDOWN)
-    elif exit_code is None:
-        log.info("Shutting down from unhandled exception")
-        red._shutdown_mode = ExitCodes.CRITICAL
+async def signal_shutdown_handler(red: Red, signal_type: signal.Signals) -> NoReturn:
+    log.info("%s received. Quitting...", signal_type.name)
+    sys.exit(ExitCodes.SHUTDOWN)
 
-    if exit_code is not None:
-        red._shutdown_mode = exit_code
 
+async def shutdown_handler(red: Red, exit_code: int) -> None:
+    red._shutdown_mode = exit_code
     try:
         if not red.is_closed():
             await red.close()
@@ -472,7 +448,8 @@ def red_exception_handler(red, red_task: asyncio.Future):
     except Exception as exc:
         log.critical("The main bot task didn't handle an exception and has crashed", exc_info=exc)
         log.warning("Attempting to die as gracefully as possible...")
-        asyncio.create_task(shutdown_handler(red))
+        log.info("Shutting down from unhandled exception")
+        sys.exit(ExitCodes.CRITICAL)
 
 
 def main():
@@ -483,7 +460,7 @@ def main():
         early_exit_runner(cli_flags, edit_instance)
         return
     try:
-        loop = asyncio.new_event_loop()
+        loop = new_event_loop()
         asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:
@@ -498,7 +475,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
 
         if os.name != "nt":
             # None of this works on windows.
@@ -506,7 +483,7 @@ def main():
             signals = (signal.SIGHUP, signal.SIGTERM, signal.SIGINT)
             for s in signals:
                 loop.add_signal_handler(
-                    s, lambda s=s: asyncio.create_task(shutdown_handler(red, s))
+                    s, lambda s=s: asyncio.create_task(signal_shutdown_handler(red, s))
                 )
 
         exc_handler = functools.partial(global_exception_handler, red)
@@ -523,7 +500,7 @@ def main():
         log.warning("Please do not use Ctrl+C to Shutdown Red! (attempting to die gracefully...)")
         log.error("Received KeyboardInterrupt, treating as interrupt")
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, signal.SIGINT))
+            loop.run_until_complete(signal_shutdown_handler(red, signal.SIGINT))
     except SystemExit as exc:
         # We also have to catch this one here. Basically any exception which normally
         # Kills the python interpreter (Base Exceptions minus asyncio.cancelled)
@@ -535,11 +512,11 @@ def main():
             exit_code_name = "UNKNOWN"
         log.info("Shutting down with exit code: %s (%s)", exit_code, exit_code_name)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, exc.code))
+            loop.run_until_complete(shutdown_handler(red, exc.code))
     except Exception as exc:  # Non standard case.
         log.exception("Unexpected exception (%s): ", type(exc), exc_info=exc)
         if red is not None:
-            loop.run_until_complete(shutdown_handler(red, None, ExitCodes.CRITICAL))
+            loop.run_until_complete(shutdown_handler(red, ExitCodes.CRITICAL))
     finally:
         # Allows transports to close properly, and prevent new ones from being opened.
         # Transports may still not be closed correctly on windows, see below

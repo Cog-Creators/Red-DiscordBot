@@ -133,6 +133,7 @@ Run **one** of the following set of commands, depending on what extras you want 
 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
+        :modifiers: red-install-guide-install-normal
 
         python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot
@@ -141,6 +142,7 @@ Run **one** of the following set of commands, depending on what extras you want 
 
     .. prompt:: batch
         :prompts: (redenv) C:\\>
+        :modifiers: red-install-guide-install-postgres
 
         python -m pip install -U pip wheel
         python -m pip install -U Red-DiscordBot[postgres]
@@ -153,6 +155,7 @@ After installation, set up your instance with the following command:
 
 .. prompt:: batch
     :prompts: (redenv) C:\\>
+    :modifiers: red-install-guide-setup
 
     redbot-setup
 
@@ -164,6 +167,7 @@ Once done setting up the instance, run the following command to run Red:
 
 .. prompt:: batch
     :prompts: (redenv) C:\\>
+    :modifiers: red-install-guide-run
 
     redbot <your instance name>
 

@@ -307,7 +307,7 @@ class Reports(commands.Cog):
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
-                if await self.config.guild(ctx.guild).output_channel() is None:
+                if await self.config.guild(guild).output_channel() is None:
                     await author.send(
                         _(
                             "This server has no reports channel set up. Please contact a server admin."

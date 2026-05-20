@@ -3,12 +3,14 @@ import asyncio
 import logging
 import sys
 from enum import IntEnum
-from typing import Optional
+from typing import Any, Coroutine, Optional, TypeVar
 
 import discord
 from discord import __version__ as discord_version
 
 from redbot.core.utils._internal_utils import cli_level_to_log_level
+
+_T = TypeVar("_T")
 
 
 # This needs to be an int enum to be used
@@ -80,7 +82,7 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
         print(
             "\nPick a prefix. A prefix is what you type before a "
             "command. Example:\n"
-            "!help\n^ The exclamation mark is the prefix in this case.\n"
+            "!help\n^ The exclamation mark (!) is the prefix in this case.\n"
             "The prefix can be multiple characters. You will be able to change it "
             "later and add more of them.\nChoose your prefix:\n"
         )
@@ -93,6 +95,12 @@ async def interactive_config(red, token_set, prefix_set, *, print_header=True):
                 print(
                     "Prefixes cannot start with '/', as it conflicts with Discord's slash commands."
                 )
+                prefix = ""
+            if prefix and not confirm(
+                f'You chose "{prefix}" as your prefix. To run the help command,'
+                f" you will have to send:\n{prefix}help\n\n"
+                "Do you want to continue with this prefix?"
+            ):
                 prefix = ""
             if prefix:
                 await red._config.prefix.set([prefix])
@@ -214,6 +222,15 @@ def parse_cli_flags(args):
         help="Force unloading specified cogs.",
     )
     parser.add_argument(
+        "--cog-path",
+        type=str,
+        default=[],
+        nargs="+",
+        action="extend",
+        help="Add a specific path to the list of cog paths. "
+        "This can be used multiple times to add multiple paths.",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
@@ -228,6 +245,14 @@ def parse_cli_flags(args):
         default=0,
         dest="logging_level",
         help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
+    )
+    parser.add_argument(
+        "--no-verbose",
+        "--no-debug",
+        action="store_const",
+        const=0,
+        dest="logging_level",
+        help="Set the verbosity level to 0.",
     )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
@@ -261,11 +286,13 @@ def parse_cli_flags(args):
     )
     parser.add_argument(
         "--team-members-are-owners",
+        "--team-developers-are-owners",
         action="store_true",
         dest="use_team_features",
         default=False,
         help=(
-            "Treat application team members as owners. "
+            "Treat application team members as owners, if their team role is Owner, "
+            "Admin, or Developer. "
             "This is off by default. Owners can load and run arbitrary code. "
             "Do not enable if you would not trust all of your team members with "
             "all of the data on the host machine."
@@ -306,6 +333,19 @@ def parse_cli_flags(args):
         default=None,
         help="Forcefully disables the Rich logging handlers.",
     )
+    # DEP-WARN: use argparse.BooleanOptionalAction when we drop support for Python 3.8
+    parser.add_argument(
+        "--rich-tracebacks",
+        action="store_true",
+        default=False,
+        help="Format the Python exception tracebacks using Rich (with syntax highlighting)."
+        " *May* be useful to increase traceback readability during development.",
+    )
+    parser.add_argument(
+        "--no-rich-tracebacks",
+        action="store_false",
+        dest="rich_tracebacks",
+    )
     parser.add_argument(
         "--rich-traceback-extra-lines",
         type=non_negative_int,
@@ -330,3 +370,33 @@ def parse_cli_flags(args):
     args.logging_level = cli_level_to_log_level(args.logging_level)
 
     return args
+
+
+def asyncio_run(coro: Coroutine[Any, Any, _T]) -> _T:
+    if sys.version_info >= (3, 11):
+        with asyncio.Runner(loop_factory=new_event_loop) as runner:
+            return runner.run(coro)
+
+    if sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    return asyncio.run(coro)
+
+
+def new_event_loop() -> asyncio.AbstractEventLoop:
+    if sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            return uvloop.new_event_loop()
+
+    return asyncio.new_event_loop()

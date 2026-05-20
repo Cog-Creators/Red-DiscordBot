@@ -7,9 +7,6 @@
 Bank
 ====
 
-Bank has now been separated from Economy for V3. New to bank is support for
-having a global bank.
-
 ***********
 Basic Usage
 ***********

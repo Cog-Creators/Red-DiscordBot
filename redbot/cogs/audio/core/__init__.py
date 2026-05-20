@@ -3,7 +3,6 @@ import datetime
 import json
 
 from collections import Counter, defaultdict
-from pathlib import Path
 from typing import Mapping, Dict
 
 import aiohttp
@@ -13,7 +12,6 @@ from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.commands import Cog
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.antispam import AntiSpam
 
 from ..utils import (
@@ -25,10 +23,7 @@ from ..utils import (
 from . import abc, cog_utils, commands, events, tasks, utilities
 from .cog_utils import CompositeMetaClass
 
-_ = Translator("Audio", Path(__file__))
 
-
-@cog_i18n(_)
 class Audio(
     commands.Commands,
     events.Events,
@@ -37,8 +32,6 @@ class Audio(
     Cog,
     metaclass=CompositeMetaClass,
 ):
-    """Play audio through voice channels."""
-
     llset_captcha_intervals = [
         (datetime.timedelta(days=1), 1),
     ]

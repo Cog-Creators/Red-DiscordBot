@@ -8,6 +8,7 @@ To install without additional config backend support:
 
 .. prompt:: bash
     :prompts: (redenv) $
+    :modifiers: red-install-guide-install-normal
 
     python -m pip install -U pip wheel
     python -m pip install -U Red-DiscordBot
@@ -16,6 +17,7 @@ Or, to install with PostgreSQL support:
 
 .. prompt:: bash
     :prompts: (redenv) $
+    :modifiers: red-install-guide-install-postgres
 
     python -m pip install -U pip wheel
     python -m pip install -U "Red-DiscordBot[postgres]"
@@ -29,6 +31,7 @@ After installation, set up your instance with the following command:
 
 .. prompt:: bash
     :prompts: (redenv) $
+    :modifiers: red-install-guide-setup
 
     redbot-setup
 
@@ -40,6 +43,7 @@ Once done setting up the instance, run the following command to run Red:
 
 .. prompt:: bash
     :prompts: (redenv) $
+    :modifiers: red-install-guide-run
 
     redbot <your instance name>
 
