@@ -17,7 +17,7 @@ jobs:
       - name: Install script's pre-requirements
         run: |
           python -m pip install -U pip
-          python -m pip install -U pathspec pyyaml rich
+          python -m pip install -U pathspec pyyaml rich typing_extensions
       - name: Check label pattern exhaustiveness
         run: |
           python .github/workflows/scripts/check_label_pattern_exhaustiveness.py

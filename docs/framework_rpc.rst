@@ -9,7 +9,7 @@ RPC
   RPC support is included in Red on a `provisional <developer-guarantees-exclusions>` basis.
   Backwards incompatible changes (up to and including removal of the RPC) may occur if deemed necessary.
 
-V3 comes default with an internal RPC server that may be used to remotely control the bot in various ways.
+Red comes default with an internal RPC server that may be used to remotely control the bot in various ways.
 Cogs must register functions to be exposed to RPC clients.
 Each of those functions must only take JSON serializable parameters and must return JSON serializable objects.
 

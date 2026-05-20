@@ -13,6 +13,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 from typing import (
     TYPE_CHECKING,
+    Any,
     Optional,
     Optional as NoParseOptional,
     Tuple,
@@ -20,6 +21,7 @@ from typing import (
     Dict,
     Type,
     TypeVar,
+    Union,
     Union as UserInputOptional,
 )
 
@@ -237,6 +239,9 @@ class RawUserIdConverter(dpy_commands.Converter):
     there is no user with such ID.
     """
 
+    def __or__(self, rhs: Any) -> Any:
+        return Union[self, rhs]
+
     async def convert(self, ctx: "Context", argument: str) -> int:
         # This is for the hackban and unban commands, where we receive IDs that
         # are most likely not in the guild.
@@ -269,17 +274,20 @@ if TYPE_CHECKING:
     finite_float = float
 else:
 
-    def finite_float(arg: str) -> float:
-        """
-        This converts a user provided string into a finite float.
-        """
-        try:
-            ret = float(arg)
-        except ValueError:
-            raise BadArgument(_("`{arg}` is not a number.").format(arg=arg))
-        if not math.isfinite(ret):
-            raise BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
-        return ret
+    class finite_float(dpy_commands.Converter):
+        """Converts a user provided string into a finite float."""
+
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
+
+        async def convert(self, ctx: "Context", arg: str) -> float:
+            try:
+                ret = float(arg)
+            except ValueError:
+                raise BadArgument(_("`{arg}` is not a number.").format(arg=arg))
+            if not math.isfinite(ret):
+                raise BadArgument(_("`{arg}` is not a finite number.").format(arg=ret))
+            return ret
 
 
 if TYPE_CHECKING:
@@ -295,6 +303,9 @@ else:
             self.expected_keys = expected_keys
             self.delims = delims or [" "]
             self.pattern = re.compile(r"|".join(re.escape(d) for d in self.delims))
+
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
 
         async def convert(self, ctx: "Context", argument: str) -> Dict[str, str]:
             ret: Dict[str, str] = {}
@@ -378,6 +389,9 @@ else:
             self.default_unit = default_unit
             self.minimum = minimum
             self.maximum = maximum
+
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
 
         async def convert(self, ctx: "Context", argument: str) -> timedelta:
             if self.default_unit and argument.isdecimal():
@@ -487,6 +501,9 @@ else:
             self.allowed_units = allowed_units
             self.default_unit = default_unit
 
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
+
         async def convert(self, ctx: "Context", argument: str) -> relativedelta:
             if self.default_unit and argument.isdecimal():
                 argument = argument + self.default_unit
@@ -537,6 +554,9 @@ else:
     class CommandConverter(dpy_commands.Converter):
         """Converts a command name to the matching `redbot.core.commands.Command` object."""
 
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
+
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()
             command = ctx.bot.get_command(arg)
@@ -546,6 +566,9 @@ else:
 
     class CogConverter(dpy_commands.Converter):
         """Converts a cog name to the matching `redbot.core.commands.Cog` object."""
+
+        def __or__(self, rhs: Any) -> Any:
+            return Union[self, rhs]
 
         async def convert(self, ctx: "Context", argument: str):
             arg = argument.strip()

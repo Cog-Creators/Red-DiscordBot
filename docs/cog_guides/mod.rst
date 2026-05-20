@@ -253,7 +253,23 @@ modset dm
 
 .. code-block:: none
 
-    [p]modset dm [enabled]
+    [p]modset dm
+
+**Description**
+
+Settings for messaging the user when being kicked or banned.
+
+.. _mod-command-modset-dm-sendmessage:
+
+"""""""""""""""""""""
+modset dm sendmessage
+"""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm sendmessage [enabled]
 
 **Description**
 
@@ -265,6 +281,72 @@ and reason as to why they were kicked/banned.
 **Arguments**
 
 * ``[enabled]``: Whether a message should be sent to a user when they are kicked/banned. |bool-input|
+
+.. _mod-command-modset-banshowextrafield:
+
+"""""""""""""""""""""""""""
+modset dm banshowextrafield
+"""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field when banning.
+
+This can be used to add additional information for the banned user, such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear when banning. |bool-input|
+
+.. _mod-command-modset-banextrafieldtitle:
+
+""""""""""""""""""""""""""""
+modset dm banextrafieldtitle
+""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldtitle [title]
+
+**Description**
+
+Set the title for the optional extra embed on ban.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``[title]``: The title of the embed field. Can by any string of text under 252 charcters long.
+
+.. _mod-command-modset-banextrafieldcontents:
+
+"""""""""""""""""""""""""""""""
+modset dm banextrafieldcontents
+"""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldcontents [contents]
+
+**Description**
+
+Set the contents for the optional extra embed on ban
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``[contents]``: The contents of the embed field. Can by any string of text under 1024 charcters long.
 
 .. _mod-command-modset-requirereason:
 

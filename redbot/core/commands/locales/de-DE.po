@@ -29,7 +29,7 @@ msgstr "Diese Zeitspanne ist für diesen Befehl zu groß. (Maximal: {maximum})"
 
 #: redbot/core/commands/converter.py:159 redbot/core/commands/converter.py:168
 msgid "0 seconds"
-msgstr ""
+msgstr "0 Sekunden"
 
 #: redbot/core/commands/converter.py:164
 msgid "This amount of time is too small for this command. (Minimum: {minimum})"
@@ -125,7 +125,7 @@ msgstr "Gebe {command1} ein, um weitere Informationen zu einem Befehl zu erhalte
 
 #: redbot/core/commands/help.py:358
 msgid "Syntax:\n"
-msgstr ""
+msgstr "Syntax:\n"
 
 #: redbot/core/commands/help.py:360
 msgid "Aliases"

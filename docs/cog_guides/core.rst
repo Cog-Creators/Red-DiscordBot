@@ -1829,7 +1829,10 @@ Commands to add servers or channels to the ignore list.
 
 The ignore list will prevent the bot from responding to commands in the configured locations.
 
-.. Note:: Owners and Admins override the ignore list.
+.. Note::
+
+    - Category ignores are ignored by user-installed commands
+    - Owners and Admins override the ignore list.
 
 
 .. _core-command-ignore-channel:
@@ -1850,7 +1853,10 @@ Ignore commands in the channel, thread, or category.
 
 Defaults to the current thread or channel.
 
-.. Note:: Owners, Admins, and those with Manage Channel permissions override ignored channels.
+.. Note::
+
+    - Category ignores are ignored by user-installed commands
+    - Owners and Admins override the ignore list.
 
 
 **Examples:**

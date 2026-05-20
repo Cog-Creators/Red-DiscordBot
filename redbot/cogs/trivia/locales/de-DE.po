@@ -37,11 +37,11 @@ msgstr "{key} Schlüssel muss ein Textwert sein."
 
 #: redbot/cogs/trivia/schema.py:43
 msgid "{key} key must be a text value not longer than 1000 characters."
-msgstr ""
+msgstr "{key} Schlüssel muss ein Textwert sein, der nicht länger als 1000 Zeichen ist."
 
 #: redbot/cogs/trivia/schema.py:48
 msgid "{key} key must be a text value not longer than 200 characters."
-msgstr ""
+msgstr "{key} Schlüssel muss ein Textwert sein, der nicht länger als 200 Zeichen ist."
 
 #: redbot/cogs/trivia/schema.py:55
 msgid "{key} key in {parent_key} must be a positive integer."
@@ -180,39 +180,39 @@ msgstr "Nein"
 
 #: redbot/cogs/trivia/trivia.py:50
 msgid "{seconds} seconds"
-msgstr ""
+msgstr "{seconds} Sekunden"
 
 #: redbot/cogs/trivia/trivia.py:56
 msgid "Bot gains points"
-msgstr ""
+msgstr "Bot gewinnt Punkte"
 
 #: redbot/cogs/trivia/trivia.py:57
 msgid "Answer time limit"
-msgstr ""
+msgstr "Zeitlimit der Antwort"
 
 #: redbot/cogs/trivia/trivia.py:58
 msgid "Lack of response timeout"
-msgstr ""
+msgstr "Timeout der Antwort fehlt"
 
 #: redbot/cogs/trivia/trivia.py:59
 msgid "Points to win"
-msgstr ""
+msgstr "Punkte, um zu gewinnen"
 
 #: redbot/cogs/trivia/trivia.py:60
 msgid "Answers are revealed on timeout"
-msgstr ""
+msgstr "Antworten werden bei Timeout angezeigt"
 
 #: redbot/cogs/trivia/trivia.py:61
 msgid "Payout multiplier"
-msgstr ""
+msgstr "Auszahlungs-Multiplikator"
 
 #: redbot/cogs/trivia/trivia.py:62
 msgid "Lists are allowed to override settings"
-msgstr ""
+msgstr "Listen dürfen Einstellungen überschreiben"
 
 #: redbot/cogs/trivia/trivia.py:63
 msgid "Answers use spoilers"
-msgstr ""
+msgstr "Antworten verwenden Spoiler"
 
 #: redbot/cogs/trivia/trivia.py:75
 #, docstring
@@ -231,7 +231,7 @@ msgstr "Zeige die aktuellen Trivia-Einstellungen."
 
 #: redbot/cogs/trivia/trivia.py:121
 msgid "Current settings:\n\n"
-msgstr ""
+msgstr "Aktuelle Einstellungen:\n\n"
 
 #: redbot/cogs/trivia/trivia.py:126
 #, docstring
@@ -477,47 +477,47 @@ msgstr "Verfügbare Trivia Listen"
 #: redbot/cogs/trivia/trivia.py:413
 #, docstring
 msgid "Get information about a trivia category."
-msgstr ""
+msgstr "Informieren Sie sich über eine Trivia-Kategorie."
 
 #: redbot/cogs/trivia/trivia.py:418
 msgid "Category {name} does not exist. See {command} for the list of available trivia categories."
-msgstr ""
+msgstr "Kategorie- {name} existiert nicht. Siehe {command} für die Liste der verfügbaren Trivia-Kategorien."
 
 #: redbot/cogs/trivia/trivia.py:425
 msgid "There was an error parsing the trivia list for the {name} category. It may be formatted incorrectly."
-msgstr ""
+msgstr "Beim Analysieren der Trivia Liste für die `{name}` Kategorie trat ein Fehler auf. Möglicherweise wurde sie falsch formatiert."
 
 #: redbot/cogs/trivia/trivia.py:434
 msgid "\"{category}\" Category Details"
-msgstr ""
+msgstr "\"{category}\" Kategorie-Details"
 
 #: redbot/cogs/trivia/trivia.py:438
 msgid "Authors"
-msgstr ""
+msgstr "Autoren"
 
 #: redbot/cogs/trivia/trivia.py:438
 msgid "Not provided."
-msgstr ""
+msgstr "Nicht angegeben."
 
 #: redbot/cogs/trivia/trivia.py:440
 msgid "Question count"
-msgstr ""
+msgstr "Anzahl Fragen"
 
 #: redbot/cogs/trivia/trivia.py:442
 msgid "Custom"
-msgstr ""
+msgstr "Benutzerdefiniert"
 
 #: redbot/cogs/trivia/trivia.py:448
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: redbot/cogs/trivia/trivia.py:451
 msgid "No description provided for this category."
-msgstr ""
+msgstr "Keine Beschreibung für diese Kategorie vorhanden."
 
 #: redbot/cogs/trivia/trivia.py:458
 msgid "Config"
-msgstr ""
+msgstr "Konfiguration"
 
 #: redbot/cogs/trivia/trivia.py:468
 #, docstring
