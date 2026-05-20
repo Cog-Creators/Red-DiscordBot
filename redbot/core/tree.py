@@ -17,8 +17,12 @@ from .app_commands import (
     Group,
     NoPrivateMessage,
     TransformerError,
+    UserFeedbackCheckFailure,
 )
-from .i18n import Translator
+from redbot.core.i18n import (
+    Translator,
+    set_contextual_locales_from_guild,
+)
 from .utils.chat_formatting import humanize_list, inline
 
 import logging
@@ -327,12 +331,29 @@ class RedTree(CommandTree):
                 relative_time=relative_time
             )
             await self._send_from_interaction(interaction, msg, delete_after=error.retry_after)
+        elif isinstance(error, UserFeedbackCheckFailure):
+            if error.message:
+                await self._send_from_interaction(interaction, error.message)
         elif isinstance(error, CheckFailure):
             await self._send_from_interaction(
                 interaction, _("You are not permitted to use this command.")
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
+
+    async def _send_interaction_check_failure(
+        self, interaction: discord.Interaction, message: str
+    ):
+        """Handles responding to interaction check failures.
+        Mainly used for when an interaction is an autocomplete and
+        providing the message in the autocomplete response.
+        """
+        if interaction.type is discord.InteractionType.autocomplete:
+            await interaction.response.autocomplete(
+                [discord.app_commands.Choice(name=message[:80], value="None")]
+            )
+            return
+        await interaction.response.send_message(message, ephemeral=True)
 
     async def interaction_check(self, interaction: discord.Interaction):
         """Global checks for app commands."""
@@ -341,15 +362,15 @@ class RedTree(CommandTree):
 
         if interaction.guild:
             if not (await self.client.ignored_channel_or_guild(interaction)):
-                await interaction.response.send_message(
-                    "This channel or server is ignored.", ephemeral=True
+                await self._send_interaction_check_failure(
+                    interaction, _("This channel or server is ignored.")
                 )
                 return False
 
         if not (await self.client.allowed_by_whitelist_blacklist(interaction.user)):
-            await interaction.response.send_message(
-                "You are not permitted to use commands because of an allowlist or blocklist.",
-                ephemeral=True,
+            await self._send_interaction_check_failure(
+                interaction,
+                _("You are not permitted to use commands because of an allowlist or blocklist."),
             )
             return False
 
@@ -377,3 +398,9 @@ class RedTree(CommandTree):
 
         for key in remove:
             del self._disabled_global_commands[key]
+
+    # DEP-WARN
+    async def _call(self, interaction: discord.Interaction, *args, **kwargs) -> None:
+        """Configure the contextual locale based on the interaction guild prior to invoking."""
+        await set_contextual_locales_from_guild(interaction.client, interaction.guild)
+        await super()._call(interaction, *args, **kwargs)

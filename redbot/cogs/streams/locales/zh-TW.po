@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-09-06 18:42+0000\n"
+"POT-Creation-Date: 2026-02-15 23:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Traditional\n"
 "MIME-Version: 1.0\n"
@@ -384,53 +384,53 @@ msgstr "當 {stream.name} 直播時，我現在會在 {channel.mention} 頻道�
 msgid "I won't send notifications about {stream.name} in the {channel.mention} channel anymore"
 msgstr "我不會再在 {channel.mention} 頻道發送有關 {stream.name} 的通知"
 
-#: redbot/cogs/streams/streams.py:914
+#: redbot/cogs/streams/streams.py:920
 msgid "{mention}, {display_name} is live!"
 msgstr "{mention}，{display_name} 正在直播！"
 
-#: redbot/cogs/streams/streams.py:934
+#: redbot/cogs/streams/streams.py:940
 msgid "{display_name} is live!"
 msgstr "{display_name} 正在直播！"
 
-#: redbot/cogs/streams/streamtypes.py:226
-msgid "This stream will start in {time}"
-msgstr "此直播將在 {time} 開始"
+#: redbot/cogs/streams/streamtypes.py:227
+msgid "This stream will start <t:{time}:R>"
+msgstr "此直播將在 <t:{time}:R> 開始"
 
-#: redbot/cogs/streams/streamtypes.py:232
-msgid "This stream was scheduled for {min} minutes ago"
-msgstr "此直播預定於 {min} 分鐘前"
+#: redbot/cogs/streams/streamtypes.py:231
+msgid "This stream was scheduled for <t:{time}:R>"
+msgstr ""
 
-#: redbot/cogs/streams/streamtypes.py:447
+#: redbot/cogs/streams/streamtypes.py:446
 msgid "Untitled broadcast"
 msgstr "無標題broadcast"
 
-#: redbot/cogs/streams/streamtypes.py:449
+#: redbot/cogs/streams/streamtypes.py:448
 msgid " - Rerun"
 msgstr " - Rerun"
 
-#: redbot/cogs/streams/streamtypes.py:452
-#: redbot/cogs/streams/streamtypes.py:498
+#: redbot/cogs/streams/streamtypes.py:451
+#: redbot/cogs/streams/streamtypes.py:497
 msgid "Followers"
 msgstr "跟隨者"
 
-#: redbot/cogs/streams/streamtypes.py:453
-#: redbot/cogs/streams/streamtypes.py:499
+#: redbot/cogs/streams/streamtypes.py:452
+#: redbot/cogs/streams/streamtypes.py:498
 msgid "Total views"
 msgstr "總瀏覽次數"
 
-#: redbot/cogs/streams/streamtypes.py:458
+#: redbot/cogs/streams/streamtypes.py:457
 msgid "Playing: "
 msgstr "正在播放: "
 
-#: redbot/cogs/streams/streamtypes.py:504
+#: redbot/cogs/streams/streamtypes.py:503
 msgid "None"
 msgstr "無"
 
-#: redbot/cogs/streams/streamtypes.py:507
+#: redbot/cogs/streams/streamtypes.py:506
 msgid "NSFW | "
 msgstr "NSFW | "
 
-#: redbot/cogs/streams/streamtypes.py:511
+#: redbot/cogs/streams/streamtypes.py:510
 msgid "{adult}Category: {category} | Tags: {tags}"
 msgstr "{adult}類別：{category} | 標籤：{tags}"
 

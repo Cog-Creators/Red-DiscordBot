@@ -23,7 +23,9 @@ __all__ = [
     "empty_role",
     "empty_user",
     "member_factory",
+    "newline_message",
     "user_factory",
+    "prefix",
     "ctx",
 ]
 
@@ -142,6 +144,18 @@ def empty_message():
     return mock_msg("No content.")
 
 
+@pytest.fixture(scope="module")
+def newline_message():
+    mock_msg = type("", (), {})()
+    mock_msg.content = "!test a\nb\nc"
+    return mock_msg
+
+
+@pytest.fixture(scope="module")
+def prefix():
+    return "!"
+
+
 @pytest.fixture()
 def ctx(empty_member, empty_channel, red):
     mock_ctx = namedtuple("Context", "author guild channel message bot")
@@ -158,11 +172,9 @@ def red(config_fr):
 
     cli_flags = parse_cli_flags(["ignore_me"])
 
-    description = "Red v3 - Alpha"
-
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
+    red = Red(cli_flags=cli_flags)
 
     yield red
 

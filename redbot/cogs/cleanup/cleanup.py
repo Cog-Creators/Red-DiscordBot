@@ -54,6 +54,9 @@ class Cleanup(commands.Cog):
         if ctx.assume_yes:
             return True
 
+        if number > 2**63 - 1:
+            return await ctx.send(_("Try a smaller number instead."))
+
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages?").format(
                 number=humanize_number(number)
@@ -705,11 +708,19 @@ class Cleanup(commands.Cog):
         def check(m):
             if m.attachments:
                 return False
+            if m.components:
+                return False
+            if m.poll:
+                return False
+            if m.activity:
+                return False
+            ref = m.reference
             c = (
                 m.author.id,
                 m.content,
                 [embed.to_dict() for embed in m.embeds],
                 [sticker.id for sticker in m.stickers],
+                ref and (ref.type, ref.message_id, ref.channel_id),
             )
             if c in msgs:
                 spam.append(m)

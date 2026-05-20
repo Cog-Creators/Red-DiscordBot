@@ -206,6 +206,10 @@ from discord.ext.commands import (
     RangeError as RangeError,
     parameter as parameter,
     HybridCommandError as HybridCommandError,
+    SoundboardSoundConverter as SoundboardSoundConverter,
+    SoundboardSoundNotFound as SoundboardSoundNotFound,
+    BadTimestampArgument as BadTimestampArgument,
+    Timestamp as Timestamp,
 )
 
 __all__ = (
@@ -397,4 +401,6 @@ __all__ = (
     "RangeError",
     "parameter",
     "HybridCommandError",
+    "SoundboardSoundConverter",
+    "SoundboardSoundNotFound",
 )

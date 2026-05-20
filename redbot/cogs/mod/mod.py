@@ -57,9 +57,13 @@ class Mod(
         "reinvite_on_unban": False,
         "current_tempbans": [],
         "dm_on_kickban": False,
+        "require_reason": False,
         "default_days": 0,
         "default_tempban_duration": 60 * 60 * 24,
         "track_nicknames": True,
+        "ban_show_extra": False,
+        "ban_extra_embed_title": "Message from staff",
+        "ban_extra_embed_contents": "Please set me",
     }
 
     default_channel_settings = {"ignored": False}

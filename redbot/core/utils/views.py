@@ -66,9 +66,10 @@ class _StopButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.view.stop()
         if interaction.message.flags.ephemeral:
-            await interaction.response.edit_message(view=None)
-            return
-        await interaction.message.delete()
+            await interaction.response.defer(thinking=False)
+            await interaction.delete_original_response()
+        else:
+            await interaction.message.delete()
 
 
 class SimpleMenu(discord.ui.View):
@@ -106,6 +107,17 @@ class SimpleMenu(discord.ui.View):
         under the select menu in this instance.
         Defaults to False.
 
+    Attributes
+    ----------
+    select_menu: `discord.ui.Select`
+        A select menu with a list of pages. The usage of this attribute is discouraged
+        as it may store different instances throughout the menu's lifetime.
+
+        .. deprecated-removed:: 3.5.14 60
+            Any behaviour enabled by the usage of this attribute should no longer be depended on.
+            If you need this for something and cannot replace it with the other functionality,
+            create an issue on Red's issue tracker.
+
     Examples
     --------
         You can provide a list of strings::
@@ -136,6 +148,7 @@ class SimpleMenu(discord.ui.View):
         super().__init__(
             timeout=timeout,
         )
+        self._fallback_author_to_ctx = True
         self.author: Optional[discord.abc.User] = None
         self.message: Optional[discord.Message] = None
         self._source = _SimplePageSource(items=pages)
@@ -192,9 +205,22 @@ class SimpleMenu(discord.ui.View):
     def source(self):
         return self._source
 
+    @property
+    def author(self) -> Optional[discord.abc.User]:
+        if self._author is not None:
+            return self._author
+        if self._fallback_author_to_ctx:
+            return getattr(self.ctx, "author", None)
+        return None
+
+    @author.setter
+    def author(self, value: Optional[discord.abc.User]) -> None:
+        self._fallback_author_to_ctx = False
+        self._author = value
+
     async def on_timeout(self):
         try:
-            if self.delete_after_timeout and not self.message.flags.ephemeral:
+            if self.delete_after_timeout:
                 await self.message.delete()
             elif self.disable_after_timeout:
                 for child in self.children:
@@ -225,22 +251,64 @@ class SimpleMenu(discord.ui.View):
             options = self.select_options[:25]
         return _SelectMenu(options)
 
-    async def start(self, ctx: Context, *, ephemeral: bool = False):
+    async def start(
+        self, ctx: Context, *, user: Optional[discord.abc.User] = None, ephemeral: bool = False
+    ):
         """
         Used to start the menu displaying the first page requested.
+
+        .. warning::
+
+            The ``user`` parameter is considered `provisional <developer-guarantees-exclusions>`.
+            If no issues arise, we plan on including it under developer guarantees
+            in the first release made after 2024-05-24.
 
         Parameters
         ----------
             ctx: `commands.Context`
                 The context to start the menu in.
+            user: discord.User
+                The user allowed to interact with the menu.
+                If this is ``None``, ``ctx.author`` will be able to interact with the menu.
+
+                .. warning::
+
+                    This parameter is `provisional <developer-guarantees-exclusions>`.
+                    If no issues arise, we plan on including it under developer guarantees
+                    in the first release made after 2024-05-24.
             ephemeral: `bool`
                 Send the message ephemerally. This only works
                 if the context is from a slash command interaction.
         """
-        self.author = ctx.author
+        if self.use_select_menu and self.source.is_paginating():
+            self.remove_item(self.select_menu)
+            # we added a default one in init so we want to remove it and add any changes here
+            self.select_menu = self._get_select_menu()
+            self.add_item(self.select_menu)
+        self._fallback_author_to_ctx = True
+        if user is not None:
+            self.author = user
         self.ctx = ctx
         kwargs = await self.get_page(self.current_page)
         self.message = await ctx.send(**kwargs, ephemeral=ephemeral)
+
+    async def start_dm(self, user: discord.User):
+        """
+        Used to start displaying the menu in a direct message.
+
+        Parameters
+        ----------
+            user: `discord.User`
+                The user that will be direct messaged by the bot.
+        """
+        if self.use_select_menu and self.source.is_paginating():
+            self.remove_item(self.select_menu)
+            # we added a default one in init so we want to remove it and add any changes here
+            self.select_menu = self._get_select_menu()
+            self.add_item(self.select_menu)
+        self.author = user
+        kwargs = await self.get_page(self.current_page)
+        self.message = await user.send(**kwargs)
 
     async def get_page(self, page_num: int) -> Dict[str, Optional[Any]]:
         try:
@@ -312,28 +380,36 @@ class SetApiModal(discord.ui.Modal):
         self.title = _("Set API Keys")
         self.keys_label = _("Keys and tokens")
         if self.default_service is not None:
-            self.title = _("Set API Keys for {service}").format(service=self.default_service)
+            truncated_service_name = (
+                (self.default_service[:20] + "…")
+                if len(self.default_service) > 20
+                else self.default_service
+            )
             self.keys_label = _("Keys and tokens for {service}").format(
-                service=self.default_service
+                service=truncated_service_name
             )
             self.default_service = self.default_service.lower()
             # Lower here to prevent someone from capitalizing a service name for the sake of UX.
 
         super().__init__(title=self.title)
 
-        self.service_input = discord.ui.TextInput(
-            label=_("Service"),
-            required=True,
-            placeholder=_placeholder_service,
-            default=self.default_service,
+        self.service_input = discord.ui.Label(
+            text=_("Service"),
+            component=discord.ui.TextInput(
+                required=True,
+                placeholder=_placeholder_service,
+                default=self.default_service,
+            ),
         )
 
-        self.token_input = discord.ui.TextInput(
-            label=self.keys_label,
-            style=discord.TextStyle.long,
-            required=True,
-            placeholder=_placeholder_token,
-            default=self.default_keys_fmt,
+        self.token_input = discord.ui.Label(
+            text=self.keys_label,
+            component=discord.ui.TextInput(
+                style=discord.TextStyle.long,
+                required=True,
+                placeholder=_placeholder_token,
+                default=self.default_keys_fmt,
+            ),
         )
 
         if self.default_service is None:
@@ -366,7 +442,7 @@ class SetApiModal(discord.ui.Modal):
             converter = get_dict_converter(*self.default_keys, delims=[";", ",", " "])
         else:
             converter = get_dict_converter(delims=[";", ",", " "])
-        tokens = " ".join(self.token_input.value.split("\n")).rstrip()
+        tokens = " ".join(self.token_input.component.value.split("\n")).rstrip()
 
         try:
             tokens = await converter().convert(None, tokens)
@@ -383,7 +459,7 @@ class SetApiModal(discord.ui.Modal):
                 ephemeral=True,
             )
         else:
-            service = self.service_input.value.lower()
+            service = self.service_input.component.value.lower()
             await interaction.client.set_shared_api_tokens(service, **tokens)
             return await interaction.response.send_message(
                 _("`{service}` API tokens have been set.").format(service=service),
