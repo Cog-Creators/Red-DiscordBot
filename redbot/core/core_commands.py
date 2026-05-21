@@ -3709,7 +3709,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
             for token_name, token in tokens.items():
                 if token.startswith("<") and token.endswith(">"):
-                    angle_bracket_warning = (
+                    angle_bracket_warning = _(
                         "You may have failed to properly format your `{token_name}`. If you were told to enter a token"
                         " with an example such as `[p]set api {service} {token_name} <your_{token_name}_here>`, and your {token_name}"
                         " was `HREDFGWE`, make sure to run `[p]set api {service} {token_name} HREDFGWE` and not "
