@@ -1015,18 +1015,17 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
                     reviewers.setdefault(review_author, []).append(pr_info)
 
             merge_commit = pr_node["mergeCommit"]
-            if merge_commit is None:
-                pr_author = pr_node["author"]["login"]
-                if not pr_author.endswith("[bot]"):
-                    authors.setdefault(pr_author, []).append(pr_info)
-                continue
+            author_logins = {pr_node["author"]["login"]}
+            if merge_commit is not None:
+                author_logins.update(
+                    author_node["user"]["login"]
+                    for author_node in merge_commit["authors"]["nodes"]
+                    if author_node["user"] is not None
+                )
 
-            for author_node in merge_commit["authors"]["nodes"]:
-                commit_user = author_node["user"]
-                if commit_user is not None:
-                    commit_author = author_node["user"]["login"]
-                    if not commit_author.endswith("[bot]"):
-                        authors.setdefault(commit_author, []).append(pr_info)
+            for login in author_logins:
+                if not login.endswith("[bot]"):
+                    authors.setdefault(login, []).append(pr_info)
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
