@@ -1032,7 +1032,7 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
         after = page_info["endCursor"]
         has_next_page = page_info["hasNextPage"]
 
-    return sorted(authors.keys() | reviewers.keys(), key=lambda t: t[0].lower())
+    return sorted(authors.keys() | reviewers.keys(), key=lambda t: t.lower())
 
 
 if __name__ == "__main__":
