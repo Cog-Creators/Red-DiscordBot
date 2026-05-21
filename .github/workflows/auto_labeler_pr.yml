@@ -25,7 +25,7 @@ jobs:
         uses: Jackenmen/label-doconly-changes@v1
         env:
           LDC_LABELS: Docs-only
-          LDC_HOOK_UNCONDITIONAL__FILES: |-
+          LDC_HOOK_UNCONDITIONAL__ALLOWED_FILES: |-
             # default list of unconditionally allowed files
             *.rst
             *.md
