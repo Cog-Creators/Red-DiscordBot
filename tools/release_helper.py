@@ -1015,7 +1015,9 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
                     reviewers.setdefault(review_author, []).append(pr_info)
 
             merge_commit = pr_node["mergeCommit"]
-            author_logins = {pr_node["author"]["login"]}
+            author_logins = set()
+            if pr_node["author"] is not None:
+                author_logins.add(pr_node["author"]["login"])
             if merge_commit is not None:
                 author_logins.update(
                     author_node["user"]["login"]
