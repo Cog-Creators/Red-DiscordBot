@@ -1106,7 +1106,14 @@ msgid "Sets the caching level.\n\n"
 "        5: Enables all Caches\n\n"
 "        If you wish to disable a specific cache use a negative number.\n"
 "        "
-msgstr ""
+msgstr "Define o nível de cache.\n\n"
+"O nível pode ser um dos seguintes:\n\n"
+"0: Desativa toda a cache\n"
+"1: Ativa a cache do Spotify\n"
+"2: Ativa a cache do YouTube\n"
+"3: Ativa a cache do Lavalink\n"
+"5: Ativa todos os caches\n\n"
+"Se pretender desativar um cache específico, utilize um número negativo        "
 
 #: redbot/cogs/audio/core/commands/audioset.py:1374
 #: redbot/cogs/audio/core/commands/audioset.py:1419
@@ -1116,17 +1123,17 @@ msgstr "Idade máxima: [{max_age}]\n"
 #: redbot/cogs/audio/core/commands/audioset.py:1375
 #: redbot/cogs/audio/core/commands/audioset.py:1420
 msgid "Spotify cache:    [{spotify_status}]\n"
-msgstr ""
+msgstr "Cache do Spotify: [{spotify_status}]"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1376
 #: redbot/cogs/audio/core/commands/audioset.py:1421
 msgid "Youtube cache:    [{youtube_status}]\n"
-msgstr ""
+msgstr "Youtube cache:    [{youtube_status}]"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1377
 #: redbot/cogs/audio/core/commands/audioset.py:1422
 msgid "Lavalink cache:   [{lavalink_status}]\n"
-msgstr ""
+msgstr "Lavalink cache:   [{lavalink_status}]"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1437
 #, docstring
@@ -1134,7 +1141,8 @@ msgid "Sets the cache max age.\n\n"
 "        This commands allows you to set the max number of days before an entry in the cache becomes\n"
 "        invalid.\n"
 "        "
-msgstr ""
+msgstr "Define o tempo máximo da cache.\n\n"
+"Este comando permite definir o número máximo de dias antes que uma entrada na cache se torne inválida"
 
 #: redbot/cogs/audio/core/commands/audioset.py:1444
 msgid "Cache age cannot be less than 7 days. If you wish to disable it run {prefix}audioset cache.\n"
@@ -1149,11 +1157,12 @@ msgstr "Eu defini a idade do cache para {age} dias"
 msgid "Toggle persistent queues.\n\n"
 "        Persistent queues allows the current queue to be restored when the queue closes.\n"
 "        "
-msgstr ""
+msgstr "Alternar filas persistentes.\n\n"
+"As filas persistentes permitem que a fila atual seja restaurada quando a fila é fechada."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1468
 msgid "Persisting queues: {true_or_false}."
-msgstr ""
+msgstr "Filas persistentes: {true_or_false}."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1476
 #, docstring
@@ -1169,7 +1178,7 @@ msgstr "Falha ao desligar Lavalink"
 #: redbot/cogs/audio/core/commands/llset.py:198
 #: redbot/cogs/audio/core/commands/llset.py:746
 msgid "Please reload Audio (`{prefix}reload audio`)."
-msgstr ""
+msgstr "Por favor, recarregue áudio (`{prefix}recarregar áudio`)."
 
 #: redbot/cogs/audio/core/commands/audioset.py:1492
 msgid "Restarting Lavalink"
@@ -1234,7 +1243,7 @@ msgstr "Desconectar do canal de voz."
 #: redbot/cogs/audio/core/commands/miscellaneous.py:103
 #: redbot/cogs/audio/core/commands/playlists.py:1125
 msgid "Nothing playing."
-msgstr ""
+msgstr "Nada a tocar."
 
 #: redbot/cogs/audio/core/commands/controller.py:49
 #: redbot/cogs/audio/core/commands/controller.py:55
@@ -1251,7 +1260,7 @@ msgstr "Há outras pessoas a ouvir - vote para saltar em vez disso."
 #: redbot/cogs/audio/core/commands/controller.py:56
 #: redbot/cogs/audio/core/commands/controller.py:62
 msgid "You need the DJ role to disconnect."
-msgstr ""
+msgstr "Precisa do cargo de DJ para desconectar."
 
 #: redbot/cogs/audio/core/commands/controller.py:61
 msgid "Unable to Disconnect"
@@ -1259,7 +1268,7 @@ msgstr "Não foi possível desconectar"
 
 #: redbot/cogs/audio/core/commands/controller.py:65
 msgid "Disconnecting..."
-msgstr ""
+msgstr "Desconectando..."
 
 #: redbot/cogs/audio/core/commands/controller.py:87
 #, docstring
@@ -1270,7 +1279,8 @@ msgstr "A reproduzir."
 #: redbot/cogs/audio/core/commands/queue.py:81
 msgid "\n"
 " Requested by: **{track.requester}**"
-msgstr ""
+msgstr "\n"
+"Solicitado por: **{track.requester}**\n"
 
 #: redbot/cogs/audio/core/commands/controller.py:114
 msgid "Nothing."
@@ -1308,7 +1318,7 @@ msgstr "Não é possível gerenciar as faixas"
 
 #: redbot/cogs/audio/core/commands/controller.py:213
 msgid "You must be in the voice channel to pause or resume."
-msgstr ""
+msgstr "Deve estar no canal de voz para pausar ou retomar."
 
 #: redbot/cogs/audio/core/commands/controller.py:219
 msgid "You need the DJ role to pause or resume tracks."
@@ -1645,7 +1655,7 @@ msgstr "Repetir faixas: {true_or_false}."
 #: redbot/cogs/audio/core/commands/controller.py:791
 #, docstring
 msgid "Remove a specific track number from the queue."
-msgstr ""
+msgstr "Remover um número de faixa específico da fila."
 
 #: redbot/cogs/audio/core/commands/controller.py:800
 msgid "Nothing queued."
@@ -1664,7 +1674,7 @@ msgstr "Você precisa ter o cargo de DJ para remover faixas."
 
 #: redbot/cogs/audio/core/commands/controller.py:811
 msgid "You must be in the voice channel to manage the queue."
-msgstr ""
+msgstr "Precisa estar no canal de voz para gerenciar a fila."
 
 #: redbot/cogs/audio/core/commands/controller.py:819
 #: redbot/cogs/audio/core/commands/controller.py:892
@@ -1686,27 +1696,27 @@ msgstr "Removido 0 faixas, nada corresponde à URL fornecida."
 
 #: redbot/cogs/audio/core/commands/controller.py:858
 msgid "Removed {removed_tracks} tracks from queue which matched the URL provided."
-msgstr ""
+msgstr "Faixas {removed_tracks} removidas da fila que correspondem ao URL fornecido."
 
 #: redbot/cogs/audio/core/commands/controller.py:868
 #, docstring
 msgid "Bump a track number to the top of the queue."
-msgstr ""
+msgstr "Coloque um número de faixa no topo da fila."
 
 #: redbot/cogs/audio/core/commands/controller.py:879
 #: redbot/cogs/audio/core/commands/controller.py:885
 #: redbot/cogs/audio/core/commands/controller.py:891
 #: redbot/cogs/audio/core/commands/player.py:152
 msgid "Unable To Bump Track"
-msgstr ""
+msgstr "Não é possível fazer pular a faixa"
 
 #: redbot/cogs/audio/core/commands/controller.py:880
 msgid "You must be in the voice channel to bump a track."
-msgstr ""
+msgstr "Deve estar no canal de voz para pular a faixa."
 
 #: redbot/cogs/audio/core/commands/controller.py:886
 msgid "You need the DJ role to bump tracks."
-msgstr ""
+msgstr "Precisa ter o cargo de DJ para pular faixas."
 
 #: redbot/cogs/audio/core/commands/controller.py:902
 msgid "Moved track to the top of the queue."
@@ -1720,7 +1730,11 @@ msgid "Equalizer management.\n\n"
 "        6.3k, 10k, and 16k Hz.\n"
 "        Setting a band value to -0.25 nullifies it while +0.25 is double.\n"
 "        "
-msgstr ""
+msgstr "Gestão do equalizador.\n\n"
+"As posições das bandas são de 1 a 15 e os valores variam de -0,25 a 1,0.\n"
+"Os nomes das bandas são 25, 40, 63, 100, 160, 250, 400, 630, 1k, 1,6k, 2,5k, 4k,\n"
+"6,3k, 10k e 16k Hz.\n"
+"Definir um valor de banda como -0,25 anula-o, enquanto +0,25 o duplica.        \n"
 
 #: redbot/cogs/audio/core/commands/equalizer.py:73
 #, docstring

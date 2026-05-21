@@ -2574,7 +2574,7 @@ msgstr ""
 
 #: redbot/cogs/audio/core/commands/player.py:615
 msgid "Couldn't get a valid track."
-msgstr ""
+msgstr "Kon geen geldige track ophalen."
 
 #: redbot/cogs/audio/core/commands/player.py:621
 #: redbot/cogs/audio/core/commands/player.py:758
@@ -2582,7 +2582,7 @@ msgstr ""
 #: redbot/cogs/audio/core/commands/player.py:895
 #: redbot/cogs/audio/core/commands/playlists.py:1898
 msgid "Unable to Get Track"
-msgstr ""
+msgstr "Kan track niet ophalen"
 
 #: redbot/cogs/audio/core/commands/player.py:622
 #: redbot/cogs/audio/core/commands/player.py:759

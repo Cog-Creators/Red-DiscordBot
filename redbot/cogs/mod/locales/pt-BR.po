@@ -572,7 +572,7 @@ msgstr ""
 #: redbot/cogs/mod/settings.py:85 redbot/cogs/mod/settings.py:93
 #: redbot/cogs/mod/settings.py:96 redbot/cogs/mod/settings.py:108
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: redbot/cogs/mod/settings.py:31 redbot/cogs/mod/settings.py:57
 #: redbot/cogs/mod/settings.py:62 redbot/cogs/mod/settings.py:67

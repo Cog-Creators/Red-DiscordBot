@@ -3,12 +3,14 @@ import asyncio
 import logging
 import sys
 from enum import IntEnum
-from typing import Optional
+from typing import Any, Coroutine, Optional, TypeVar
 
 import discord
 from discord import __version__ as discord_version
 
 from redbot.core.utils._internal_utils import cli_level_to_log_level
+
+_T = TypeVar("_T")
 
 
 # This needs to be an int enum to be used
@@ -247,6 +249,14 @@ def parse_cli_flags(args):
         dest="logging_level",
         help="Increase the verbosity of the logs, each usage of this flag increases the verbosity level by 1.",
     )
+    parser.add_argument(
+        "--no-verbose",
+        "--no-debug",
+        action="store_const",
+        const=0,
+        dest="logging_level",
+        help="Set the verbosity level to 0.",
+    )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
     parser.add_argument(
         "--mentionable",
@@ -363,3 +373,33 @@ def parse_cli_flags(args):
     args.logging_level = cli_level_to_log_level(args.logging_level)
 
     return args
+
+
+def asyncio_run(coro: Coroutine[Any, Any, _T]) -> _T:
+    if sys.version_info >= (3, 11):
+        with asyncio.Runner(loop_factory=new_event_loop) as runner:
+            return runner.run(coro)
+
+    if sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    return asyncio.run(coro)
+
+
+def new_event_loop() -> asyncio.AbstractEventLoop:
+    if sys.implementation.name == "cpython":
+        # Let's not force this dependency, uvloop is much faster on cpython
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            return uvloop.new_event_loop()
+
+    return asyncio.new_event_loop()

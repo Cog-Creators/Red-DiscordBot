@@ -7,6 +7,10 @@ build:
   jobs:
     install:
       - pip install .[doc]
+    post_build:
+      - mkdir -p docs/_build/doctrees docs/_build/markdown "$READTHEDOCS_OUTPUT/html/_markdown"
+      - python -m sphinx -T -b markdown -d docs/_build/doctrees -D "language=$READTHEDOCS_LANGUAGE" docs docs/_build/markdown
+      - cp docs/_build/markdown/changelog.md "$READTHEDOCS_OUTPUT/html/_markdown/changelog.md"
 
 sphinx:
   configuration: docs/conf.py

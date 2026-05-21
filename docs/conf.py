@@ -44,8 +44,11 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.doctest",
     "sphinxcontrib_trio",
+    "sphinx_markdown_builder",
     "sphinx-prompt",
+    "changelog_contributors",
     "deprecated_removed",
+    "prompt_builder",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -227,6 +230,14 @@ texinfo_documents = [
 # checked when doing a linkcheck build.
 linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 linkcheck_retries = 3
+
+
+# -- Options for markdown builder ----------------------------------------
+
+markdown_http_base = os.environ.get(
+    "READTHEDOCS_CANONICAL_URL", "https://docs.discord.red/en/stable"
+)
+markdown_uri_doc_suffix = ".html"
 
 
 # -- Options for extensions -----------------------------------------------
