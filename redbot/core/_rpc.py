@@ -97,9 +97,6 @@ class RPC:
                     self._runner,
                     host="127.0.0.1",
                     port=port,
-                    shutdown_timeout=120
-                    # Give the RPC server 2 minutes to finish up, else slap it!
-                    # Seems like a reasonable time. See Red#6391
                 ),
             )
         except Exception as exc:

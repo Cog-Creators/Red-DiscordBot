@@ -8,8 +8,6 @@
 Mod log
 =======
 
-Mod log has now been separated from Mod for V3.
-
 ***********
 Basic Usage
 ***********
