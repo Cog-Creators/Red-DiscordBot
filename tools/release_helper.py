@@ -4,7 +4,12 @@
 This script mostly aims to help with the changelog-related tasks but it does also guide you
 through the release process steps including running the 'Prepare release' workflow.
 """
+
+from __future__ import annotations
+
+import dataclasses
 import enum
+import functools
 import json
 import os
 import pydoc
@@ -15,7 +20,7 @@ import time
 import urllib.parse
 import webbrowser
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Set
 
 import click
 import requests
@@ -974,18 +979,19 @@ def cli_contributors(version: str, *, show_not_merged: bool = False) -> None:
 
 
 def get_contributors(version: str, *, show_not_merged: bool = False) -> None:
-    print(*_get_contributors(version, show_not_merged=show_not_merged))
+    print(*_get_contributors(version, show_not_merged=show_not_merged).combined_contributors)
 
 
-def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[str]:
+def _get_contributors(version: str, *, show_not_merged: bool = False) -> Contributors:
     after = None
     has_next_page = True
-    authors: Dict[str, List[Tuple[int, str]]] = {}
-    reviewers: Dict[str, List[Tuple[int, str]]] = {}
+    authors: Dict[str, List[PullRequest]] = {}
+    reviewers: Dict[str, List[PullRequest]] = {}
     token = get_github_token()
     states = ["MERGED"]
     if show_not_merged:
         states.append("OPEN")
+    pr_contribs: Dict[int, PullRequestContributors] = {}
     while has_next_page:
         resp = requests.post(
             "https://api.github.com/graphql",
@@ -1007,12 +1013,14 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
         pull_requests = milestone_data["pullRequests"]
         nodes = pull_requests["nodes"]
         for pr_node in nodes:
-            pr_info = (pr_node["number"], pr_node["title"])
+            pr_info = PullRequest(pr_node["number"], pr_node["title"])
             reviews = pr_node["latestOpinionatedReviews"]["nodes"]
+            pr_reviewers = set()
             for review_node in reviews:
                 review_author = review_node["author"]["login"]
                 if not review_author.endswith("[bot]"):
                     reviewers.setdefault(review_author, []).append(pr_info)
+                    pr_reviewers.add(review_author)
 
             merge_commit = pr_node["mergeCommit"]
             author_logins = set()
@@ -1025,15 +1033,51 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
                     if author_node["user"] is not None
                 )
 
+            pr_authors = set()
             for login in author_logins:
                 if not login.endswith("[bot]"):
                     authors.setdefault(login, []).append(pr_info)
+                    pr_authors.add(login)
+
+            pr_contribs[pr_info.number] = PullRequestContributors(
+                pr_info.number, pr_authors, pr_reviewers
+            )
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
         has_next_page = page_info["hasNextPage"]
 
-    return sorted(authors.keys() | reviewers.keys(), key=lambda t: t.lower())
+    return Contributors(authors, reviewers, pr_contribs)
+
+
+class PullRequest(NamedTuple):
+    number: int
+    title: str
+
+
+@dataclasses.dataclass
+class PullRequestContributors:
+    number: int
+    # list of logins
+    authors: Set[str]
+    reviewers: Set[str]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors | self.reviewers, key=str.lower)
+
+
+@dataclasses.dataclass
+class Contributors:
+    # login -> PullRequest
+    authors: Dict[str, List[PullRequest]]
+    reviewers: Dict[str, List[PullRequest]]
+    # PR number -> PullRequestContributors
+    pull_requests: Dict[int, PullRequestContributors]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors.keys() | self.reviewers.keys(), key=str.lower)
 
 
 if __name__ == "__main__":
