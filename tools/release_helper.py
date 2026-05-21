@@ -83,6 +83,15 @@ query getMilestoneContributors(
                 }
               }
             }
+            mergeCommit {
+                authors(first: 100) {
+                    nodes {
+                        user {
+                            login
+                        }
+                    }
+                }
+            }
           }
           pageInfo {
             endCursor
@@ -999,12 +1008,22 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
         nodes = pull_requests["nodes"]
         for pr_node in nodes:
             pr_info = (pr_node["number"], pr_node["title"])
-            pr_author = pr_node["author"]["login"]
-            authors.setdefault(pr_author, []).append(pr_info)
             reviews = pr_node["latestOpinionatedReviews"]["nodes"]
             for review_node in reviews:
                 review_author = review_node["author"]["login"]
                 reviewers.setdefault(review_author, []).append(pr_info)
+
+            merge_commit = pr_node["mergeCommit"]
+            if merge_commit is None:
+                pr_author = pr_node["author"]["login"]
+                authors.setdefault(pr_author, []).append(pr_info)
+                continue
+
+            for author_node in merge_commit["authors"]["nodes"]:
+                commit_user = author_node["user"]
+                if commit_user is not None:
+                    commit_author = author_node["user"]["login"]
+                    authors.setdefault(commit_author, []).append(pr_info)
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
