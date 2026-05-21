@@ -3707,14 +3707,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
             angle_bracket_warning = None
 
-            for api_service_name, token in tokens.items():
+            for token_name, token in tokens.items():
                 if token.startswith("<") and token.endswith(">"):
                     angle_bracket_warning = (
-                        "You may have failed to properly format your {api_service_name}. If you were told to enter a key"
-                        " with an example such as `[p]set api {service} api_key <your_api_key_here>`, and your API key"
-                        " was `HREDFGWE`, make sure to run `[p]set api {service} api_key HREDFGWE` and not "
-                        "`[p]set api {service} api_key <HREDFGWE>`."
-                    ).format(api_service_name=api_service_name, service=service)
+                        "You may have failed to properly format your `{token_name}`. If you were told to enter a key"
+                        " with an example such as `[p]set api {service} {token_name} <your_api_key_here>`, and your {token_name}"
+                        " was `HREDFGWE`, make sure to run `[p]set api {service} {token_name} HREDFGWE` and not "
+                        "`[p]set api {service} {token_name} <HREDFGWE>`."
+                    ).format(token_name=token_name, service=service)
                     log.warning(angle_bracket_warning)
                     break
 
