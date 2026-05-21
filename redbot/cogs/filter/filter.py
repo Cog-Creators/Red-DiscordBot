@@ -475,7 +475,7 @@ class Filter(commands.Cog):
 
             if word_list:
                 pattern = re.compile(
-                    "|".join(_build_word_pattern(w) for w in word_list), flags=re.I
+                    "|".join(rf"(?<!\w){re.escape(w)}(?!\w)" for w in word_list), flags=re.I
                 )
             else:
                 pattern = None
@@ -640,13 +640,6 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             return
-
-
-def _build_word_pattern(word: str) -> str:
-    escaped = re.escape(word)
-    left_boundary = r"(?<!\w)" if word and re.match(r"\w", word[0], re.UNICODE) else ""
-    right_boundary = r"(?!\w)" if word and re.match(r"\w", word[-1], re.UNICODE) else ""
-    return f"{left_boundary}{escaped}{right_boundary}"
 
 
 _ChildComponent = Union[
