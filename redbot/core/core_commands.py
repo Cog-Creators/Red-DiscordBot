@@ -3715,7 +3715,6 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                         " was `HREDFGWE`, make sure to run `[p]set api {service} {token_name} HREDFGWE` and not "
                         "`[p]set api {service} {token_name} <HREDFGWE>`."
                     ).format(token_name=token_name, service=service)
-                    log.warning(angle_bracket_warning)
                     break
 
             await ctx.bot.set_shared_api_tokens(service, **tokens)
