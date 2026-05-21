@@ -26,7 +26,7 @@ Creating a Bot account is a pretty straightforward process.
     .. image::  /.resources/bot-guide/discord_create_app_form.png
         :alt: The new application form filled in.
 
-5. Open the "Overview" category and navigate to the "Install" tab on the left side of the screen.
+5. Open the "Overview" category and navigate to the "Installation" tab on the left side of the screen.
 
     .. image:: /.resources/bot-guide/discord_installation_tab.png
         :alt: The installation tab in the application page.
