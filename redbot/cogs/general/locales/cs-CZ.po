@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2024-03-03 21:57+0000\n"
+"POT-Creation-Date: 2026-03-04 21:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
@@ -15,92 +15,92 @@ msgstr ""
 "X-Crowdin-File-ID: 17\n"
 "Language: cs_CZ\n"
 
-#: redbot/cogs/general/general.py:48
+#: redbot/cogs/general/general.py:49
 #, docstring
 msgid "General commands."
 msgstr "Obecné příkazy."
 
-#: redbot/cogs/general/general.py:53
+#: redbot/cogs/general/general.py:54
 msgid "As I see it, yes"
 msgstr "Jak tak vidím, tak ano"
 
-#: redbot/cogs/general/general.py:54
+#: redbot/cogs/general/general.py:55
 msgid "It is certain"
 msgstr "Je to jisté"
 
-#: redbot/cogs/general/general.py:55
+#: redbot/cogs/general/general.py:56
 msgid "It is decidedly so"
 msgstr "Rozhodně"
 
-#: redbot/cogs/general/general.py:56
+#: redbot/cogs/general/general.py:57
 msgid "Most likely"
 msgstr "Pravděpodobně"
 
-#: redbot/cogs/general/general.py:57
+#: redbot/cogs/general/general.py:58
 msgid "Outlook good"
 msgstr "Vypadá to dobře"
 
-#: redbot/cogs/general/general.py:58
+#: redbot/cogs/general/general.py:59
 msgid "Signs point to yes"
 msgstr "Znamení ukazují na ano"
 
-#: redbot/cogs/general/general.py:59
+#: redbot/cogs/general/general.py:60
 msgid "Without a doubt"
 msgstr "Bez pochyb"
 
-#: redbot/cogs/general/general.py:60
+#: redbot/cogs/general/general.py:61
 msgid "Yes"
 msgstr "Ano"
 
-#: redbot/cogs/general/general.py:61
+#: redbot/cogs/general/general.py:62
 msgid "Yes – definitely"
 msgstr "Ano, určitě"
 
-#: redbot/cogs/general/general.py:62
+#: redbot/cogs/general/general.py:63
 msgid "You may rely on it"
 msgstr "Na to se můžeš spolehnout"
 
-#: redbot/cogs/general/general.py:63
+#: redbot/cogs/general/general.py:64
 msgid "Reply hazy, try again"
 msgstr "Odpověď je nejasná, zkuste to znovu"
 
-#: redbot/cogs/general/general.py:64
+#: redbot/cogs/general/general.py:65
 msgid "Ask again later"
 msgstr "Zeptej se později"
 
-#: redbot/cogs/general/general.py:65
+#: redbot/cogs/general/general.py:66
 msgid "Better not tell you now"
 msgstr "Raději vám to teď nebudu říkat"
 
-#: redbot/cogs/general/general.py:66
+#: redbot/cogs/general/general.py:67
 msgid "Cannot predict now"
 msgstr "To teď nemohu předpovědět"
 
-#: redbot/cogs/general/general.py:67
+#: redbot/cogs/general/general.py:68
 msgid "Concentrate and ask again"
 msgstr "Soustřeď se a zeptej se znovu"
 
-#: redbot/cogs/general/general.py:68
+#: redbot/cogs/general/general.py:69
 msgid "Don't count on it"
 msgstr "S tím nepočítej"
 
-#: redbot/cogs/general/general.py:69
+#: redbot/cogs/general/general.py:70
 msgid "My reply is no"
 msgstr "Moje odpověď je ne"
 
-#: redbot/cogs/general/general.py:70
+#: redbot/cogs/general/general.py:71
 msgid "My sources say no"
 msgstr "Moje zdroje říkají, že ne"
 
-#: redbot/cogs/general/general.py:71
+#: redbot/cogs/general/general.py:72
 msgid "Outlook not so good"
 msgstr "To nevypadá dobře"
 
-#: redbot/cogs/general/general.py:72
+#: redbot/cogs/general/general.py:73
 msgid "Very doubtful"
 msgstr "Velmi pochybné"
 
-#: redbot/cogs/general/general.py:87
+#: redbot/cogs/general/general.py:88
 #, docstring
 msgid "Choose between multiple options.\n\n"
 "        There must be at least 2 options to pick from.\n"
@@ -114,11 +114,11 @@ msgstr "Výběr z více možností.\n\n"
 "        měl by jste je uzavřít do dvojtých uvozovek.\n"
 "        "
 
-#: redbot/cogs/general/general.py:96
+#: redbot/cogs/general/general.py:97
 msgid "Not enough options to pick from."
 msgstr "Není k dispozici dostatek možností, ze kterých lze vybrat."
 
-#: redbot/cogs/general/general.py:102
+#: redbot/cogs/general/general.py:103
 #, docstring
 msgid "Roll a random number.\n\n"
 "        The result will be between 1 and `<number>`.\n\n"
@@ -129,15 +129,15 @@ msgstr "Hodit náhodné číslo.\n\n"
 "        `<number>` výchozí  hodnota je 100.\n"
 "        "
 
-#: redbot/cogs/general/general.py:117
+#: redbot/cogs/general/general.py:118
 msgid "{author.mention} Maybe higher than 1? ;P"
 msgstr "{author.mention} Možná vyšší než 1? ;P"
 
-#: redbot/cogs/general/general.py:120
+#: redbot/cogs/general/general.py:121
 msgid "{author.mention} Max allowed number is {maxamount}."
 msgstr "{author.mention} Maximalní povolené číslo je {maxamount}."
 
-#: redbot/cogs/general/general.py:127
+#: redbot/cogs/general/general.py:128
 #, docstring
 msgid "Flip a coin... or a user.\n\n"
 "        Defaults to a coin.\n"
@@ -146,46 +146,46 @@ msgstr "Hoďte si mincí... nebo uživatelem.\n\n"
 "        Výchozí stav je mince.\n"
 "        "
 
-#: redbot/cogs/general/general.py:135
+#: redbot/cogs/general/general.py:136
 msgid "Nice try. You think this is funny?\n"
 " How about *this* instead:\n\n"
 msgstr "Dobrý pokus. Myslíš si, že je to vtipné?\n"
 " Co tak zkusit:\n\n"
 
-#: redbot/cogs/general/general.py:146
+#: redbot/cogs/general/general.py:147
 msgid "*flips a coin and... "
 msgstr "*hází minci a... "
 
-#: redbot/cogs/general/general.py:146
+#: redbot/cogs/general/general.py:147
 msgid "HEADS!*"
 msgstr "PANNA!*"
 
-#: redbot/cogs/general/general.py:146
+#: redbot/cogs/general/general.py:147
 msgid "TAILS!*"
 msgstr "OREL!*"
 
-#: redbot/cogs/general/general.py:150
+#: redbot/cogs/general/general.py:151
 #, docstring
 msgid "Play Rock Paper Scissors."
 msgstr "Hrát kámen, nůžky, papír."
 
-#: redbot/cogs/general/general.py:155
+#: redbot/cogs/general/general.py:156
 msgid "This isn't a valid option. Try {r}, {p}, or {s}."
 msgstr "Toto není platná možnost. Zkuste {r}, {p} nebo {s}."
 
-#: redbot/cogs/general/general.py:176
+#: redbot/cogs/general/general.py:177
 msgid "{choice} You win {author.mention}!"
 msgstr "{choice} Vyhrál jsi, {author.mention}!"
 
-#: redbot/cogs/general/general.py:182
+#: redbot/cogs/general/general.py:183
 msgid "{choice} You lose {author.mention}!"
 msgstr "{choice} Prohrál jsi, {author.mention}!"
 
-#: redbot/cogs/general/general.py:188
+#: redbot/cogs/general/general.py:189
 msgid "{choice} We're square {author.mention}!"
 msgstr "{choice} Remíza, {author.mention}!"
 
-#: redbot/cogs/general/general.py:195
+#: redbot/cogs/general/general.py:196
 #, docstring
 msgid "Ask 8 ball a question.\n\n"
 "        Question must end with a question mark.\n"
@@ -194,29 +194,29 @@ msgstr "Polož otázku 8 kouli.\n\n"
 "        Otázka musí končit otazníkem.\n"
 "        "
 
-#: redbot/cogs/general/general.py:202
+#: redbot/cogs/general/general.py:203
 msgid "That doesn't look like a question."
 msgstr "To nevypadá jako otázka."
 
-#: redbot/cogs/general/general.py:206
+#: redbot/cogs/general/general.py:207
 #, docstring
 msgid "Start or stop the stopwatch."
 msgstr "Spustit nebo zastavit stopky."
 
-#: redbot/cogs/general/general.py:210
+#: redbot/cogs/general/general.py:211
 msgid " Stopwatch started!"
 msgstr " Stopky byly spuštěny!"
 
-#: redbot/cogs/general/general.py:215
+#: redbot/cogs/general/general.py:216
 msgid " Stopwatch stopped! Time: **{seconds}**"
 msgstr " Stopky byly zastaveny! Čas: **{seconds}**"
 
-#: redbot/cogs/general/general.py:221
+#: redbot/cogs/general/general.py:222
 #, docstring
 msgid "Create a lmgtfy link."
 msgstr "Vytvořit odkaz lmgtfy."
 
-#: redbot/cogs/general/general.py:230
+#: redbot/cogs/general/general.py:231
 #, docstring
 msgid "Because everyone likes hugs!\n\n"
 "        Up to 10 intensity levels.\n"
@@ -225,7 +225,7 @@ msgstr "Protože každý má rád objímání!\n\n"
 "        10 úrovní intenzity.\n"
 "        "
 
-#: redbot/cogs/general/general.py:254
+#: redbot/cogs/general/general.py:255
 #, docstring
 msgid "\n"
 "        Show server information.\n\n"
@@ -238,93 +238,93 @@ msgstr "\n"
 "        Výchozí hodnota je False.\n"
 "        "
 
-#: redbot/cogs/general/general.py:261
+#: redbot/cogs/general/general.py:262
 msgid "Created on {date_and_time}. That's {relative_time}!"
 msgstr "Vytvořeno v {date_and_time}. To je {relative_time}!"
 
-#: redbot/cogs/general/general.py:275
+#: redbot/cogs/general/general.py:276
 msgid "Users online"
 msgstr "Uživatelů online"
 
-#: redbot/cogs/general/general.py:276
+#: redbot/cogs/general/general.py:277
 msgid "Not available"
 msgstr "Není k dispozici"
 
-#: redbot/cogs/general/general.py:278
+#: redbot/cogs/general/general.py:279
 msgid "Text Channels"
 msgstr "Textové kanály"
 
-#: redbot/cogs/general/general.py:279
+#: redbot/cogs/general/general.py:280
 msgid "Voice Channels"
 msgstr "Hlasové kanály"
 
-#: redbot/cogs/general/general.py:280
+#: redbot/cogs/general/general.py:281
 msgid "Roles"
 msgstr "Role"
 
-#: redbot/cogs/general/general.py:281
+#: redbot/cogs/general/general.py:282
 msgid "Owner"
 msgstr "Vlastník"
 
-#: redbot/cogs/general/general.py:283
+#: redbot/cogs/general/general.py:284
 msgid "Server ID: "
 msgstr "ID serveru: "
 
-#: redbot/cogs/general/general.py:285
+#: redbot/cogs/general/general.py:286
 msgid "  •  Use {command} for more info on the server."
 msgstr "  •  Použijte {command} pro více informací o serveru."
 
-#: redbot/cogs/general/general.py:311
+#: redbot/cogs/general/general.py:312
 msgid "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
 msgstr "\n"
 "Shard ID: **{shard_id}/{shard_count}**"
 
-#: redbot/cogs/general/general.py:320
+#: redbot/cogs/general/general.py:321
 msgid "Humans: "
 msgstr "Lidé: "
 
-#: redbot/cogs/general/general.py:321
+#: redbot/cogs/general/general.py:322
 msgid " • Bots: "
 msgstr " • Boti: "
 
-#: redbot/cogs/general/general.py:333
+#: redbot/cogs/general/general.py:334
 msgid "Users online: **{online}/{total_users}**\n"
 msgstr "Uživatelů online: **{online}/{total_users}**\n"
 
-#: redbot/cogs/general/general.py:350
+#: redbot/cogs/general/general.py:351
 msgid "0 - None"
 msgstr "0 - Žádná"
 
-#: redbot/cogs/general/general.py:351
+#: redbot/cogs/general/general.py:352
 msgid "1 - Low"
 msgstr "1 - Nízká"
 
-#: redbot/cogs/general/general.py:352
+#: redbot/cogs/general/general.py:353
 msgid "2 - Medium"
 msgstr "2 - Střední"
 
-#: redbot/cogs/general/general.py:353
+#: redbot/cogs/general/general.py:354
 msgid "3 - High"
 msgstr "3 - Vysoká"
 
-#: redbot/cogs/general/general.py:354
+#: redbot/cogs/general/general.py:355
 msgid "4 - Highest"
 msgstr "5 - Nejvyšší"
 
-#: redbot/cogs/general/general.py:357
+#: redbot/cogs/general/general.py:358
 msgid "{bot_name} joined this server on {bot_join}. That's over {since_join} days ago!"
 msgstr "{bot_name} se přidal k tomuto serveru dne {bot_join}. To je více jak před {since_join} dny!"
 
-#: redbot/cogs/general/general.py:379
+#: redbot/cogs/general/general.py:380
 msgid "Members:"
 msgstr "Členové:"
 
-#: redbot/cogs/general/general.py:381
+#: redbot/cogs/general/general.py:382
 msgid "Channels:"
 msgstr "Kanály:"
 
-#: redbot/cogs/general/general.py:382
+#: redbot/cogs/general/general.py:383
 msgid "💬 Text: {text}\n"
 "🔊 Voice: {voice}\n"
 "🎙 Stage: {stage}"
@@ -332,11 +332,11 @@ msgstr "💬 Text: {text}\n"
 "🔊 Hlas: {voice}\n"
 "🎙 Jeviště: {stage}"
 
-#: redbot/cogs/general/general.py:393
+#: redbot/cogs/general/general.py:394
 msgid "Utility:"
 msgstr "Nástroje:"
 
-#: redbot/cogs/general/general.py:394
+#: redbot/cogs/general/general.py:395
 msgid "Owner: {owner}\n"
 "Verif. level: {verif}\n"
 "Server ID: {id}{shard_info}"
@@ -344,11 +344,11 @@ msgstr "Vlastník: {owner}\n"
 "Úroveň ověření: {verif}\n"
 "ID serveru: {id}{shard_info}"
 
-#: redbot/cogs/general/general.py:405
+#: redbot/cogs/general/general.py:406
 msgid "Misc:"
 msgstr "Různé:"
 
-#: redbot/cogs/general/general.py:406
+#: redbot/cogs/general/general.py:407
 msgid "AFK channel: {afk_chan}\n"
 "AFK timeout: {afk_timeout}\n"
 "Custom emojis: {emoji_count}\n"
@@ -358,15 +358,19 @@ msgstr "AFK kanál: {afk_chan}\n"
 "Vlastní emoji: {emoji_count}\n"
 "Role: {role_count}"
 
-#: redbot/cogs/general/general.py:411
+#: redbot/cogs/general/general.py:412
 msgid "Not set"
 msgstr "Nenastaveno"
 
-#: redbot/cogs/general/general.py:444
+#: redbot/cogs/general/general.py:450
 msgid "Server features:"
 msgstr "Funkce serveru:"
 
-#: redbot/cogs/general/general.py:451
+#: redbot/cogs/general/general.py:450
+msgid "Server features (continued):"
+msgstr "Funkce serveru (pokračování):"
+
+#: redbot/cogs/general/general.py:455
 msgid "Tier {boostlevel} with {nitroboosters} boosts\n"
 "File size limit: {filelimit}\n"
 "Emoji limit: {emojis_limit}\n"
@@ -376,11 +380,11 @@ msgstr "Úroveň {boostlevel} pomocí {nitroboosters} nitro vylepšení\n"
 "Emoji limit: {emojis_limit}\n"
 "VC maximální bitrate: {bitrate}"
 
-#: redbot/cogs/general/general.py:463
+#: redbot/cogs/general/general.py:467
 msgid "Nitro Boost:"
 msgstr "Nitro Vylepšení:"
 
-#: redbot/cogs/general/general.py:472
+#: redbot/cogs/general/general.py:476
 #, docstring
 msgid "Search the Urban Dictionary.\n\n"
 "        This uses the unofficial Urban Dictionary API.\n"
@@ -389,29 +393,29 @@ msgstr "Vyhledávání ve slovníku 'Urban Dictionary'.\n\n"
 "        Používá neoficialní  Urban Dictionary API.\n"
 "        "
 
-#: redbot/cogs/general/general.py:490 redbot/cogs/general/general.py:561
+#: redbot/cogs/general/general.py:494 redbot/cogs/general/general.py:565
 msgid "No Urban Dictionary entries were found, or there was an error in the process."
 msgstr "Zádné záznamy v 'Urban Dictionary' nebyly nalezeny nebo se stala chyba v průběhu procesu."
 
-#: redbot/cogs/general/general.py:496
+#: redbot/cogs/general/general.py:500
 msgid "No Urban Dictionary entries were found."
 msgstr "Žádné záznamy v 'Urban Dictionary' nebyly nalezeny."
 
-#: redbot/cogs/general/general.py:502
+#: redbot/cogs/general/general.py:506
 msgid "{word} by {author}"
 msgstr "{word} od {author}"
 
-#: redbot/cogs/general/general.py:510 redbot/cogs/general/general.py:544
+#: redbot/cogs/general/general.py:514 redbot/cogs/general/general.py:548
 msgid "{definition}\n\n"
 "**Example:** {example}"
 msgstr "{definition}\n\n"
 "**Příklad:** {example}"
 
-#: redbot/cogs/general/general.py:516
+#: redbot/cogs/general/general.py:520
 msgid "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
 msgstr "{thumbs_down} Dolů / {thumbs_up} Nahoru, Využívá Urban Dictionary."
 
-#: redbot/cogs/general/general.py:534
+#: redbot/cogs/general/general.py:538
 msgid "<{permalink}>\n"
 " {word} by {author}\n\n"
 "{description}\n\n"

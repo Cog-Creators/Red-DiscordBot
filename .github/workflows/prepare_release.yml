@@ -7,18 +7,24 @@ on:
         required: false
         default: 'auto'
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   crowdin_download_translations:
+    environment: Prepare Release
     needs: pr_stable_bump
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
+          private-key: ${{ secrets.RED_RELEASER_PRIVATE_KEY }}
+
+      # Checkout repository and install Python
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.8'
       - name: Install dependencies
@@ -43,7 +49,7 @@ jobs:
         id: cpr_crowdin
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: Automated Crowdin downstream
           title: "Automated Crowdin downstream"
           body: |
@@ -51,31 +57,32 @@ jobs:
             Please ensure that there are no errors or invalid files are in the PR.
           labels: "Automated PR, Changelog Entry: Skipped"
           branch: "automated/i18n"
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: >-
+            ${{ steps.app-token.outputs.app-slug }}[bot]
+            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
+          author: >-
+            ${{ steps.app-token.outputs.app-slug }}[bot]
+            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
           milestone: ${{ needs.pr_stable_bump.outputs.milestone_number }}
 
-      - name: Close and reopen the PR with different token to trigger CI
-        uses: actions/github-script@v6
-        env:
-          PR_NUMBER: ${{ steps.cpr_crowdin.outputs.pull-request-number }}
-          PR_OPERATION: ${{ steps.cpr_crowdin.outputs.pull-request-operation }}
-        with:
-          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
-          script: |
-            const script = require(
-              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
-            );
-            console.log(script({github, context}));
-
   pr_stable_bump:
+    environment: Prepare Release
     runs-on: ubuntu-latest
     outputs:
       milestone_number: ${{ steps.get_milestone_number.outputs.result }}
     steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
+          private-key: ${{ secrets.RED_RELEASER_PRIVATE_KEY }}
+
       # Checkout repository and install Python
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.app-token.outputs.token }}
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.8'
 
@@ -105,7 +112,7 @@ jobs:
         id: cpr_bump_stable
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
           title: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
           body: |
@@ -113,18 +120,10 @@ jobs:
             Please ensure that there are no errors or invalid files are in the PR.
           labels: "Automated PR, Changelog Entry: Skipped"
           branch: "automated/pr_bumps/${{ steps.bump_version_stable.outputs.new_version }}"
-          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: >-
+            ${{ steps.app-token.outputs.app-slug }}[bot]
+            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
+          author: >-
+            ${{ steps.app-token.outputs.app-slug }}[bot]
+            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
           milestone: ${{ steps.get_milestone_number.outputs.result }}
-
-      - name: Close and reopen the PR with different token to trigger CI
-        uses: actions/github-script@v6
-        env:
-          PR_NUMBER: ${{ steps.cpr_bump_stable.outputs.pull-request-number }}
-          PR_OPERATION: ${{ steps.cpr_bump_stable.outputs.pull-request-operation }}
-        with:
-          github-token: ${{ secrets.cogcreators_bot_repo_scoped }}
-          script: |
-            const script = require(
-              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/close_and_reopen_pr.js`
-            );
-            console.log(await script({github, context}));

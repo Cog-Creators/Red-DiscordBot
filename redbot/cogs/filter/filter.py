@@ -644,10 +644,15 @@ class Filter(commands.Cog):
 
 _ChildComponent = Union[
     discord.Button,
+    discord.CheckboxComponent,
+    discord.CheckboxGroupComponent,
     discord.FileComponent,
+    discord.FileUploadComponent,
     discord.LabelComponent,
     discord.MediaGalleryComponent,
+    discord.RadioGroupComponent,
     discord.SelectMenu,
+    discord.SeparatorComponent,
     discord.TextDisplay,
     discord.TextInput,
     discord.ThumbnailComponent,
@@ -673,8 +678,15 @@ def _extract_values_from_component(component: _ChildComponent) -> Iterable[Optio
         yield component.content
     elif isinstance(component, discord.ThumbnailComponent):
         yield component.description
-    # FileComponent does not have any user-provided text fields
-    # LabelComponent and TextInput are modal-only components
+    # The following do not have any user-provided text fields
+    # - FileComponent
+    # - SeparatorComponent
+    # The following are modal-only components:
+    # - CheckboxComponent
+    # - CheckboxGroupComponent
+    # - FileUploadComponent
+    # - LabelComponent
+    # - TextInput
 
 
 def _walk_all_components(components: Iterable[discord.Component]) -> Iterable[_ChildComponent]:

@@ -65,50 +65,51 @@ msgstr "seconden"
 
 #: redbot/core/utils/chat_formatting.py:667
 msgid "negative"
-msgstr ""
+msgstr "negatief"
 
 #: redbot/core/utils/views.py:34
 msgid "Select a Page"
-msgstr ""
+msgstr "Selecteer een pagina"
 
 #: redbot/core/utils/views.py:183
 msgid "Page {num}"
-msgstr ""
+msgstr "Pagina {num}"
 
 #: redbot/core/utils/views.py:338 redbot/core/utils/views.py:702
 msgid "You are not authorized to interact with this."
-msgstr ""
+msgstr "Je hebt geen toestemming om dit te gebruiken."
 
 #: redbot/core/utils/views.py:380
 msgid "Set API Keys"
-msgstr ""
+msgstr "API-sleutels instellen"
 
 #: redbot/core/utils/views.py:381
 msgid "Keys and tokens"
-msgstr ""
+msgstr "Sleutels en tokens"
 
 #: redbot/core/utils/views.py:388
 msgid "Keys and tokens for {service}"
-msgstr ""
+msgstr "Sleutels en tokens voor {service}"
 
 #: redbot/core/utils/views.py:397
 msgid "Service"
-msgstr ""
+msgstr "Dienst"
 
 #: redbot/core/utils/views.py:438
 msgid "This modal is for bot owners only. Whoops!"
-msgstr ""
+msgstr "Deze modal is alleen voor bot-eigenaren. Oeps!"
 
 #: redbot/core/utils/views.py:451
 msgid "{error_message}\n"
 "Please try again."
-msgstr ""
+msgstr "{error_message}\n"
+"Probeer het opnieuw."
 
 #: redbot/core/utils/views.py:458 redbot/core/utils/views.py:465
 msgid "`{service}` API tokens have been set."
-msgstr ""
+msgstr "`{service}` API-tokens zijn ingesteld."
 
 #: redbot/core/utils/views.py:501
 msgid "This button is for bot owners only, oh well."
-msgstr ""
+msgstr "Deze knop is alleen voor bot-eigenaren, tja."
 

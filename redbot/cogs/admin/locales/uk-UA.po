@@ -114,7 +114,15 @@ msgid "\n"
 "            `[p]editrole colour \"The Transistor\" #ff0000`\n"
 "            `[p]editrole colour Test #ff9900`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Редагування кольору ролі.\n\n"
+"        Використовуйте подвійні лапки, якщо роль містить пробіли.\n"
+"        Колір повинен бути в шістнадцятковому форматі.\n"
+"        [Онлайн-палітра кольорів](http://www.w3schools.com/colors/colors_picker.asp)\n\n"
+"        Приклади:\n"
+"            `[p]editrole colour \"The Transistor\" #ff0000`\n"
+"            `[p]editrole colour Test #ff9900`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:275
 msgid "{author} ({author.id}) changed the colour of role '{role.name}'"
@@ -132,7 +140,12 @@ msgid "\n"
 "        Example:\n"
 "            `[p]editrole name \"The Transistor\" Test`\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Редагування назви ролі.\n\n"
+"        Використовуйте подвійні лапки, якщо роль або ім'я містять пробіли.\n\n"
+"        Наприклад:\n"
+"            `[p]editrole name \"The Transistor\" Test`\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:308
 msgid "{author} ({author.id}) changed the name of role '{old_name}' to '{name}'"
@@ -198,7 +211,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Додайте собі роль себе.\n\n"
+"        Адміністратори сервера повинні налаштувати роль як таку, що може бути встановлена користувачем.\n"
+"        ПРИМІТКА: У ролі враховується регістр символів!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:424
 #, docstring
@@ -207,7 +224,11 @@ msgid "\n"
 "        Server admins must have configured the role as user settable.\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Приберіть собі селф-роль.\n\n"
+"        Адміністратори сервера повинні налаштувати роль як таку, що може бути встановлена користувачем.\n"
+"        ПРИМІТКА: У ролі враховується регістр символів!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:435
 #, docstring
@@ -235,7 +256,10 @@ msgid "\n"
 "        Add a role, or a selection of roles, to the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Додайте роль або вибір ролей до списку доступних саморолей.\n\n"
+"        ПРИМІТКА: У ролі враховується регістр символів!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:465
 msgid "I cannot let you add {role.name} as a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -259,7 +283,10 @@ msgid "\n"
 "        Remove a role, or a selection of roles, from the list of available selfroles.\n\n"
 "        NOTE: The role is case sensitive!\n"
 "        "
-msgstr ""
+msgstr "\n"
+"        Видалити роль або вибір ролей зі списку доступних саморолей.\n\n"
+"        ПРИМІТКА: У ролі враховується регістр символів!\n"
+"        "
 
 #: redbot/cogs/admin/admin.py:498
 msgid "I cannot let you remove {role.name} from being a selfrole because that role is higher than or equal to your highest role in the Discord hierarchy."
@@ -300,20 +327,20 @@ msgstr "Список з селф-ролями був очищений."
 
 #: redbot/cogs/admin/admin.py:546
 msgid "No changes have been made."
-msgstr ""
+msgstr "Жодних змін не внесено."
 
 #: redbot/cogs/admin/admin.py:551
 #, docstring
 msgid "Lock a bot to its current servers only."
-msgstr ""
+msgstr "Заблокувати бота тільки на його поточних серверах."
 
 #: redbot/cogs/admin/admin.py:556
 msgid "The bot is no longer serverlocked."
-msgstr ""
+msgstr "Бот більше не прив'язаний до сервера."
 
 #: redbot/cogs/admin/admin.py:558
 msgid "The bot is now serverlocked."
-msgstr ""
+msgstr "Бот тепер заблокований сервером."
 
 #: redbot/cogs/admin/announcer.py:68
 msgid "I could not announce to the following server: "
