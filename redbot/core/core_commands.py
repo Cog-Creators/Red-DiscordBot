@@ -3721,7 +3721,7 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
 
             message = _("`{service}` API tokens have been set.").format(service=service)
             if angle_bracket_warning:
-                message += "\n\n" + _("**Warning:** ") + _(angle_bracket_warning)
+                message += "\n\n" + _("**Warning:** ") + angle_bracket_warning
 
             await ctx.send(message)
 
