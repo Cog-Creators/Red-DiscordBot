@@ -63,7 +63,7 @@ Redbot 3.5.23 (2026-03-04)
 
 .. changelog-contributors::
 
-    cswimr EternalllZM Evanroby Flame442 Jackenmen Kowlin karlsbjorn palmtree5 PredaaA VasilisThePikachu yamikaitou
+    cswimr EternalllZM Evanroby Flame442 Jackenmen karlsbjorn Kowlin palmtree5 PredaaA VasilisThePikachu yamikaitou
 
 Read before updating
 --------------------
@@ -170,7 +170,7 @@ Redbot 3.5.22 (2025-09-05)
 
 .. changelog-contributors::
 
-    AAA3A-AAA3A aikaterna Flame442 Jackenmen Kowlin
+    AAA3A-AAA3A aikaterna Flame442 Jackenmen Kowlin Twentysix26
 
 Read before updating
 --------------------
@@ -590,7 +590,7 @@ Redbot 3.5.14 (2024-12-25)
 
 .. changelog-contributors::
 
-    aikaterna Ascensionn cswimr Chovin cdaman3141 DJTOMATO Flame442 japandotorg Jackenmen karlsbjorn Kowlin kpopdev kevin1015wang Kreusada mellow-org palmtree5 sravan1946 TrustyJAID
+    aikaterna Ascensionn cdaman3141 Chovin cswimr DJTOMATO Flame442 Jackenmen japandotorg karlsbjorn kevin1015wang Kowlin kpopdev Kreusada mellow-org palmtree5 sravan1946 TrustyJAID Vexed01
 
 Read before updating
 --------------------
@@ -684,7 +684,7 @@ Redbot 3.5.13 (2024-08-27)
 
 .. changelog-contributors::
 
-    aikaterna Guyonsteroids Jackenmen Kowlin
+    aikaterna Guyonsteroids Jackenmen Kowlin Wayrion
 
 Read before updating
 --------------------
@@ -767,7 +767,7 @@ Redbot 3.5.11 (2024-08-04)
 
 .. changelog-contributors::
 
-    aikaterna anopem Flame442 japandotorg Jackenmen Kowlin palmtree5 yamikaitou
+    aikaterna anopem Flame442 Jackenmen japandotorg Kowlin palmtree5 TrustyJAID yamikaitou
 
 Read before updating
 --------------------
@@ -932,7 +932,7 @@ Redbot 3.5.9 (2024-04-21)
 
 .. changelog-contributors::
 
-    aikaterna giplgwm Jackenmen Kuro-Rui Kowlin palmtree5 TrustyJAID Zephyrkul
+    aikaterna Flame442 giplgwm Jackenmen Kowlin Kuro-Rui palmtree5 TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
@@ -1064,7 +1064,7 @@ Redbot 3.5.7 (2024-03-24)
 
 .. changelog-contributors::
 
-    aikaterna Flame442 karlsbjorn Jackenmen
+    aikaterna Flame442 Jackenmen karlsbjorn
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1092,7 +1092,7 @@ Redbot 3.5.6 (2024-03-22)
 
 .. changelog-contributors::
 
-    aikaterna BlizzardTheWolf DJTOMATO Dav-Git Flame442 goettner Jackenmen Jan200101 japandotorg Kowlin Kreusada laggron42 madebylydia michael-is-qcde scarecr0w12 yeetbruises Zephyrkul
+    aikaterna BlizzardTheWolf Dav-Git DJTOMATO Flame442 goettner Jackenmen Jan200101 japandotorg Kowlin Kreusada laggron42 madebylydia michael-is-qcde palmtree5 scarecr0w12 yeetbruises Zephyrkul
 
 Read before updating
 --------------------
@@ -1389,7 +1389,7 @@ Redbot 3.5.2 (2023-05-14)
 
 .. changelog-contributors::
 
-    aikaterna flaree Flame442 Jackenmen karlsbjorn rramboer synrg TrustyJAID Vexed01
+    aikaterna Flame442 flaree Jackenmen karlsbjorn Kreusada rramboer synrg TrustyJAID Vexed01
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -1496,7 +1496,7 @@ Redbot 3.5.0 (2023-05-04)
 
 .. changelog-contributors::
 
-    AAA3A-AAA3A aikaterna alexratman AntonioNarra Arman0334 Dav-Git Drapersniper Flame442 Honkertonken i-am-zaidali Jackenmen japandotorg karlsbjorn keqking Kowlin Kreusada Kuro-Rui leetfin npc203 palmtree5 PredaaA Predeactor TrustyJAID Vexed01 yuansheng1549
+    AAA3A-AAA3A aikaterna alexratman AntonioNarra Arman0334 Dav-Git douglascdev Drapersniper Flame442 flaree Honkertonken i-am-zaidali Jackenmen japandotorg karlsbjorn keqking Kowlin Kreusada Kuro-Rui leetfin npc203 palmtree5 PredaaA Predeactor Rapptz TrustyJAID Vexed01 yuansheng1549 Zephyrkul
 
 Read before updating
 --------------------
@@ -1757,7 +1757,7 @@ Redbot 3.4.19 (2023-04-20)
 
 .. changelog-contributors::
 
-    aikaterna Ankur391 BigPeep0doo chasehult Flame442 Honkertonken Jackenmen japandotorg Kowlin Kreusada leetfin Lioness100 ltzmax MHLoppy OofChair Ryan5453 SnappyDragon64 sravan1946 TheThomanski TrustyJAID vertyco Vexed01 Visne
+    aikaterna Ankur391 BigPeep0doo chasehult Coltuna Drapersniper Flame442 Honkertonken Jackenmen japandotorg Kowlin Kreusada leetfin Lioness100 ltzmax MHLoppy OofChair psykzz Ryan5453 SnappyDragon64 sravan1946 TheThomanski TrustyJAID vertyco Vexed01 Visne Zephyrkul
 
 Read before updating
 --------------------
@@ -1926,7 +1926,7 @@ Redbot 3.4.17 (2022-06-07)
 
 .. changelog-contributors::
 
-    aikaterna Drapersniper Flame442 jack1142 Kowlin Kreusada ltzmax matcha19 mina9999 ponte-vecchio PredaaA TrustyJAID untir-l Vexed01
+    aikaterna arjunsatarkar Drapersniper Flame442 jack1142 Kowlin kpopdev Kreusada ltzmax matcha19 mina9999 ponte-vecchio PredaaA TrustyJAID untir-l Vexed01
 
 Read before updating
 --------------------
@@ -2079,7 +2079,7 @@ Redbot 3.4.15 (2021-12-31)
 
 .. changelog-contributors::
 
-    aikaterna aleclol Arman0334 Crossedfall Dav-Git fixator10 Flame442 jack1142 Jan200101 Just-Jojo Kowlin Kreusada laggron42 ltzmax Parnassius PredaaA Predeactor RasmusWL sravan1946 Stonedestroyer the-krak3n Tobotimus vertyco Vexed01 WreckRox yamikaitou
+    aikaterna aleclol Arman0334 Crossedfall Dav-Git fixator10 Flame442 jack1142 Jan200101 Just-Jojo Kowlin Kreusada laggron42 ltzmax Parnassius PredaaA Predeactor psykzz RasmusWL sravan1946 Stonedestroyer the-krak3n Tobotimus TrustyJAID vertyco Vexed01 WreckRox yamikaitou
 
 Read before updating
 --------------------
@@ -2501,7 +2501,7 @@ Redbot 3.4.10 (2021-05-28)
 
 .. changelog-contributors::
 
-    aikaterna aleclol benno1237 bobloy BoyDownTown Danstr5544 DeltaXWizard Drapersniper Fabian-Evolved fixator10 Flame442 flaree jack1142 Kowlin Kreusada Lifeismana Obi-Wan3 OofChair palmtree5 plofts PredaaA Predeactor TrustyJAID Vexed01
+    aikaterna aleclol benno1237 bobloy BoyDownTown Danstr5544 DeltaXWizard Drapersniper Fabian-Evolved fixator10 Flame442 flaree jack1142 Kowlin Kreusada Lifeismana Obi-Wan3 Onii-Chan-Discord OofChair palmtree5 plofts PredaaA Predeactor TrustyJAID Twentysix26 Vexed01
 
 Read before updating
 --------------------
@@ -2659,7 +2659,7 @@ Redbot 3.4.8 (2021-04-06)
 
 .. changelog-contributors::
 
-    6days9weeks aikaterna Drapersniper fixator10 Flame442 flaree jack1142 kingslayer268 Kowlin Kreusada Obi-Wan3 OofChair palmtree5 phenom4n4n PredaaA Predeactor rijusougata13 TheDiscordHistorian Tobotimus TrustyJAID Twentysix26 Vexed01
+    6days9weeks aikaterna Drapersniper fixator10 Flame442 flaree jack1142 kingslayer268 Kowlin Kreusada npc203 Obi-Wan3 OofChair palmtree5 phenom4n4n PredaaA Predeactor rijusougata13 TheDiscordHistorian Tobotimus TrustyJAID Twentysix26 Vexed01
 
 Read before updating
 --------------------
@@ -2796,7 +2796,7 @@ Redbot 3.4.7 (2021-02-26)
 
 .. changelog-contributors::
 
-    elijabesu Flame442 flaree jack1142 Kowlin kreusada palmtree5 TrustyJAID
+    bobloy elijabesu Flame442 flaree jack1142 Kowlin kreusada palmtree5 TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -2842,7 +2842,7 @@ Redbot 3.4.6 (2021-02-16)
 
 .. changelog-contributors::
 
-    aikaterna aleclol Andeeeee bobloy BreezeQS Danstr5544 Dav-Git Elysweyr Fabian-Evolved fixator10 Flame442 Injabie3 jack1142 Kowlin kreusada leblancg maxbooiii NeuroAssassin phenom4n4n PredaaA Predeactor retke siu3334 Strafee TheWyn TrustyJAID Vexed01 yamikaitou
+    aikaterna aleclol Andeeeee bobloy BreezeQS Danstr5544 Dav-Git Elysweyr Fabian-Evolved fixator10 Flame442 flaree Injabie3 jack1142 Kowlin kreusada leblancg maxbooiii NeuroAssassin phenom4n4n PredaaA Predeactor retke siu3334 Strafee TheWyn TrustyJAID Vexed01 yamikaitou
 
 Read before updating
 --------------------
@@ -2993,7 +2993,7 @@ Redbot 3.4.5 (2020-12-24)
 
 .. changelog-contributors::
 
-    Injabie3 NeuroAssassin
+    Injabie3 Kowlin NeuroAssassin
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3020,7 +3020,7 @@ Redbot 3.4.4 (2020-12-24)
 
 .. changelog-contributors::
 
-    aikaterna bobloy Flame442 flaree jack1142 Kowlin kreus7 NeuroAssassin npc203 palmtree5 phenom4n4n Predeactor retke siu3334 Vexed01 yamikaitou
+    aikaterna Bakersbakebread bobloy Flame442 flaree jack1142 Kowlin kreus7 NeuroAssassin npc203 palmtree5 phenom4n4n Predeactor retke siu3334 Vexed01 yamikaitou
 
 Read before updating
 --------------------
@@ -3118,7 +3118,7 @@ Redbot 3.4.3 (2020-11-16)
 
 .. changelog-contributors::
 
-    aikaterna bobloy Flame442 jack1142 KianBral maxbooiii phenom4n4n Predeactor retke
+    aikaterna bobloy Flame442 jack1142 KianBral maxbooiii phenom4n4n Predeactor retke TrustyJAID Zephyrkul
 
 Read before updating
 --------------------
@@ -3193,7 +3193,7 @@ Redbot 3.4.2 (2020-10-28)
 
 .. changelog-contributors::
 
-    aikaterna Drapersniper jack1142 Kowlin PredaaA Stonedestroyer
+    aikaterna bobloy Drapersniper Flame442 jack1142 Kowlin palmtree5 PredaaA Stonedestroyer
 
 Read before updating
 --------------------
@@ -3252,7 +3252,7 @@ Redbot 3.4.1 (2020-10-27)
 
 .. changelog-contributors::
 
-    absj30 aikaterna bobloy chloecormier Dav-Git Drapersniper fixator10 Flame442 flaree Generaleoley hisztendahl jack1142 KaiGucci Kowlin maxbooiii MeatyChunks NeuroAssassin nfitzen palmtree5 phenom4n4n PredaaA Predeactor PythonTryHard SharkyTheKing Stonedestroyer thisisjvgrace TrustyJAID TurnrDev Vexed01 Vuks69 xBlynd zephyrkul
+    absj30 aikaterna bobloy chloecormier Dav-Git Drapersniper fixator10 Flame442 flaree Generaleoley hisztendahl jack1142 KaiGucci Kowlin maxbooiii MeatyChunks NeuroAssassin nfitzen palmtree5 phenom4n4n PredaaA Predeactor PythonTryHard SharkyTheKing Stonedestroyer thisisjvgrace TrustyJAID TurnrDev Twentysix26 Vexed01 Vuks69 xBlynd zephyrkul
 
 Read before updating
 --------------------
@@ -3438,7 +3438,7 @@ Redbot 3.4.0 (2020-08-17)
 
 .. changelog-contributors::
 
-    Dav-Git DevilXD douglas-cpp Drapersniper flaree jack1142 kablekompany Kowlin maxbooiii MeatyChunks mikeshardmind NeuroAssassin PredaaA Predeactor retke SharkyTheKing thisisjvgrace Tinonb TrustyJAID Twentysix26 Vexed01 zephyrkul
+    aikaterna Dav-Git DevilXD douglas-cpp Drapersniper Flame442 flaree jack1142 kablekompany Kowlin maxbooiii MeatyChunks mikeshardmind NeuroAssassin palmtree5 PredaaA Predeactor retke SharkyTheKing thisisjvgrace Tinonb TrustyJAID Twentysix26 Vexed01 zephyrkul
 
 Read before updating
 --------------------
@@ -3640,7 +3640,7 @@ Redbot 3.3.11 (2020-08-10)
 
 .. changelog-contributors::
 
-    douglas-cpp Drapersniper Flame jack1142 MeatyChunks Vexed01 yamikaitou
+    aikaterna douglas-cpp Drapersniper Flame jack1142 Kowlin MeatyChunks Vexed01 yamikaitou
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3677,7 +3677,7 @@ Redbot 3.3.10 (2020-07-09)
 
 .. changelog-contributors::
 
-    aikaterna bobloy Dav-Git Drapersniper Flame442 flaree Injabie3 jack1142 mikeshardmind MiniJennJenn NeuroAssassin thisisjvgrace Vexed01
+    aikaterna bobloy Dav-Git Drapersniper Flame442 flaree hatred2k Injabie3 jack1142 Kowlin mikeshardmind MiniJennJenn NeuroAssassin thisisjvgrace Vexed01
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3772,7 +3772,7 @@ Redbot 3.3.9 (2020-06-12)
 
 .. changelog-contributors::
 
-    aikaterna Dav-Git Drapersniper Flame442 mikeshardmind NeuroAssassin Predeactor Vexed01
+    aikaterna Dav-Git Drapersniper Flame442 jack1142 Kowlin mikeshardmind NeuroAssassin Predeactor Vexed01
 
 Read before updating
 --------------------
@@ -3871,7 +3871,7 @@ Redbot 3.3.8 (2020-05-29)
 
 .. changelog-contributors::
 
-    aikaterna Bakersbakebread DariusStClair Dav-Git Drapersniper Flame442 jack1142 mikeshardmind NeuroAssassin PredaaA Predeactor qaisjp Tobotimus
+    aikaterna Bakersbakebread DariusStClair Dav-Git Drapersniper Flame442 jack1142 Kowlin mikeshardmind NeuroAssassin PredaaA Predeactor qaisjp Tobotimus TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -3982,7 +3982,7 @@ Redbot 3.3.6 (2020-04-27)
 
 .. changelog-contributors::
 
-    aikaterna Drapersniper jack1142 Kowlin MiniJennJenn NeuroAssassin PredaaA TrustyJAID yamikaitou
+    aikaterna Drapersniper Flame442 jack1142 Kowlin MiniJennJenn NeuroAssassin PredaaA TrustyJAID yamikaitou
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4101,7 +4101,7 @@ Redbot 3.3.4 (2020-04-05)
 
 .. changelog-contributors::
 
-    jack1142 kennnyshiwa
+    Flame442 jack1142 kennnyshiwa Kowlin
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4155,7 +4155,7 @@ Redbot 3.3.3 (2020-03-28)
 
 .. changelog-contributors::
 
-    AnonGuy Dav-Git FancyJesse Ianardo-DiCaprio jack1142 kennnyshiwa Kowlin NeuroAssassin PredaaA Stonedestroyer TrustyJAID
+    aikaterna AnonGuy Dav-Git Drapersniper FancyJesse Flame442 Ianardo-DiCaprio jack1142 kennnyshiwa Kowlin NeuroAssassin PredaaA Stonedestroyer TrustyJAID
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4427,7 +4427,7 @@ Redbot 3.3.0 (2020-01-26)
 
 .. changelog-contributors::
 
-    DevilXD Drapersniper Flame442 Ianardo-DiCaprio jack1142 Kowlin mikeshardmind Stonedestroyer zephyrkul
+    DevilXD Drapersniper Flame442 Ianardo-DiCaprio jack1142 Kowlin mikeshardmind Rapptz Stonedestroyer zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -4661,7 +4661,7 @@ Redbot 3.2.0 (2020-01-09)
 
 .. changelog-contributors::
 
-    aikaterna Aurorum Bakersbakebread DevilXD DiscordLiz DJtheRedstoner Drapersniper Flame442 flaree Ianardo-DiCaprio jack1142 jerbob jonasbohmann kennnyshiwa Kowlin mikeshardmind palmtree5 PredaaA RealFriesi retke Tobotimus Vexed01 wereii yamikaitou ZeLarpMaster zephyrkul
+    aikaterna Aurorum Bakersbakebread DevilXD DiscordLiz DJtheRedstoner Drapersniper Flame442 flaree Ianardo-DiCaprio jack1142 jerbob jonasbohmann kennnyshiwa Kowlin mikeshardmind palmtree5 PredaaA RealFriesi Redjumpman retke Tobotimus Vexed01 wereii yamikaitou ZeLarpMaster zephyrkul
 
 Read before updating
 --------------------
@@ -5264,7 +5264,7 @@ Redbot 3.1.2 (2019-05-31)
 
 .. changelog-contributors::
 
-    bren0xa DevilXD DiscordLiz fixator10 Flame442 jack1142 Kowlin mikeshardmind NeuroAssassin palmtree5 PredaaA retke Stonedestroyer Tobotimus yamikaitou zephyrkul
+    aikaterna bren0xa campbellbrendene DevilXD DiscordLiz fixator10 Flame442 jack1142 Kowlin matchai mikeshardmind NeuroAssassin palmtree5 PredaaA retke Stonedestroyer Tobotimus yamikaitou zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
@@ -5507,7 +5507,7 @@ Redbot 3.0.1 (2019-02-17)
 
 .. changelog-contributors::
 
-    calebj DiscordLiz mikeshardmind PredaaA Redjumpman Tobotimus Twentysix26 ZeLarpMaster zephyrkul
+    calebj DiscordLiz Kowlin mikeshardmind palmtree5 PredaaA Redjumpman Tobotimus Twentysix26 ZeLarpMaster zephyrkul
 
 .. RED-CHANGELOG-USER-CHANGELOG-BEGIN
 
