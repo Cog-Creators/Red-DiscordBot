@@ -1011,19 +1011,22 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
             reviews = pr_node["latestOpinionatedReviews"]["nodes"]
             for review_node in reviews:
                 review_author = review_node["author"]["login"]
-                reviewers.setdefault(review_author, []).append(pr_info)
+                if not review_author.endswith("[bot]"):
+                    reviewers.setdefault(review_author, []).append(pr_info)
 
             merge_commit = pr_node["mergeCommit"]
             if merge_commit is None:
                 pr_author = pr_node["author"]["login"]
-                authors.setdefault(pr_author, []).append(pr_info)
+                if not pr_author.endswith("[bot]"):
+                    authors.setdefault(pr_author, []).append(pr_info)
                 continue
 
             for author_node in merge_commit["authors"]["nodes"]:
                 commit_user = author_node["user"]
                 if commit_user is not None:
                     commit_author = author_node["user"]["login"]
-                    authors.setdefault(commit_author, []).append(pr_info)
+                    if not commit_author.endswith("[bot]"):
+                        authors.setdefault(commit_author, []).append(pr_info)
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
