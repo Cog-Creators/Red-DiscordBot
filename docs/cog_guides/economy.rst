@@ -87,7 +87,7 @@ bank add
 Add currency to a user's bank account.
 
 Example:
-    - ``[p]bank add @Twentysix 100``
+    - ``[p]bank add @Twentysix 100`` - Increases balance by 100
 
 **Arguments**
 
@@ -143,7 +143,7 @@ bank sub
 Remove currency from a user's bank account.
 
 Example:
-    - ``[p]bank sub @Twentysix 50``
+    - ``[p]bank sub @Twentysix 50`` - Decreases balance by 50
 
 **Arguments**
 
