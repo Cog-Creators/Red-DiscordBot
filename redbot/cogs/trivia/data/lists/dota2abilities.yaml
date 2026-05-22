@@ -1,7 +1,7 @@
 AUTHOR: JennJenn, Eternalll
 DESCRIPTION: >-
   A trivia about Dota 2 abilities as of patch 7.41c. In this trivia, identify the ability
-  from the image sent. Dota 2 is a multiplayer online battle arena video game by Valve.
+  from the image sent. Dota 2 is a multiplayer online battle arena (MOBA) video game by Valve.
 # Abaddon
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
 # - Withering Mist
@@ -46,11 +46,9 @@ What ability is this? https://i.imgur.com/5lkslhd.png: # [ULT]
 What ability is this? https://i.imgur.com/nYi9uXc.png: # [1]
 - Mana Break
 What ability is this? https://i.imgur.com/j6tX9kQ.png: # [2]
-- Blink (Anti-Mage)
 - Blink
-- Anti-Mage Blink
-What ability is this? https://i.imgur.com/Dz7G2Ma.png: # [3] - image is a little out of date
-- Counterspell
+# What innate ability is this? https://i.imgur.com/0000000: # [3]
+# - Counterspell
 What ability is this? https://i.imgur.com/BLCIY3v.png: # [ULT]
 - Mana Void
 # Arc Warden
@@ -119,6 +117,7 @@ What ability is this? https://i.imgur.com/DIto2eL.png: # [1]
 - Bloodrage
 What ability is this? https://i.imgur.com/XzPyTGf.png: # [2]
 - Blood Rite
+- Bloodrite
 What ability is this? https://i.imgur.com/TjIASfx.png: # [3]
 - Thirst
 What ability is this? https://i.imgur.com/b5IrqkC.png: # [ULT]
@@ -165,12 +164,12 @@ What ability is this? https://i.imgur.com/2T8w9q2.png: # [ULT]
 # - Spider's Milk
 What ability is this? https://i.imgur.com/xN1TWZh.png: # [1]
 - Insatiable Hunger
-# What ability is this? https://i.imgur.com/0000000: # [2]
-# - Spin Web
+What ability is this? https://i.imgur.com/G3yMjte.png: # [2]
+- Spin Web
 What ability is this? https://i.imgur.com/PNH7ytm.png: # [3]
 - Incapacitating Bite
-What ability is this? https://i.imgur.com/G3yMjte.png: # [4]
-- Spinner's Snare
+# What ability is this? https://i.imgur.com/0000000: # [4]
+# - Spinner's Snare
 What ability is this? https://i.imgur.com/B7bhmxH.png: # [ULT]
 - Spawn Spiderlings
 # Centaur Warrunner
@@ -217,6 +216,7 @@ What ability is this? https://i.imgur.com/FhPo2Dv.png: # [2]
 - Searing Arrows
 What ability is this? https://i.imgur.com/o2qAqkE.png: # [3]
 - Death Pact
+- Deathpact
 # What ability is this? https://i.imgur.com/0000000: # [4]
 # - Burning Army
 # What ability is this? https://i.imgur.com/0000000: # [5]
@@ -315,6 +315,7 @@ What ability is this? https://i.imgur.com/4m1JoUa.png: # [ULT]
 # - Electromagnetic Repulsion
 What ability is this? https://i.imgur.com/2MbrJ06.png: # [1]
 - Thunder Strike
+- Thunderstrike
 What ability is this? https://i.imgur.com/fPFw0GN.png: # [2]
 - Glimpse
 What ability is this? https://i.imgur.com/83gBZsI.png: # [3]
@@ -382,6 +383,7 @@ What ability is this? https://i.imgur.com/I2NvxE1.png: # [2]
 - Enchant Totem
 What ability is this? https://i.imgur.com/KAxGqvz.png: # [3]
 - Aftershock
+- After shock
 What ability is this? https://i.imgur.com/rJjuneV.png: # [4]
 - Echo Slam
 # Elder Titan
@@ -406,6 +408,7 @@ What ability is this? https://i.imgur.com/kkcrkoo.png: # [2]
 - Sleight of Fist
 What ability is this? https://i.imgur.com/Thg1NJH.png: # [3]
 - Flame Guard
+- Flameguard
 What ability is this? https://i.imgur.com/TAqbyTQ.png: # [4]
 - Activate Fire Remnant
 What ability is this? https://i.imgur.com/ctHMsSI.png: # [ULT]
@@ -441,10 +444,12 @@ What ability is this? https://i.imgur.com/YXTVCNd.png: # [ULT]
 # - Distortion Field
 What ability is this? https://i.imgur.com/xNqYfoK.png: # [1]
 - Time Walk
+- Timewalk
 What ability is this? https://i.imgur.com/gG7OwWD.png: # [2]
 - Time Dilation
 What ability is this? https://i.imgur.com/JVJs8VI.png: # [3]
 - Time Lock
+- Timelock
 # What ability is this? https://i.imgur.com/0000000: # [4]
 # - Reverse Time Walk
 What ability is this? https://i.imgur.com/5oS4p6Z.png: # [ULT]
@@ -475,6 +480,7 @@ What ability is this? https://i.imgur.com/jIKqZdq.png: # [3]
 # - Side Gunner
 What ability is this? https://i.imgur.com/nLpMXtX.png:
 - Call Down
+- Calldown
 # Hoodwink
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
 # - Mistwoods Wayfarer
@@ -501,6 +507,7 @@ What ability is this? https://i.imgur.com/najZXYr.png: # [3]
 - Berserker's Blood
 What ability is this? https://i.imgur.com/kEjJIc9.png: # [4]
 - Life Break
+- Lifebreak
 # Invoker
 What ability is this? https://i.imgur.com/QdDe9x2.png: # [1]
 - Quas
@@ -566,6 +573,7 @@ What ability is this? https://i.imgur.com/N479xl0.png: # [ULT]
 # - Bladeform
 What ability is this? https://i.imgur.com/7Oh7bjv.png: # [1]
 - Blade Fury
+- Bladefury
 What ability is this? https://i.imgur.com/PtqRyJI.png: # [2]
 - Healing Ward
 What ability is this? https://i.imgur.com/4Mmu9H3.png: # [3]
@@ -582,7 +590,9 @@ What ability is this? https://i.imgur.com/Ydf1cL2.png: # [1]
 What ability is this? https://i.imgur.com/yUqvGUh.png: # [1](Alt)
 - Release Illuminate
 What ability is this? https://i.imgur.com/Md4o99D.png: # [1](Alt)
+- Illuminate (Spirit Form)
 - Illuminate Spirit Form
+- Illuminate
 What ability is this? https://i.imgur.com/0MYQSVF.png: # [2]
 - Blinding Light
 What ability is this? https://i.imgur.com/CBFlvIh.png: # [3]
@@ -855,11 +865,11 @@ What ability is this? https://i.imgur.com/FZEYYYQ.png: # [2]
 What ability is this? https://i.imgur.com/0LSBunY.png: # [3]
 - Attribute Shift (Agility Gain)
 - Attribute Shift Agility Gain
-- Attribute Shift
+- Attribute Shift Agility
 What ability is this? https://i.imgur.com/V1roWyX.png: # [4]
 - Attribute Shift (Strength Gain)
 - Attribute Shift Strength Gain
-- Attribute Shift
+- Attribute Shift Strength
 What ability is this? https://i.imgur.com/gyK74ha.png: # [ULT]
 - Morph
 What ability is this? https://i.imgur.com/kkMA22I.png: # [ULT](Alt)
@@ -959,6 +969,7 @@ What ability is this? https://i.imgur.com/HJUyVQ2.png: # [4]
 # - Fire Shield
 What ability is this? https://i.imgur.com/lG97CeO.png: # [ULT]
 - Multicast
+- Multi-cast
 # Omniknight
 What innate ability is this? https://i.imgur.com/FcRJMtq.png: # [IN]
 - Degen Aura
@@ -1045,6 +1056,7 @@ What ability is this? https://i.imgur.com/21bnvvZ.png: # [2](Alt)
 - Launch Fire Spirit
 What ability is this? https://i.imgur.com/RSgnSqT.png: # [3]
 - Sun Ray
+- Sunray
 What ability is this? https://i.imgur.com/2U8fvM5.png: # [3] (Alt)
 - Stop Sun Ray
 What ability is this? https://i.imgur.com/8lfQ4e4.png: # [4]
@@ -1108,8 +1120,6 @@ What ability is this? https://i.imgur.com/BJRUHS9.png: # [1]
 - Shadow Strike
 What ability is this? https://i.imgur.com/XhcNvQ3.png: # [2]
 - Blink
-- Blink (Queen of Pain)
-- Queen of Pain Blink
 What ability is this? https://i.imgur.com/rW8u5w7.png: # [3]
 - Scream of Pain
 What ability is this? https://i.imgur.com/wjMDyPe.png: # [ULT]
@@ -1130,12 +1140,13 @@ What ability is this? https://i.imgur.com/Wd8SgdN.png: # [ULT]
 # - Backstab
 What ability is this? https://i.imgur.com/FCISu8S.png: # [1]
 - Smoke Screen
+- Smokescreen
 What ability is this? https://i.imgur.com/Q2YMrCY.png: # [2]
 - Blink Strike
 What ability is this? https://i.imgur.com/ORT7Dwy.png: # [3]
 - Tricks of the Trade
-What ability is this? https://i.imgur.com/QCv66xU.png: # [ULT]
-- Cloak and Dagger
+#What ability is this? https://i.imgur.com/QCv66xU.png: # [ULT] - BROKEN URL
+#- Cloak and Dagger
 # Ringmaster
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
 # - Dark Carnival Barker
@@ -1179,6 +1190,7 @@ What innate ability is this? https://i.imgur.com/H0eo0j3.png: # [IN]
 - Caustic Finale
 What ability is this? https://i.imgur.com/4m16Vjf.png: # [1]
 - Burrowstrike
+- Burrow strike
 What ability is this? https://i.imgur.com/IYziArw.png:
 - Sand Storm
 # What ability is this? https://i.imgur.com/0000000: # [3]
@@ -1216,6 +1228,7 @@ What ability is this? https://i.imgur.com/YunlihM.png: # [1](Alt)
 # - Feast of Souls
 What ability is this? https://i.imgur.com/dq6rID6.png: # [4]
 - Presence of the Dark Lord
+- Presense of the Dark Lord # typo
 What ability is this? https://i.imgur.com/ConFPLo.png: # [ULT]
 - Requiem of Souls
 # Shadow Shaman
@@ -1231,7 +1244,6 @@ What ability is this? https://i.imgur.com/hHrloCO.png: # [3]
 # - Urnaconda
 What ability is this? https://i.imgur.com/WQHV5aU.png:
 - Mass Serpent Ward
-- Serpent Ward
 # Silencer
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
 # - Suffer In Silence
@@ -1355,6 +1367,7 @@ What ability is this? https://i.imgur.com/2oeoTNi.png: # [2]
 - Great Cleave
 What ability is this? https://i.imgur.com/kgo57gs.png: # [3]
 - Warcry
+- War cry
 What ability is this? https://i.imgur.com/K3WXdiC.png: # [ULT]
 - God's Strength
 # Techies
@@ -1501,8 +1514,9 @@ What ability is this? https://i.imgur.com/oN6udOB.png: # [1]
 - Ice Shards
 What ability is this? https://i.imgur.com/wJwUbrH.png: # [2]
 - Snowball
-What ability is this? https://i.imgur.com/c9ECJIK.png: # [2](Alt)
-- Launch Snowball
+- Snow ball
+- Launch Snowball # same icon
+- Launch Snow ball # same icon
 # What ability is this? https://i.imgur.com/0000000: # [3]
 # - Tag Team
 # What ability is this? https://i.imgur.com/0000000: # [4]
@@ -1517,6 +1531,7 @@ What ability is this? https://i.imgur.com/PCrmtNx.png: # [ULT]
 # - Invading Force
 What ability is this? https://i.imgur.com/JvHLhJm.png: # [1]
 - Firestorm
+- Fire storm
 What ability is this? https://i.imgur.com/Ihhvhdx.png: # [2]
 - Pit of Malice
 What ability is this? https://i.imgur.com/LiPZwBR.png: # [3]
@@ -1528,10 +1543,11 @@ What ability is this? https://i.imgur.com/LiPZwBR.png: # [3]
 # - Ceaseless Dirge
 What ability is this? https://i.imgur.com/hNY3HEK.png: # [1]
 - Decay
-What ability is this? https://i.imgur.com/ZUB9LCI.png: # [2]
-- Soul Rip
+# What ability is this? https://i.imgur.com/ZUB9LCI.png: # [2] - BROKEN URL
+# - Soul Rip
 What ability is this? https://i.imgur.com/bUdXqyZ.png: # [3]
 - Tombstone
+- Tomb stone
 What ability is this? https://i.imgur.com/374iVtN.png: # [ULT]
 - Flesh Golem
 # Ursa
@@ -1539,8 +1555,10 @@ What ability is this? https://i.imgur.com/374iVtN.png: # [ULT]
 # - Maul
 What ability is this? https://i.imgur.com/pQV2JLt.png: # [1]
 - Earthshock
+- Earth shock
 What ability is this? https://i.imgur.com/XGjIZ3l.png: # [2]
 - Overpower
+- Over power
 What ability is this? https://i.imgur.com/tdEXOZF.png: # [3]
 - Fury Swipes
 What ability is this? https://i.imgur.com/8VQoMYP.png: # [ULT]
@@ -1624,6 +1642,7 @@ What ability is this? https://i.imgur.com/nfMltKz.png: # [2]
 - Shukuchi
 What ability is this? https://i.imgur.com/RY773PQ.png: # [3]
 - Geminate Attack
+- Germinate Attack # purposeful typo
 What ability is this? https://i.imgur.com/ehrPB5V.png: # [ULT]
 - Time Lapse
 # Windranger
@@ -1631,10 +1650,13 @@ What ability is this? https://i.imgur.com/ehrPB5V.png: # [ULT]
 # - Tailwind
 What ability is this? https://i.imgur.com/xxDj7GO.png: # [1]
 - Shackleshot
+- Shackle shot
 What ability is this? https://i.imgur.com/JJLAsfU.png: # [2]
 - Powershot
+- Power shot
 What ability is this? https://i.imgur.com/aHqmkB0.png: # [3]
 - Windrun
+- Wind run
 # What ability is this? https://i.imgur.com/0000000: # [4]
 # - Gale Force
 What ability is this? https://i.imgur.com/2jZ4Uf1.png: # [ULT]
