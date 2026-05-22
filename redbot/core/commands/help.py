@@ -910,9 +910,7 @@ class RedHelpFormatter(HelpFormatterABC):
                     messages.append(msg)
                     page_destination = destination
             if ctx.interaction and use_DMs:
-                await ctx.send(
-                    _("I have sent the help message to your DMs."), ephemeral=True
-                )
+                await ctx.send(_("I have sent the help message to your DMs."), ephemeral=True)
             elif use_DMs and help_settings.use_tick:
                 await ctx.tick()
             # The if statement takes into account that 'destination' will be
