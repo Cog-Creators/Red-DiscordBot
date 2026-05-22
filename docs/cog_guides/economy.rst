@@ -44,30 +44,6 @@ bank
 
 Base command to manage the bank.
 
-.. _economy-command-bank-balance:
-
-""""""""""""
-bank balance
-""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]bank balance [user]
-
-**Description**
-
-Show the user's account balance.
-
-Example:
-    - ``[p]bank balance``
-    - ``[p]bank balance @Twentysix``
-
-**Arguments**
-
-- ``<user>`` The user to check the balance of. If omitted, defaults to your own balance.
-
 .. _economy-command-bank-add:
 
 """"""""
@@ -93,6 +69,30 @@ Example:
 
 - ``<to>`` The user to give currency to.
 - ``<creds>`` The amount of currency to add.
+
+.. _economy-command-bank-balance:
+
+""""""""""""
+bank balance
+""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bank balance [user]
+
+**Description**
+
+Show the user's account balance.
+
+Example:
+    - ``[p]bank balance``
+    - ``[p]bank balance @Twentysix``
+
+**Arguments**
+
+- ``<user>`` The user to check the balance of. If omitted, defaults to your own balance.
 
 .. _economy-command-bank-set:
 
