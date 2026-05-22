@@ -19,7 +19,7 @@ them with dnf:
 
     sudo dnf -y install python3.11 python3.11-devel git adoptium-temurin-java-repository @development-tools nano
     sudo dnf config-manager setopt adoptium-temurin-java-repository.enabled=1
-    sudo dnf -y install temurin-17-jre
+    sudo dnf -y install temurin-25-jre
 
 .. Include common instructions:
 
