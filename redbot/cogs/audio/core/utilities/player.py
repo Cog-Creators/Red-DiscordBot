@@ -65,12 +65,16 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playing_servers = 0
         return get_single_title, playing_servers
 
-    async def update_bot_presence(self, track: Optional[str], playing_servers: int) -> None:
+    async def update_bot_presence(
+        self, track: Optional[str], playing_servers: int
+    ) -> None:
         if playing_servers == 0:
             await self.bot.change_presence(activity=None)
         elif playing_servers == 1:
             await self.bot.change_presence(
-                activity=discord.Activity(name=track, type=discord.ActivityType.listening)
+                activity=discord.Activity(
+                    name=track, type=discord.ActivityType.listening
+                )
             )
         elif playing_servers > 1:
             await self.bot.change_presence(
@@ -80,7 +84,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
             )
 
-    async def _can_instaskip(self, ctx: commands.Context, member: discord.Member) -> bool:
+    async def _can_instaskip(
+        self, ctx: commands.Context, member: discord.Member
+    ) -> bool:
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -128,7 +134,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             log.trace("Caught error in `is_requester`", exc_info=exc)
         return False
 
-    async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
+    async def _skip_action(
+        self, ctx: commands.Context, skip_to_track: int = None
+    ) -> None:
         player = lavalink.get_player(ctx.guild.id)
         autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
@@ -141,7 +149,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if player.current.is_stream:
                 embed = discord.Embed(title=_("There's nothing in the queue."))
                 embed.set_footer(
-                    text=_("Currently livestreaming {track}").format(track=player.current.title)
+                    text=_("Currently livestreaming {track}").format(
+                        track=player.current.title
+                    )
                 )
             else:
                 embed = discord.Embed(title=_("There's nothing in the queue."))
@@ -179,11 +189,15 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 return
             embed = discord.Embed(
-                title=_("{skip_to_track} Tracks Skipped").format(skip_to_track=skip_to_track)
+                title=_("{skip_to_track} Tracks Skipped").format(
+                    skip_to_track=skip_to_track
+                )
             )
             await self.send_embed_msg(ctx, embed=embed)
             if player.repeat:
-                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
+                queue_to_append = player.queue[
+                    0 : min(skip_to_track - 1, len(player.queue) - 1)
+                ]
             player.queue = player.queue[
                 min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
             ]
@@ -195,7 +209,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ),
             )
             await self.send_embed_msg(ctx, embed=embed)
-        self.bot.dispatch("red_audio_skip_track", player.guild, player.current, ctx.author)
+        self.bot.dispatch(
+            "red_audio_skip_track", player.guild, player.current, ctx.author
+        )
         await player.play()
         player.queue += queue_to_append
 
@@ -231,7 +247,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             enqueue_tracks = False
         player = lavalink.get_player(ctx.guild.id)
         api_data = await self._check_api_tokens()
-        if any([not api_data["spotify_client_id"], not api_data["spotify_client_secret"]]):
+        if any(
+            [not api_data["spotify_client_id"], not api_data["spotify_client_secret"]]
+        ):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Invalid Environment"),
@@ -268,7 +286,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if not res:
                     title = _("Nothing found.")
                     embed = discord.Embed(title=title)
-                    if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
+                    if (
+                        query.is_local
+                        and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT
+                    ):
                         title = _("Track is not playable.")
                         description = _(
                             "**{suffix}** is not a fully supported "
@@ -287,7 +308,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             self.update_player_lock(ctx, False)
             try:
                 if enqueue_tracks:
-                    new_query = Query.process_input(res[0], self.local_folder_current_path)
+                    new_query = Query.process_input(
+                        res[0], self.local_folder_current_path
+                    )
                     new_query.start_time = query.start_time
                     return await self._enqueue_tracks(ctx, new_query)
                 else:
@@ -309,7 +332,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     tracks = result.tracks
                     if not tracks:
                         embed = discord.Embed(title=_("Nothing found."))
-                        if query.is_local and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT:
+                        if (
+                            query.is_local
+                            and query.suffix in _PARTIALLY_SUPPORTED_MUSIC_EXT
+                        ):
                             embed = discord.Embed(title=_("Track is not playable."))
                             embed.description = _(
                                 "**{suffix}** is not a fully supported format and some "
@@ -352,7 +378,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Find Tracks"),
-                description=_("This doesn't seem to be a supported Spotify URL or code."),
+                description=_(
+                    "This doesn't seem to be a supported Spotify URL or code."
+                ),
             )
 
     async def _enqueue_tracks(
@@ -378,9 +406,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         playlist_url = None
         seek = 0
         if type(query) is not list:
-            if not await self.is_query_allowed(self.config, ctx, f"{query}", query_obj=query):
+            if not await self.is_query_allowed(
+                self.config, ctx, f"{query}", query_obj=query
+            ):
                 raise QueryUnauthorized(
-                    _("{query} is not an allowed query.").format(query=query.to_string_user())
+                    _("{query} is not an allowed query.").format(
+                        query=query.to_string_user()
+                    )
                 )
             if query.single_track:
                 first_track_only = True
@@ -390,7 +422,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             if query.is_url:
                 playlist_url = query.uri
             try:
-                result, called_api = await self.api_interface.fetch_track(ctx, player, query)
+                result, called_api = await self.api_interface.fetch_track(
+                    ctx, player, query
+                )
             except TrackEnqueueError:
                 self.update_player_lock(ctx, False)
                 return await self.send_embed_msg(
@@ -416,7 +450,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     if "Status Code" in result.exception_message:
                         embed.set_footer(text=result.exception_message[:2000])
                     else:
-                        embed.set_footer(text=result.exception_message[:2000].replace("\n", ""))
+                        embed.set_footer(
+                            text=result.exception_message[:2000].replace("\n", "")
+                        )
                 if await self.config.use_external_lavalink() and query.is_local:
                     embed.description = _(
                         "Local tracks will not work "
@@ -444,7 +480,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # url where Lavalink handles providing all Track objects to use, like a
             # YouTube or SoundCloud playlist
             if len(player.queue) >= 10000:
-                return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
+                return await self.send_embed_msg(
+                    ctx, title=_("Queue size limit reached.")
+                )
             track_len = 0
             empty_queue = not player.queue
             async for track in AsyncIter(tracks):
@@ -457,9 +495,13 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     f"{track.title} {track.author} {track.uri} {str(track_query)}",
                     query_obj=track_query,
                 ):
-                    log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
+                    log.debug(
+                        "Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id
+                    )
                     continue
-                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
+                elif guild_data["maxlength"] > 0 and not (
+                    can_skip and maxlength_bypass
+                ):
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
                         track.extras.update(
@@ -484,7 +526,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                         }
                     )
                     player.add(ctx.author, track)
-                    self.bot.dispatch("red_audio_track_enqueue", player.guild, track, ctx.author)
+                    self.bot.dispatch(
+                        "red_audio_track_enqueue", player.guild, track, ctx.author
+                    )
             player.maybe_shuffle(0 if empty_queue else 1)
 
             if len(tracks) > track_len:
@@ -496,7 +540,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             playlist_name = escape(
                 playlist_data.name if playlist_data else _("No Title"), formatting=True
             )
-            title = _("Playlist Enqueued") if not query.is_album else _("Album Enqueued")
+            title = (
+                _("Playlist Enqueued") if not query.is_album else _("Album Enqueued")
+            )
             embed = discord.Embed(
                 description=bold(f"[{playlist_name}]({playlist_url})", False)
                 if playlist_url
@@ -512,7 +558,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_footer(
                     text=_(
                         "{time} until start of playlist playback: starts at #{position} in queue"
-                    ).format(time=queue_total_duration, position=before_queue_length + 1)
+                    ).format(
+                        time=queue_total_duration, position=before_queue_length + 1
+                    )
                 )
             if not player.current:
                 await player.play()
@@ -526,7 +574,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             # or this is a localtrack item
             try:
                 if len(player.queue) >= 10000:
-                    return await self.send_embed_msg(ctx, title=_("Queue size limit reached."))
+                    return await self.send_embed_msg(
+                        ctx, title=_("Queue size limit reached.")
+                    )
 
                 single_track = (
                     tracks
@@ -537,7 +587,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 )
                 if seek and seek > 0:
                     single_track.start_timestamp = seek * 1000
-                query = Query.process_input(single_track, self.local_folder_current_path)
+                query = Query.process_input(
+                    single_track, self.local_folder_current_path
+                )
                 if not await self.is_query_allowed(
                     self.config,
                     ctx,
@@ -547,13 +599,19 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                     query_obj=query,
                 ):
-                    log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
+                    log.debug(
+                        "Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id
+                    )
                     self.update_player_lock(ctx, False)
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
-                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
+                elif guild_data["maxlength"] > 0 and not (
+                    can_skip and maxlength_bypass
+                ):
+                    if self.is_track_length_allowed(
+                        single_track, guild_data["maxlength"]
+                    ):
                         single_track.extras.update(
                             {
                                 "enqueue_time": int(time.time()),
@@ -586,7 +644,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, single_track, ctx.author
+                        "red_audio_track_enqueue",
+                        player.guild,
+                        single_track,
+                        ctx.author,
                     )
             except IndexError:
                 self.update_player_lock(ctx, False)
@@ -699,7 +760,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return False
         try:
             in_channel = sum(
-                not m.bot for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
+                not m.bot
+                for m in ctx.guild.get_member(self.bot.user.id).voice.channel.members
             )
         except AttributeError:
             return False
@@ -718,7 +780,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             ):
                 await player.move_to(
                     user_channel,
-                    self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
+                    self_deaf=await self.config.guild_from_id(
+                        ctx.guild.id
+                    ).auto_deafen(),
                 )
                 return True
         else:
