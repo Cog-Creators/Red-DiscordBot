@@ -319,7 +319,7 @@ class Economy(commands.Cog):
 
     @bank.is_owner_if_bank_global()
     @commands.admin_or_permissions(manage_guild=True)
-    @_bank.command(name="sub")
+    @_bank.command(name="sub", aliases=["subtract"])
     async def _sub(self, ctx: commands.Context, to: discord.Member, creds: positive_int):
         """Remove currency from a user's bank account.
 
