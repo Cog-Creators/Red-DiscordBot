@@ -370,6 +370,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             self.update_player_lock(ctx, True)
         guild_data = await self.config.guild(ctx.guild).all()
         can_skip = await self._can_instaskip(ctx, ctx.author)
+        maxlength_bypass = guild_data["maxlength_bypass"]
         first_track_only = False
         single_track = None
         index = None
@@ -453,12 +454,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if not await self.is_query_allowed(
                     self.config,
                     ctx,
-                    f"{track.title} {track.author} {track.uri} " f"{str(track_query)}",
+                    f"{track.title} {track.author} {track.uri} {str(track_query)}",
                     query_obj=track_query,
                 ):
                     log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0 and not can_skip:
+                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
                         track.extras.update(
@@ -551,7 +552,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0 and not can_skip:
+                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
                     if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                         single_track.extras.update(
                             {

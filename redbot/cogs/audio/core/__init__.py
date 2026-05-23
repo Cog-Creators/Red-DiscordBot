@@ -129,6 +129,7 @@ class Audio(
             jukebox=False,
             jukebox_price=0,
             maxlength=0,
+            maxlength_bypass=True,
             max_volume=150,
             notify=False,
             prefer_lyrics=False,

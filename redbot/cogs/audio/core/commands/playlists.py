@@ -4,11 +4,10 @@ import math
 import os
 import tarfile
 import time
-
 from io import BytesIO
 from pathlib import Path
-from urllib.parse import urlparse
 from typing import cast
+from urllib.parse import urlparse
 
 import discord
 import lavalink
@@ -24,7 +23,12 @@ from redbot.core.utils.menus import menu
 from redbot.core.utils.predicates import MessagePredicate
 
 from ...apis.api_utils import FakePlaylist
-from ...apis.playlist_interface import Playlist, create_playlist, delete_playlist, get_all_playlist
+from ...apis.playlist_interface import (
+    Playlist,
+    create_playlist,
+    delete_playlist,
+    get_all_playlist,
+)
 from ...audio_dataclasses import LocalPath, Query
 from ...converters import ComplexScopeParser, ScopeParser
 from ...errors import MissingGuild, TooManyMatches, TrackEnqueueError
@@ -1485,6 +1489,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                 ctx.command.reset_cooldown(ctx)
                 return
             maxlength = await self.config.guild(ctx.guild).maxlength()
+            maxlength_bypass = await self.config.guild(ctx.guild).maxlength_bypass()
             can_skip = await self._can_instaskip(ctx, ctx.author)
             author_obj = self.bot.get_user(ctx.author.id)
             track_len = 0
@@ -1499,7 +1504,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                     if not await self.is_query_allowed(
                         self.config,
                         ctx,
-                        f"{track.title} {track.author} {track.uri} " f"{str(query)}",
+                        f"{track.title} {track.author} {track.uri} {str(query)}",
                         query_obj=query,
                     ):
                         log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
@@ -1513,7 +1518,7 @@ class PlaylistCommands(MixinMeta, metaclass=CompositeMetaClass):
                             continue
                     if (
                         maxlength > 0
-                        and not can_skip
+                        and not (can_skip and maxlength_bypass)
                         and not self.is_track_length_allowed(track, maxlength)
                     ):
                         continue
