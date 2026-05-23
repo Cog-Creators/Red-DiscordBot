@@ -123,7 +123,7 @@ def load_basic_configuration(instance_name_: str):
         basic_config = config[_instance_name]
     except KeyError:
         print(
-            "Instance with this name doesn't exist."
+            f"Instance with name '{_instance_name}' doesn't exist."
             " You can create new instance using `redbot-setup` prior to running the bot."
         )
         sys.exit(ExitCodes.INVALID_CLI_USAGE)

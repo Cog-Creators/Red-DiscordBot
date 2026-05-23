@@ -215,11 +215,11 @@ modset deletenames
 
 **Description**
 
-Delete all stored usernames and nicknames.
+Delete all stored usernames, global display names, and server nicknames.
 
 **Arguments**
 
-- ``<confirmation>``: Whether to delete all stored usernames and nicknames. |bool-input|
+- ``<confirmation>``: Whether to delete all stored usernames, global display names, and server nicknames. |bool-input|
 
 .. _mod-command-modset-deleterepeats:
 
@@ -253,7 +253,23 @@ modset dm
 
 .. code-block:: none
 
-    [p]modset dm [enabled]
+    [p]modset dm
+
+**Description**
+
+Settings for messaging the user when being kicked or banned.
+
+.. _mod-command-modset-dm-sendmessage:
+
+"""""""""""""""""""""
+modset dm sendmessage
+"""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm sendmessage [enabled]
 
 **Description**
 
@@ -265,6 +281,94 @@ and reason as to why they were kicked/banned.
 **Arguments**
 
 * ``[enabled]``: Whether a message should be sent to a user when they are kicked/banned. |bool-input|
+
+.. _mod-command-modset-banshowextrafield:
+
+"""""""""""""""""""""""""""
+modset dm banshowextrafield
+"""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field when banning.
+
+This can be used to add additional information for the banned user, such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear when banning. |bool-input|
+
+.. _mod-command-modset-banextrafieldtitle:
+
+""""""""""""""""""""""""""""
+modset dm banextrafieldtitle
+""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldtitle [title]
+
+**Description**
+
+Set the title for the optional extra embed on ban.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``[title]``: The title of the embed field. Can by any string of text under 252 charcters long.
+
+.. _mod-command-modset-banextrafieldcontents:
+
+"""""""""""""""""""""""""""""""
+modset dm banextrafieldcontents
+"""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm banextrafieldcontents [contents]
+
+**Description**
+
+Set the contents for the optional extra embed on ban
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``[contents]``: The contents of the embed field. Can by any string of text under 1024 charcters long.
+
+.. _mod-command-modset-requirereason:
+
+""""""""""""""""""""
+modset requirereason
+""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset requirereason [enabled]
+
+**Description**
+
+Toggle whether a reason is required for mod actions.
+        
+If this is enabled, the bot will require a reason to be provided for all mod actions.
+
+**Arguments**
+
+* ``[enabled]``: Whether a reason should be required when performing mod actions. |bool-input|
 
 .. _mod-command-modset-hierarchy:
 
@@ -469,7 +573,7 @@ modset tracknicknames
 
 **Description**
 
-Toggle whether nickname changes should be tracked.
+Toggle whether server nickname changes should be tracked.
 
 This setting will be overridden if trackallnames is disabled.
 
@@ -527,7 +631,7 @@ names
 
 **Description**
 
-Show previous names and nicknames of a member.
+Show previous usernames, global display names, and server nicknames of a member.
 
 **Arguments**
 
@@ -549,14 +653,14 @@ rename
 
 **Description**
 
-Change a member's nickname.
+Change a member's server nickname.
 
-Leaving the nickname empty will remove it.
+Leaving the nickname argument empty will remove it.
 
 **Arguments**
 
 * ``<member>``: |member-input|
-* ``[nickname]``: The new nickname for the member.
+* ``[nickname]``: The new server nickname for the member.
 
 .. _mod-command-slowmode:
 
@@ -684,9 +788,9 @@ userinfo
 Show information about a user.
 
 This includes fields for status, discord join date, server
-join date, voice state and previous names/nicknames.
+join date, voice state and previous usernames/global display names/nicknames.
 
-If the user has no roles, previous names or previous nicknames,
+If the user has no roles, previous usernames, global display names, or server nicknames,
 these fields will be omitted.
 
 **Arguments**

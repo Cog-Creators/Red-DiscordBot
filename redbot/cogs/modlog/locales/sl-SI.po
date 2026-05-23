@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2023-04-13 18:17+0000\n"
+"POT-Creation-Date: 2024-03-05 19:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: redgettext 3.4.2\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Crowdin-Project: red-discordbot\n"
 "X-Crowdin-Project-ID: 289505\n"
 "X-Crowdin-Language: sl\n"
@@ -17,7 +17,7 @@ msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:19
 #, docstring
-msgid "Browse and manage modlog cases."
+msgid "Browse and manage modlog cases. To manage modlog settings, use `[p]modlogset`."
 msgstr ""
 
 #: redbot/cogs/modlog/modlog.py:32

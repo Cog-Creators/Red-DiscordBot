@@ -330,6 +330,132 @@ STATEMENT_TESTS = {
             """,
         ),
     ),
+    # exception chaining
+    """\
+    try:
+        1 / 0
+    except ZeroDivisionError as exc:
+        try:
+            raise RuntimeError("direct cause") from exc
+        except RuntimeError:
+            raise ValueError("indirect cause")
+    """: (
+        (
+            lambda v: v < (3, 11),
+            """\
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 2, in <module>
+                1 / 0
+            ZeroDivisionError: division by zero
+
+            The above exception was the direct cause of the following exception:
+
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 5, in <module>
+                raise RuntimeError("direct cause") from exc
+            RuntimeError: direct cause
+
+            During handling of the above exception, another exception occurred:
+
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 7, in <module>
+                raise ValueError("indirect cause")
+            ValueError: indirect cause
+            """,
+        ),
+        (
+            lambda v: v >= (3, 11),
+            """\
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 2, in <module>
+                1 / 0
+                ~~^~~
+            ZeroDivisionError: division by zero
+
+            The above exception was the direct cause of the following exception:
+
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 5, in <module>
+                raise RuntimeError("direct cause") from exc
+            RuntimeError: direct cause
+
+            During handling of the above exception, another exception occurred:
+
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 7, in <module>
+                raise ValueError("indirect cause")
+            ValueError: indirect cause
+            """,
+        ),
+    ),
+    # exception groups
+    """\
+    def f(v):
+        try:
+            1 / 0
+        except ZeroDivisionError:
+            try:
+                raise ValueError(v)
+            except ValueError as e:
+                return e
+    try:
+        raise ExceptionGroup("one", [f(1)])
+    except ExceptionGroup as e:
+        eg = e
+    try:
+        raise ExceptionGroup("two", [f(2), eg])
+    except ExceptionGroup as e:
+        raise RuntimeError("wrapping") from e
+    """: (
+        (
+            lambda v: v >= (3, 11),
+            """\
+              + Exception Group Traceback (most recent call last):
+              |   File "<test run - snippet #0>", line 14, in <module>
+              |     raise ExceptionGroup("two", [f(2), eg])
+              | ExceptionGroup: two (2 sub-exceptions)
+              +-+---------------- 1 ----------------
+                | Traceback (most recent call last):
+                |   File "<test run - snippet #0>", line 3, in f
+                |     1 / 0
+                |     ~~^~~
+                | ZeroDivisionError: division by zero
+                | 
+                | During handling of the above exception, another exception occurred:
+                | 
+                | Traceback (most recent call last):
+                |   File "<test run - snippet #0>", line 6, in f
+                |     raise ValueError(v)
+                | ValueError: 2
+                +---------------- 2 ----------------
+                | Exception Group Traceback (most recent call last):
+                |   File "<test run - snippet #0>", line 10, in <module>
+                |     raise ExceptionGroup("one", [f(1)])
+                | ExceptionGroup: one (1 sub-exception)
+                +-+---------------- 1 ----------------
+                  | Traceback (most recent call last):
+                  |   File "<test run - snippet #0>", line 3, in f
+                  |     1 / 0
+                  |     ~~^~~
+                  | ZeroDivisionError: division by zero
+                  | 
+                  | During handling of the above exception, another exception occurred:
+                  | 
+                  | Traceback (most recent call last):
+                  |   File "<test run - snippet #0>", line 6, in f
+                  |     raise ValueError(v)
+                  | ValueError: 1
+                  +------------------------------------
+
+            The above exception was the direct cause of the following exception:
+
+            Traceback (most recent call last):
+              File "<test run - snippet #0>", line 16, in <module>
+                raise RuntimeError("wrapping") from e
+            RuntimeError: wrapping
+            """,
+        ),
+    ),
 }
 
 

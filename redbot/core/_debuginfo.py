@@ -143,6 +143,24 @@ class DebugInfo:
         parts = [f"Instance name: {instance_name}"]
 
         if self.bot is not None:
+            # sys.original_argv is available since 3.10 and shows the actual command line arguments
+            # rather than a Python-transformed version (i.e. with '-c' or path to `__main__.py`
+            # as first element). We could just not show the first argument for consistency
+            # but it can be useful.
+            cli_args = getattr(sys, "orig_argv", sys.argv).copy()
+            # best effort attempt to expunge a token argument
+            for idx, arg in enumerate(cli_args):
+                if not arg.startswith("--to"):
+                    continue
+                arg_name, sep, arg_value = arg.partition("=")
+                if arg_name not in ("--to", "--tok", "--toke", "--token"):
+                    continue
+                if sep:
+                    cli_args[idx] = f"{arg_name}{sep}[EXPUNGED]"
+                elif len(cli_args) > idx + 1:
+                    cli_args[idx + 1] = f"[EXPUNGED]"
+            parts.append(f"Command line arguments: {cli_args!r}")
+
             # This formatting is a bit ugly but this is a debug information command
             # and calling repr() on prefix strings ensures that the list isn't ambiguous.
             prefixes = ", ".join(map(repr, await self.bot._config.prefix()))

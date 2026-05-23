@@ -4,7 +4,12 @@
 This script mostly aims to help with the changelog-related tasks but it does also guide you
 through the release process steps including running the 'Prepare release' workflow.
 """
+
+from __future__ import annotations
+
+import dataclasses
 import enum
+import functools
 import json
 import os
 import pydoc
@@ -12,9 +17,10 @@ import re
 import shlex
 import subprocess
 import time
+import urllib.parse
 import webbrowser
 from collections import defaultdict
-from typing import Dict, List, Optional
+from typing import Dict, List, NamedTuple, Optional, Set
 
 import click
 import requests
@@ -29,7 +35,7 @@ class ReleaseType(enum.Enum):
     MAINTENANCE = 3
     HOTFIX = 4
 
-    def __str__(self) -> None:
+    def __str__(self) -> str:
         return f"{self.name.lower()} release"
 
     @classmethod
@@ -82,6 +88,15 @@ query getMilestoneContributors(
                 }
               }
             }
+            mergeCommit {
+                authors(first: 100) {
+                    nodes {
+                        user {
+                            login
+                        }
+                    }
+                }
+            }
           }
           pageInfo {
             endCursor
@@ -105,9 +120,7 @@ query getAllTagCommits {
       nodes {
         name
         target {
-          ... on Commit {
-            oid
-          }
+          commitResourcePath
         }
       }
     }
@@ -139,6 +152,27 @@ query getCommitHistory($refQualifiedName: String!, $after: String) {
             }
           }
         }
+      }
+    }
+  }
+}
+"""
+GET_LAST_ISSUE_NUMBER_QUERY = """
+query getLastIssueNumber {
+  repository(owner: "Cog-Creators", name: "Red-DiscordBot") {
+    discussions(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
+      }
+    }
+    issues(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
+      }
+    }
+    pullRequests(orderBy: {field: CREATED_AT, direction: DESC}, first: 1) {
+      nodes {
+        number
       }
     }
   }
@@ -208,9 +242,32 @@ def print_markdown(text: str) -> None:
     rich.print(Markdown(text))
 
 
+def cli_link(text: str, url: str) -> str:
+    return f"\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\"
+
+
+def linkify_users(users: List[str], *, version: str = "") -> List[str]:
+    base_url = f"{GH_URL}/pulls?q="
+    if version:
+        base_url += f"milestone:{version}+"
+    return [
+        cli_link(login, f"{base_url}involves:{login}") for login in sorted(users, key=str.lower)
+    ]
+
+
 def linkify_issue_refs_cli(text: str) -> str:
     return LINKIFY_ISSUE_REFS_RE.sub(
-        "\x1b]8;;" rf"{GH_URL}/issues/\1" "\x1b\\\\" r"\g<0>" "\x1b]8;;\x1b\\\\",
+        # OSC 8 - open hyperlink with no params
+        "\x1b]8;;"
+        # URI
+        # `\1` is substituted with the issue number (e.g. "123")
+        rf"{GH_URL}/issues/\1"
+        # ST (string terminator)
+        "\x1b\\\\"
+        # hyperlink text (`\g<0>` substituted with "#123")
+        r"\g<0>"
+        # OSC 8 - close hyperlink
+        "\x1b]8;;\x1b\\\\",
         text,
     )
 
@@ -228,11 +285,11 @@ def get_git_config_value(key: str) -> str:
         return ""
 
 
-def set_git_config_value(key: str, value: str) -> str:
+def set_git_config_value(key: str, value: str) -> None:
     subprocess.check_call(("git", "config", "--local", f"red-release-helper.{key}", value))
 
 
-def wipe_git_config_values() -> str:
+def wipe_git_config_values() -> None:
     try:
         subprocess.check_output(
             ("git", "config", "--local", "--remove-section", "red-release-helper")
@@ -304,8 +361,11 @@ def set_release_stage(stage: ReleaseStage) -> None:
 @click.group(invoke_without_command=True)
 @click.option("--continue", "abort", flag_value=False, default=None)
 @click.option("--abort", "abort", flag_value=True, default=None)
-def cli(*, abort: bool = None):
+@click.pass_context
+def cli(ctx: click.Context, *, abort: Optional[bool] = None):
     """Red's release helper, guiding you through the whole process!"""
+    if ctx.invoked_subcommand is not None:
+        return
     stage = get_release_stage()
     if abort is True:
         if stage is not ReleaseStage.WELCOME:
@@ -377,7 +437,7 @@ def cli(*, abort: bool = None):
     rich.print(Markdown("# Step 8+: Follow the release process documentation"))
     rich.print(
         "You can continue following the release process documentation from step 8:\n"
-        "https://red-devguide.readthedocs.io/core-devs/release-process/"
+        "https://red-devguide.readthedocs.io/core-devs/release-process/#write-announcement"
     )
     wipe_git_config_values()
 
@@ -501,7 +561,12 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
     else:
         rich.print("Time for a changelog!")
 
-    if click.confirm("Do you have a changelog already?"):
+    rich.print(
+        "Do you have a [bold]finished[/] changelog already?"
+        " This should include the contributor list.",
+        end="",
+    )
+    if click.confirm(""):
         set_release_stage(ReleaseStage.CHANGELOG_CREATED)
         return
     rich.print()
@@ -511,40 +576,46 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
     else:
         changelog_branch = f"V3/changelogs/{version}"
         subprocess.check_call(("git", "fetch", GH_URL))
-    try:
-        subprocess.check_call(("git", "checkout", "-b", changelog_branch, "FETCH_HEAD"))
-    except subprocess.CalledProcessError:
-        rich.print()
-        if click.confirm(
-            f"It seems that {changelog_branch} branch already exists, do you want to use it?"
-        ):
-            subprocess.check_call(("git", "checkout", changelog_branch))
-        elif not click.confirm("Do you want to use a different branch?"):
-            raise click.ClickException("Can't continue without a changelog branch...")
-        elif click.confirm("Do you want to create a new branch?"):
-            while True:
-                changelog_branch = click.prompt("Input the name of the new branch")
-                try:
-                    subprocess.check_call(
-                        ("git", "checkout", "-b", changelog_branch, "FETCH_HEAD")
-                    )
-                except subprocess.CalledProcessError:
-                    continue
-                else:
-                    break
-        else:
-            while True:
-                changelog_branch = click.prompt("Input the name of the branch to check out")
-                try:
-                    subprocess.check_call(("git", "checkout", changelog_branch))
-                except subprocess.CalledProcessError:
-                    continue
-                else:
-                    break
+        try:
+            subprocess.check_call(("git", "checkout", "-b", changelog_branch, "FETCH_HEAD"))
+        except subprocess.CalledProcessError:
+            rich.print()
+            if click.confirm(
+                f"It seems that {changelog_branch} branch already exists, do you want to use it?"
+            ):
+                subprocess.check_call(("git", "checkout", changelog_branch))
+            elif not click.confirm("Do you want to use a different branch?"):
+                raise click.ClickException("Can't continue without a changelog branch...")
+            elif click.confirm("Do you want to create a new branch?"):
+                while True:
+                    changelog_branch = click.prompt("Input the name of the new branch")
+                    try:
+                        subprocess.check_call(
+                            ("git", "checkout", "-b", changelog_branch, "FETCH_HEAD")
+                        )
+                    except subprocess.CalledProcessError:
+                        continue
+                    else:
+                        break
+            else:
+                while True:
+                    changelog_branch = click.prompt("Input the name of the branch to check out")
+                    try:
+                        subprocess.check_call(("git", "checkout", changelog_branch))
+                    except subprocess.CalledProcessError:
+                        continue
+                    else:
+                        break
 
-    set_changelog_branch(changelog_branch)
-    set_release_stage(ReleaseStage.CHANGELOG_BRANCH_EXISTS)
+        set_changelog_branch(changelog_branch)
+        set_release_stage(ReleaseStage.CHANGELOG_BRANCH_EXISTS)
 
+    title = f"Red {version} - Changelog"
+    commands = [
+        ("git", "add", "."),
+        ("git", "commit", "-m", title),
+        ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
+    ]
     if get_release_stage() < ReleaseStage.CHANGELOG_COMMITTED:
         rich.print(
             "\n:pencil: At this point, you should have an up-to-date milestone"
@@ -573,11 +644,6 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
             if option == "4":
                 break
 
-        commands = [
-            ("git", "add", "."),
-            ("git", "commit", "-m", f"Red {version} - Changelog"),
-            ("git", "push", "-u", GH_URL, f"{changelog_branch}:{changelog_branch}"),
-        ]
         print(
             "Do you want to commit everything from repo's working tree and push it?"
             " The following commands will run:"
@@ -591,10 +657,37 @@ def create_changelog(release_type: ReleaseType, version: str) -> None:
         else:
             print("Okay, please open a changelog PR manually then.")
     if get_release_stage() is ReleaseStage.CHANGELOG_COMMITTED:
+        token = get_github_token()
+        resp = requests.post(
+            "https://api.github.com/graphql",
+            json={"query": GET_LAST_ISSUE_NUMBER_QUERY},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        next_issue_number = (
+            max(
+                next(iter(data["nodes"]), {"number": 0})["number"]
+                for data in resp.json()["data"]["repository"].values()
+            )
+            + 1
+        )
+        docs_preview_url = (
+            f"https://red-discordbot--{next_issue_number}.org.readthedocs.build"
+            f"/en/{next_issue_number}/changelog.html"
+        )
         subprocess.check_call(commands[2])
+        query = {
+            "expand": "1",
+            "milestone": version,
+            "labels": "Type: Feature,Changelog Entry: Skipped",
+            "title": title,
+            "body": (
+                "### Description of the changes\n\n"
+                f"The PR for Red {version} changelog.\n\n"
+                f"Docs preview: {docs_preview_url}"
+            ),
+        }
         pr_url = (
-            f"{GH_URL}/compare/V3/develop...{changelog_branch}"
-            f"?expand=1&milestone={version}&labels=Type:+Feature"
+            f"{GH_URL}/compare/V3/develop...{changelog_branch}?{urllib.parse.urlencode(query)}"
         )
         print(f"Create new PR: {pr_url}")
         webbrowser.open_new_tab(pr_url)
@@ -700,7 +793,15 @@ def run_prepare_release_workflow(release_type: ReleaseType, version: str) -> Non
                 break
             time.sleep(5)
 
-        subprocess.check_call(("gh", "run", "watch", str(run_id)))
+        try:
+            subprocess.check_call(("gh", "run", "watch", "--exit-status", str(run_id)))
+        except subprocess.CalledProcessError:
+            set_release_stage(ReleaseStage.CHANGELOG_REVIEWED)
+            raise click.ClickException(
+                "Github Actions workflow failed, run this command again"
+                " once you're ready to try running the 'Prepare Release' workflow again."
+            )
+
         rich.print("The automated pull requests have been created.\n")
         set_release_stage(ReleaseStage.PREPARE_RELEASE_RAN)
     rich.print(Markdown("# Step 6: Merge the automatically created PRs"))
@@ -777,11 +878,11 @@ STEPS = (
 @cli.command(name="unreleased")
 @click.argument("version")
 @click.argument("base_branch")
-def cli_unreleased(version: str, base_branch: str) -> int:
+def cli_unreleased(version: str, base_branch: str) -> None:
     show_unreleased_commits(version, base_branch)
 
 
-def show_unreleased_commits(version: str, base_branch: str) -> int:
+def show_unreleased_commits(version: str, base_branch: str) -> None:
     token = get_github_token()
 
     resp = requests.post(
@@ -791,7 +892,8 @@ def show_unreleased_commits(version: str, base_branch: str) -> int:
     )
     json = resp.json()
     tag_commits = {
-        node["target"]["oid"]: node["name"] for node in json["data"]["repository"]["refs"]["nodes"]
+        node["target"]["commitResourcePath"].rsplit("/", 1)[-1]: node["name"]
+        for node in json["data"]["repository"]["refs"]["nodes"]
     }
 
     after = None
@@ -863,7 +965,7 @@ def cli_milestone(version: str) -> None:
 
 
 def view_milestone_issues(version: str) -> None:
-    issue_views = []
+    issue_views: List[str] = []
     for issue_type in ("pr", "issue"):
         for number in subprocess.check_output(
             (
@@ -900,23 +1002,45 @@ def cli_contributors(version: str, *, show_not_merged: bool = False) -> None:
 
 
 def get_contributors(version: str, *, show_not_merged: bool = False) -> None:
-    print(
-        ", ".join(
-            f":ghuser:`{username}`"
-            for username in _get_contributors(version, show_not_merged=show_not_merged)
-        )
-    )
+    contribs = _get_contributors(version, show_not_merged=show_not_merged)
+    warning_threshold = 4
+    for pr_number, pr_contribs in contribs.pull_requests.items():
+        if len(pr_contribs.authors) < warning_threshold:
+            continue
+        authors = []
+        for author in pr_contribs.authors:
+            if author in contribs.reviewers:
+                continue
+            for pr_info in contribs.authors[author]:
+                nested_pr_contribs = contribs.pull_requests[pr_info.number]
+                if len(nested_pr_contribs.authors) < warning_threshold:
+                    break
+            else:
+                authors.append(author)
+        if authors:
+            linkified_authors = ", ".join(linkify_users(authors, version=version))
+            print(
+                linkify_issue_refs_cli(
+                    f"WARNING: Found over {warning_threshold} authors for PR #{pr_number},"
+                    f" double check that the following contributed to this release:\n"
+                    f"{linkified_authors}\n"
+                )
+            )
+    print("---\n")
+    print(*linkify_users(contribs.combined_contributors, version=version))
+    print("\n---")
 
 
-def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[str]:
+def _get_contributors(version: str, *, show_not_merged: bool = False) -> Contributors:
     after = None
     has_next_page = True
-    authors = {}
-    reviewers = {}
+    authors: Dict[str, List[PullRequest]] = {}
+    reviewers: Dict[str, List[PullRequest]] = {}
     token = get_github_token()
     states = ["MERGED"]
     if show_not_merged:
         states.append("OPEN")
+    pr_contribs: Dict[int, PullRequestContributors] = {}
     while has_next_page:
         resp = requests.post(
             "https://api.github.com/graphql",
@@ -935,23 +1059,74 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
             milestone_data = json["data"]["repository"]["milestones"]["nodes"][0]
         except IndexError:
             raise click.ClickException("Given milestone couldn't have been found.")
-        milestone_title = milestone_data["title"]
         pull_requests = milestone_data["pullRequests"]
         nodes = pull_requests["nodes"]
         for pr_node in nodes:
-            pr_info = (pr_node["number"], pr_node["title"])
-            pr_author = pr_node["author"]["login"]
-            authors.setdefault(pr_author, []).append(pr_info)
+            pr_info = PullRequest(pr_node["number"], pr_node["title"])
             reviews = pr_node["latestOpinionatedReviews"]["nodes"]
+            pr_reviewers = set()
             for review_node in reviews:
                 review_author = review_node["author"]["login"]
-                reviewers.setdefault(review_author, []).append(pr_info)
+                if not review_author.endswith("[bot]"):
+                    reviewers.setdefault(review_author, []).append(pr_info)
+                    pr_reviewers.add(review_author)
+
+            merge_commit = pr_node["mergeCommit"]
+            author_logins = set()
+            if pr_node["author"] is not None:
+                author_logins.add(pr_node["author"]["login"])
+            if merge_commit is not None:
+                author_logins.update(
+                    author_node["user"]["login"]
+                    for author_node in merge_commit["authors"]["nodes"]
+                    if author_node["user"] is not None
+                )
+
+            pr_authors = set()
+            for login in author_logins:
+                if not login.endswith("[bot]"):
+                    authors.setdefault(login, []).append(pr_info)
+                    pr_authors.add(login)
+
+            pr_contribs[pr_info.number] = PullRequestContributors(
+                pr_info.number, pr_authors, pr_reviewers
+            )
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
         has_next_page = page_info["hasNextPage"]
 
-    return sorted(authors.keys() | reviewers.keys(), key=lambda t: t[0].lower())
+    return Contributors(authors, reviewers, pr_contribs)
+
+
+class PullRequest(NamedTuple):
+    number: int
+    title: str
+
+
+@dataclasses.dataclass
+class PullRequestContributors:
+    number: int
+    # list of logins
+    authors: Set[str]
+    reviewers: Set[str]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors | self.reviewers, key=str.lower)
+
+
+@dataclasses.dataclass
+class Contributors:
+    # login -> PullRequest
+    authors: Dict[str, List[PullRequest]]
+    reviewers: Dict[str, List[PullRequest]]
+    # PR number -> PullRequestContributors
+    pull_requests: Dict[int, PullRequestContributors]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors.keys() | self.reviewers.keys(), key=str.lower)
 
 
 if __name__ == "__main__":
