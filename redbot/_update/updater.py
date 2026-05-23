@@ -312,7 +312,10 @@ class Updater:
         )
 
         if self.options.red_version:
-            if self.options.red_version <= self.current_version:
+            if self.options.red_version < self.current_version or (
+                not self.options.force_reinstall
+                and self.options.red_version == self.current_version
+            ):
                 common.print_with_prefix_column(
                     common.ICON_ERROR, "You can only update to a newer version of Red."
                 )
