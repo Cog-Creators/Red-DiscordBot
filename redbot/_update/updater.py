@@ -302,7 +302,8 @@ class Updater:
             available_versions = await fetch_available_red_versions(
                 include_prereleases=(
                     self.options.red_version.is_prerelease
-                    or common.get_current_red_version().is_prerelease
+                    if self.options.red_version is not None
+                    else common.get_current_red_version().is_prerelease
                 )
             )
             latest_major = available_versions[0]
