@@ -619,12 +619,12 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
     async def command_summon(
-        self, ctx: commands.Context, *, voice_channel: Optional[discord.VoiceChannel] = None
+        self, ctx: commands.Context, *, voice_channel: discord.VoiceChannel = None
     ):
         """Summon the bot to a voice channel.
 
-        You can specify a personalised voice room with an id. Otherwise, the bot will join the voice room you are in.
-        To learn how to get a channel ID please read the following help article: <https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID>
+        If `[voice_channel]` is not specified, the bot will join the channel you are currently in.
+        `[voice_channel]` can be a channel link ("Copy Link" option in channel's context menu) or ID.
         """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
