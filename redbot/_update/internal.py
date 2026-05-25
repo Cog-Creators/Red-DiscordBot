@@ -421,6 +421,7 @@ def reinstall(
                 common.ICON_ERROR, "Failed to restore old virtual environment."
             )
         else:
+            status.stop()
             common.print_with_prefix_column(
                 common.ICON_INFO, "The old virtual environment has been restored."
             )
