@@ -649,6 +649,7 @@ class Updater:
                 "redbot.setup",
                 "backup",
                 *debug_args,
+                "--",
                 instance_name,
                 str(instance_backups_dir),
             )

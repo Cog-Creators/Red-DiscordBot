@@ -348,6 +348,7 @@ async def _call_cog_update(instance_name: str, *, update_repos: bool) -> Tuple[i
         "redbot._update.internal",
         *debug_args,
         _UPDATE_COGS_CMD_NAME,
+        "--",
         instance_name,
     ]
     if update_repos:
