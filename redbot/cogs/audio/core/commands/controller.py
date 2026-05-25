@@ -649,6 +649,15 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
+            if voice_channel is not None:
+                current_perms = voice_channel.permissions_for(ctx.author)
+                if not current_perms.speak or not current_perms.connect:
+                    ctx.command.reset_cooldown(ctx)
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Join Voice Channel"),
+                        description=_("You don't have permission to connect and speak in this channel."),
+                    )
             channel = voice_channel or ctx.author.voice.channel
             if (
                 not self.can_join_and_speak(channel)
