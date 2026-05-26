@@ -87,6 +87,7 @@ INFO_JSON = {
     "author": ("tekulvw",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
+    "min_python_version": [3, 7, 1],
     "description": "A long description",
     "hidden": False,
     "install_msg": "A post-installation message",
@@ -101,6 +102,7 @@ LIBRARY_INFO_JSON = {
     "author": ("seputaes",),
     "min_bot_version": "3.0.0",
     "max_bot_version": "3.0.2",
+    "min_python_version": [3, 7, 1],
     "description": "A long library description",
     "hidden": False,  # libraries are always hidden, this tests it will be flipped
     "install_msg": "A library install message",
@@ -127,8 +129,9 @@ def installed_cog(tmpdir):
     cog_path = tmpdir.mkdir("test_repo").mkdir("test_installed_cog")
     info_path = cog_path.join("info.json")
     info_path.write_text(json.dumps(INFO_JSON), "utf-8")
+    location = Path(str(cog_path))
 
-    cog_info = InstalledModule(Path(str(cog_path)))
+    cog_info = InstalledModule(location, install_location=location)
     return cog_info
 
 
