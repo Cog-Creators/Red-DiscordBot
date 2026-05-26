@@ -46,23 +46,34 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         can_skip = await self._can_instaskip(ctx, ctx.author)
         is_alone = await self.is_requester_alone(ctx, channel)
-        if (vote_enabled or (vote_enabled and dj_enabled)) and not can_skip and not is_alone:
+        if is_alone or can_skip:
+            # User can always disconnect the bot, if there is nobody else in the player's channel
+            # or when they can instaskip.
+            pass
+        # There is someone else in the player's channel and the author can't instaskip,
+        # we have to ensure that none of the following are true for them to be allowed to DC:
+        elif vote_enabled:
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Disconnect"),
                 description=_("There are other people listening - vote to skip instead."),
             )
-        if dj_enabled and not vote_enabled and not can_skip:
+        elif dj_enabled:
+            # DJ role would have granted the user the ability to instaskip,
+            # so we know they don't have it
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Disconnect"),
                 description=_("You need the DJ role to disconnect."),
             )
-        if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not channel.permissions_for(ctx.author).connect
-            and not is_alone
+        elif not channel.permissions_for(ctx.author).connect and (
+            not ctx.author.voice or ctx.author.voice.channel != channel
         ):
+            # The user cannot connect to player's current channel,
+            # so they shouldn't be able to affect what the bot is doing there.
+            # As a special case, if the user is already connected to the channel
+            # (perhaps they were moved by a mod), we should assume they can tell the bot to DC,
+            # since they can already perform any other player action by being in its channel.
             return await self.send_embed_msg(
                 ctx,
                 title=_("Unable To Disconnect"),
