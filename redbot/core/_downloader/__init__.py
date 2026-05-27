@@ -154,9 +154,10 @@ async def installed_cogs() -> Tuple[InstalledModule, ...]:
 
     """
     installed = await _config.installed_cogs()
+    install_path = await _cog_mgr.install_path()
     # noinspection PyTypeChecker
     return tuple(
-        InstalledModule.from_json(cog_json, _repo_manager)
+        InstalledModule.from_json(cog_json, _repo_manager, base_target_dir=install_path)
         for repo_json in installed.values()
         for cog_json in repo_json.values()
     )
@@ -174,7 +175,7 @@ async def installed_libraries() -> Tuple[InstalledModule, ...]:
     installed = await _config.installed_libraries()
     # noinspection PyTypeChecker
     return tuple(
-        InstalledModule.from_json(lib_json, _repo_manager)
+        InstalledModule.from_json(lib_json, _repo_manager, base_target_dir=SHAREDLIB_PATH)
         for repo_json in installed.values()
         for lib_json in repo_json.values()
     )
@@ -388,8 +389,8 @@ async def _install_cogs(
         for commit, cogs_to_install in cogs_by_commit.items():
             await repo.checkout(commit)
             for cog in cogs_to_install:
-                if await cog.copy_to(await _cog_mgr.install_path()):
-                    installed.append(InstalledModule.from_installable(cog))
+                if install_location := await cog.copy_to(await _cog_mgr.install_path()):
+                    installed.append(InstalledModule.from_installable(cog, install_location))
                 else:
                     failed.append(cog)
         await repo.checkout(exit_to_commit)

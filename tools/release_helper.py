@@ -4,7 +4,12 @@
 This script mostly aims to help with the changelog-related tasks but it does also guide you
 through the release process steps including running the 'Prepare release' workflow.
 """
+
+from __future__ import annotations
+
+import dataclasses
 import enum
+import functools
 import json
 import os
 import pydoc
@@ -15,7 +20,7 @@ import time
 import urllib.parse
 import webbrowser
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Set
 
 import click
 import requests
@@ -82,6 +87,15 @@ query getMilestoneContributors(
                   login
                 }
               }
+            }
+            mergeCommit {
+                authors(first: 100) {
+                    nodes {
+                        user {
+                            login
+                        }
+                    }
+                }
             }
           }
           pageInfo {
@@ -228,9 +242,32 @@ def print_markdown(text: str) -> None:
     rich.print(Markdown(text))
 
 
+def cli_link(text: str, url: str) -> str:
+    return f"\x1b]8;;{url}\x1b\\{text}\x1b]8;;\x1b\\"
+
+
+def linkify_users(users: List[str], *, version: str = "") -> List[str]:
+    base_url = f"{GH_URL}/pulls?q="
+    if version:
+        base_url += f"milestone:{version}+"
+    return [
+        cli_link(login, f"{base_url}involves:{login}") for login in sorted(users, key=str.lower)
+    ]
+
+
 def linkify_issue_refs_cli(text: str) -> str:
     return LINKIFY_ISSUE_REFS_RE.sub(
-        "\x1b]8;;" rf"{GH_URL}/issues/\1" "\x1b\\\\" r"\g<0>" "\x1b]8;;\x1b\\\\",
+        # OSC 8 - open hyperlink with no params
+        "\x1b]8;;"
+        # URI
+        # `\1` is substituted with the issue number (e.g. "123")
+        rf"{GH_URL}/issues/\1"
+        # ST (string terminator)
+        "\x1b\\\\"
+        # hyperlink text (`\g<0>` substituted with "#123")
+        r"\g<0>"
+        # OSC 8 - close hyperlink
+        "\x1b]8;;\x1b\\\\",
         text,
     )
 
@@ -965,18 +1002,45 @@ def cli_contributors(version: str, *, show_not_merged: bool = False) -> None:
 
 
 def get_contributors(version: str, *, show_not_merged: bool = False) -> None:
-    print(*_get_contributors(version, show_not_merged=show_not_merged))
+    contribs = _get_contributors(version, show_not_merged=show_not_merged)
+    warning_threshold = 4
+    for pr_number, pr_contribs in contribs.pull_requests.items():
+        if len(pr_contribs.authors) < warning_threshold:
+            continue
+        authors = []
+        for author in pr_contribs.authors:
+            if author in contribs.reviewers:
+                continue
+            for pr_info in contribs.authors[author]:
+                nested_pr_contribs = contribs.pull_requests[pr_info.number]
+                if len(nested_pr_contribs.authors) < warning_threshold:
+                    break
+            else:
+                authors.append(author)
+        if authors:
+            linkified_authors = ", ".join(linkify_users(authors, version=version))
+            print(
+                linkify_issue_refs_cli(
+                    f"WARNING: Found over {warning_threshold} authors for PR #{pr_number},"
+                    f" double check that the following contributed to this release:\n"
+                    f"{linkified_authors}\n"
+                )
+            )
+    print("---\n")
+    print(*linkify_users(contribs.combined_contributors, version=version))
+    print("\n---")
 
 
-def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[str]:
+def _get_contributors(version: str, *, show_not_merged: bool = False) -> Contributors:
     after = None
     has_next_page = True
-    authors: Dict[str, List[Tuple[int, str]]] = {}
-    reviewers: Dict[str, List[Tuple[int, str]]] = {}
+    authors: Dict[str, List[PullRequest]] = {}
+    reviewers: Dict[str, List[PullRequest]] = {}
     token = get_github_token()
     states = ["MERGED"]
     if show_not_merged:
         states.append("OPEN")
+    pr_contribs: Dict[int, PullRequestContributors] = {}
     while has_next_page:
         resp = requests.post(
             "https://api.github.com/graphql",
@@ -998,19 +1062,71 @@ def _get_contributors(version: str, *, show_not_merged: bool = False) -> List[st
         pull_requests = milestone_data["pullRequests"]
         nodes = pull_requests["nodes"]
         for pr_node in nodes:
-            pr_info = (pr_node["number"], pr_node["title"])
-            pr_author = pr_node["author"]["login"]
-            authors.setdefault(pr_author, []).append(pr_info)
+            pr_info = PullRequest(pr_node["number"], pr_node["title"])
             reviews = pr_node["latestOpinionatedReviews"]["nodes"]
+            pr_reviewers = set()
             for review_node in reviews:
                 review_author = review_node["author"]["login"]
-                reviewers.setdefault(review_author, []).append(pr_info)
+                if not review_author.endswith("[bot]"):
+                    reviewers.setdefault(review_author, []).append(pr_info)
+                    pr_reviewers.add(review_author)
+
+            merge_commit = pr_node["mergeCommit"]
+            author_logins = set()
+            if pr_node["author"] is not None:
+                author_logins.add(pr_node["author"]["login"])
+            if merge_commit is not None:
+                author_logins.update(
+                    author_node["user"]["login"]
+                    for author_node in merge_commit["authors"]["nodes"]
+                    if author_node["user"] is not None
+                )
+
+            pr_authors = set()
+            for login in author_logins:
+                if not login.endswith("[bot]"):
+                    authors.setdefault(login, []).append(pr_info)
+                    pr_authors.add(login)
+
+            pr_contribs[pr_info.number] = PullRequestContributors(
+                pr_info.number, pr_authors, pr_reviewers
+            )
 
         page_info = pull_requests["pageInfo"]
         after = page_info["endCursor"]
         has_next_page = page_info["hasNextPage"]
 
-    return sorted(authors.keys() | reviewers.keys(), key=lambda t: t[0].lower())
+    return Contributors(authors, reviewers, pr_contribs)
+
+
+class PullRequest(NamedTuple):
+    number: int
+    title: str
+
+
+@dataclasses.dataclass
+class PullRequestContributors:
+    number: int
+    # list of logins
+    authors: Set[str]
+    reviewers: Set[str]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors | self.reviewers, key=str.lower)
+
+
+@dataclasses.dataclass
+class Contributors:
+    # login -> PullRequest
+    authors: Dict[str, List[PullRequest]]
+    reviewers: Dict[str, List[PullRequest]]
+    # PR number -> PullRequestContributors
+    pull_requests: Dict[int, PullRequestContributors]
+
+    @functools.cached_property
+    def combined_contributors(self):
+        return sorted(self.authors.keys() | self.reviewers.keys(), key=str.lower)
 
 
 if __name__ == "__main__":

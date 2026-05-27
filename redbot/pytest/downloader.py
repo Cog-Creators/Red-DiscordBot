@@ -129,8 +129,9 @@ def installed_cog(tmpdir):
     cog_path = tmpdir.mkdir("test_repo").mkdir("test_installed_cog")
     info_path = cog_path.join("info.json")
     info_path.write_text(json.dumps(INFO_JSON), "utf-8")
+    location = Path(str(cog_path))
 
-    cog_info = InstalledModule(Path(str(cog_path)))
+    cog_info = InstalledModule(location, install_location=location)
     return cog_info
 
 

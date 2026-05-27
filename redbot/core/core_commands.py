@@ -3708,8 +3708,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
+
+            angle_bracket_warning = None
+
+            for token_name, token in tokens.items():
+                if token.startswith("<") and token.endswith(">"):
+                    angle_bracket_warning = _(
+                        "You may have failed to properly format your `{token_name}`. If you were told to enter a token"
+                        " with an example such as `[p]set api {service} {token_name} <your_{token_name}_here>`, and your {token_name}"
+                        " was `HREDFGWE`, make sure to run `[p]set api {service} {token_name} HREDFGWE` and not "
+                        "`[p]set api {service} {token_name} <HREDFGWE>`."
+                    ).format(token_name=token_name, service=service)
+                    break
+
             await ctx.bot.set_shared_api_tokens(service, **tokens)
-            await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+
+            message = _("`{service}` API tokens have been set.").format(service=service)
+            if angle_bracket_warning:
+                message += "\n\n" + _("**Warning:** ") + angle_bracket_warning
+
+            await ctx.send(message)
 
     @_set_api.command(name="list")
     async def _set_api_list(self, ctx: commands.Context):

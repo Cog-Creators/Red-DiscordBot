@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from .info_schemas import REPO_SCHEMA, update_mixin
 from .log import log
@@ -9,7 +9,7 @@ from .log import log
 class RepoJSONMixin:
     INFO_FILE_NAME = "info.json"
 
-    def __init__(self, repo_folder: Path):
+    def __init__(self, repo_folder: Path, *, info_file: Optional[Path] = None):
         self._repo_folder = repo_folder
 
         self.author: Tuple[str, ...]
@@ -17,7 +17,7 @@ class RepoJSONMixin:
         self.short: str
         self.description: str
 
-        self._info_file = repo_folder / self.INFO_FILE_NAME
+        self._info_file = info_file or repo_folder / self.INFO_FILE_NAME
         self._info: Dict[str, Any]
 
         self._read_info_file()

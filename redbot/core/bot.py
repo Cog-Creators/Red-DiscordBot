@@ -249,6 +249,9 @@ class Red(
         kwargs["max_messages"] = message_cache_size
         self._max_messages = message_cache_size
 
+        if cli_flags.enable_debug_events:
+            kwargs["enable_debug_events"] = True
+
         self._uptime = None
         self._checked_time_accuracy = None
 

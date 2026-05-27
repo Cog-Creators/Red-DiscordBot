@@ -61,7 +61,8 @@ async def _run_cog_update(bot: Red, *, update_repos: bool) -> None:
     console = common.get_console(stderr=True)
 
     instance_name = data_manager.instance_name()
-    last_known_prefix = await bot._config.last_system_info.python_prefix()
+    last_system_info = await bot._config.last_system_info()
+    last_known_prefix = last_system_info["python_prefix"]
     same_install = False
     if last_known_prefix is not None:
         try:
@@ -78,11 +79,45 @@ async def _run_cog_update(bot: Red, *, update_repos: bool) -> None:
         " instance.",
         console=console,
     )
+
+    await _downloader._init(bot)
+
+    ver_info = list(sys.version_info[:2])
+    if ver_info != last_system_info["python_version"]:
+        await bot._config.last_system_info.python_version.set(ver_info)
+        if any(_downloader.LIB_PATH.iterdir()):
+            shutil.rmtree(str(_downloader.LIB_PATH))
+            _downloader.LIB_PATH.mkdir()
+            common.print_with_prefix_column(
+                common.ICON_INFO,
+                "We detected a change in minor Python version and cleared packages in lib folder.",
+            )
+            status = Text.assemble(
+                "Reinstalling cog requirements on the ", (instance_name, "bold"), " instance..."
+            )
+            with console.status(status):
+                failed_reqs, failed_libs = await _downloader.reinstall_requirements()
+            stdout_console.print(
+                "Cog requirements and shared libraries for all installed cogs"
+                " have been reinstalled."
+            )
+            if failed_reqs:
+                common.print_with_prefix_column(
+                    common.ICON_ERROR,
+                    "Failed to reinstall requirements: ",
+                    Text(", ").join(Text(req, style="bold") for req in failed_reqs),
+                )
+            if failed_libs:
+                common.print_with_prefix_column(
+                    common.ICON_ERROR,
+                    "Failed to reinstall shared libraries: ",
+                    Text(", ").join(Text(lib.name, style="bold") for lib in failed_libs),
+                )
+
     status = Text.assemble(
         "Update cogs installed on the ", (instance_name, "bold"), " instance..."
     )
     with console.status(status):
-        await _downloader._init_without_bot(bot._cog_mgr)
         result = await _downloader.update_cogs(update_repos=update_repos)
 
     common.print_with_prefix_column(
@@ -210,6 +245,16 @@ async def _finish_update() -> None:
                     Text(cog_name, style="bold") for cog_name in sorted(unsupported_cogs)
                 ),
             )
+
+    old_python_version = updater_metadata.current_python_version.release[:2]
+    new_python_version = updater_metadata.interpreter_version.release[:2]
+    if old_python_version != new_python_version:
+        common.print_with_prefix_column(
+            common.ICON_INFO,
+            "Downloader's library folder needs to be regenerated"
+            " because the used Python version changed.\n"
+            "Choosing to update cogs now will perform this step automatically.",
+        )
 
     update_cogs = updater_metadata.options.update_cogs
     if update_cogs is None:
@@ -348,6 +393,7 @@ async def _call_cog_update(instance_name: str, *, update_repos: bool) -> Tuple[i
         "redbot._update.internal",
         *debug_args,
         _UPDATE_COGS_CMD_NAME,
+        "--",
         instance_name,
     ]
     if update_repos:

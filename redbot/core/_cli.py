@@ -138,6 +138,12 @@ def parse_cli_flags(args):
     parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
     parser.add_argument("--debuginfo", action="store_true", help="Show debug information.")
     parser.add_argument(
+        "--enable-debug-events",
+        action="store_true",
+        help="Enable discord.py raw socket events (on_socket_raw_receive and on_socket_raw_send)."
+        " This may reduce the bot's performance significantly.",
+    )
+    parser.add_argument(
         "--list-instances",
         action="store_true",
         help="List all instance names setup with 'redbot-setup'",
