@@ -51,11 +51,12 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
+        if number > 2**63 - 1:
+            await ctx.send(_("Try a smaller number instead."))
+            return False
+
         if ctx.assume_yes:
             return True
-
-        if number > 2**63 - 1:
-            return await ctx.send(_("Try a smaller number instead."))
 
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages?").format(
@@ -453,13 +454,13 @@ class Cleanup(commands.Cog):
             mone = await channel.fetch_message(one)
         except discord.errors.NotFound:
             return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=one))
+                _("Could not find a message with the ID of {id}.").format(id=one)
             )
         try:
             mtwo = await channel.fetch_message(two)
         except discord.errors.NotFound:
             return await ctx.send(
-                _("Could not find a message with the ID of {id}.".format(id=two))
+                _("Could not find a message with the ID of {id}.").format(id=two)
             )
         to_delete = await self.get_messages_for_deletion(
             channel=channel, before=mtwo, after=mone, delete_pinned=delete_pinned
