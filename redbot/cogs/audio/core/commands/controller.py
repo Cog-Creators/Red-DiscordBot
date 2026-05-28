@@ -162,6 +162,8 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 view.message = message
             player.store("np_message", message)
             return
+        if not ctx.channel.permissions_for(ctx.me).add_reactions:
+            raise commands.BotMissingPermissions(["add_reactions"])
         message = await self.send_embed_msg(ctx, embed=embed, footer=text)
         player.store("np_message", message)
 
