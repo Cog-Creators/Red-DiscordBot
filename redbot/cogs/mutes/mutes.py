@@ -98,7 +98,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "muted_users": {},
             "default_time": 0,
             "dm": False,
-            "dm_on_unmute": True,
+            "dm_on_unmute": False,
             "show_mod": False,
         }
         self.config.register_global(schema_version=0)
@@ -189,6 +189,11 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             schema_version += 1
             await self.config.schema_version.set(schema_version)
 
+        if schema_version == 1:
+            await self._schema_1_to_2()
+            schema_version += 1
+            await self.config.schema_version.set(schema_version)
+
     async def _schema_0_to_1(self):
         """This contains conversion that adds guild ID to channel mutes data."""
         all_channels = await self.config.all_channels()
@@ -213,6 +218,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "Config conversion to schema_version 1 done. It took %s to proceed.",
             datetime.now() - start,
         )
+
+    async def _schema_1_to_2(self):
+        """This migration sets dm_on_unmute to True for guilds that previously had dm enabled,
+        preserving the existing unmute DM behaviour for those guilds."""
+        all_guilds = await self.config.all_guilds()
+        for guild_id, guild_data in all_guilds.items():
+            if guild_data.get("dm", False):
+                await self.config.guild_from_id(guild_id).dm_on_unmute.set(True)
 
     async def cog_before_invoke(self, ctx: commands.Context):
         if not self._ready.is_set():
