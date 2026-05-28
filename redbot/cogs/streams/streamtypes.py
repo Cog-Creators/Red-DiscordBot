@@ -3,26 +3,28 @@ import contextlib
 import json
 import logging
 import time
-from dateutil.parser import parse as parse_time
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 from random import choice
 from string import ascii_letters
-from datetime import datetime, timedelta, timezone
-import xml.etree.ElementTree as ET
-from typing import ClassVar, Optional, List, Tuple
+from typing import ClassVar, List, Optional, Tuple
 
 import aiohttp
 import discord
+from dateutil.parser import parse as parse_time
+
+from redbot.core.i18n import Translator
+from redbot.core.utils.chat_formatting import humanize_number
 
 from .errors import (
     APIError,
-    OfflineStream,
+    InvalidKickCredentials,
     InvalidTwitchCredentials,
     InvalidYoutubeCredentials,
+    OfflineStream,
     StreamNotFound,
     YoutubeQuotaExceeded,
 )
-from redbot.core.i18n import Translator
-from redbot.core.utils.chat_formatting import humanize_number, humanize_timedelta
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/helix/users"
@@ -34,6 +36,10 @@ YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
 YOUTUBE_SEARCH_ENDPOINT = YOUTUBE_BASE_URL + "/search"
 YOUTUBE_VIDEOS_ENDPOINT = YOUTUBE_BASE_URL + "/videos"
 YOUTUBE_CHANNEL_RSS = "https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
+
+KICK_BASE_URL = "https://api.kick.com/public/v1/"
+KICK_USERS_ENDPOINT = KICK_BASE_URL + "users"
+KICK_CHANNELS_ENDPOINT = KICK_BASE_URL + "channels"
 
 _ = Translator("Streams", __file__)
 
@@ -509,3 +515,108 @@ class PicartoStream(Stream):
 
         embed.set_footer(text=_("{adult}Category: {category} | Tags: {tags}").format(**data))
         return embed
+
+
+class KickStream(Stream):
+    token_name = "kick"
+    platform_name = "Kick"
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.pop("id", None)
+        self._display_name = None
+        self._token = kwargs.pop("token", None)
+        super().__init__(**kwargs)
+
+    @property
+    def display_name(self) -> Optional[str]:
+        return self._display_name or self.name
+
+    @display_name.setter
+    def display_name(self, value: str) -> None:
+        self._display_name = value
+
+    async def get_data(self, url: str, params: dict = {}) -> Tuple[Optional[int], dict]:
+        if self._token is None:
+            raise InvalidKickCredentials()
+
+        headers = {"Authorization": f"Bearer {self._token}"}
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.get(url, headers=headers, params=params, timeout=60) as resp:
+                    if resp.status != 200:
+                        return resp.status, {}
+
+                    data = await resp.json(encoding="utf-8")
+                    return resp.status, data["data"][0] if data["data"] else []
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError) as exc:
+                log.warning("Connection error occurred when fetching Kick stream", exc_info=exc)
+                return None, {}
+
+    async def is_online(self):
+        channel_code, channel_data = await self.get_data(
+            KICK_CHANNELS_ENDPOINT, {"slug": self.name}
+        )
+        if not channel_data:
+            raise StreamNotFound()
+
+        if channel_code == 200:
+            if channel_data["stream"]["is_live"] is False:
+                raise OfflineStream()
+
+            self.id = channel_data["broadcaster_user_id"]
+            user_profile_data = await self._fetch_user_profile()
+
+            final_data = dict.fromkeys(
+                ("game_name", "followers", "name", "slug", "profile_picture", "view_count")
+            )
+
+            if user_profile_data is not None:
+                final_data["user_name"] = self.display_name = user_profile_data["name"]
+                final_data["profile_picture"] = user_profile_data["profile_picture"]
+
+            stream_data = channel_data["stream"]
+            final_data["game_name"] = channel_data["category"]["name"]
+            final_data["title"] = channel_data["stream_title"]
+            final_data["thumbnail_url"] = stream_data["thumbnail"]
+            final_data["view_count"] = stream_data["viewer_count"]
+            final_data["slug"] = channel_data["slug"]
+
+            return self.make_embed(final_data)
+        elif channel_code == 401:
+            raise InvalidKickCredentials()
+        elif channel_code == 400:
+            raise StreamNotFound()
+        else:
+            raise APIError(channel_code, stream_data)
+
+    async def _fetch_user_profile(self):
+        code, data = await self.get_data(KICK_USERS_ENDPOINT, {"id": self.id})
+        if code == 200:
+            if not data:
+                raise StreamNotFound()
+            return data
+        elif code == 400:
+            raise StreamNotFound()
+        elif code == 401:
+            raise InvalidKickCredentials()
+        else:
+            raise APIError(code, data)
+
+    def make_embed(self, data):
+        url = f"https://www.kick.com/{data['slug']}" if data["slug"] is not None else None
+        logo = (
+            data["profile_picture"] or "https://www.google.com/s2/favicons?domain=kick.com&sz=256"
+        )
+        status = data["title"] or _("Untitled broadcast")
+        embed = discord.Embed(title=status, url=url, color=0x00E701)
+        embed.set_author(name=data["user_name"])
+        embed.add_field(name=_("Total views"), value=humanize_number(data["view_count"]))
+        embed.set_thumbnail(url=logo)
+        if data["thumbnail_url"]:
+            embed.set_image(url=rnd(data["thumbnail_url"]))
+        if data["game_name"]:
+            embed.set_footer(text=_("Playing: ") + data["game_name"])
+        return embed
+
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)

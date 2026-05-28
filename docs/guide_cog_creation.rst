@@ -3,11 +3,11 @@
 .. role:: python(code)
     :language: python
 
-========================
-Creating cogs for Red V3
-========================
+=====================
+Creating cogs for Red
+=====================
 
-This guide serves as a tutorial on creating cogs for Red V3.
+This guide serves as a tutorial on creating cogs for Red.
 It will cover the basics of setting up a package for your
 cog and the basics of setting up the file structure. We will
 also point you towards some further resources that may assist
@@ -111,8 +111,8 @@ Make sure that both files are saved.
 Testing your cog
 ----------------
 
-To test your cog, you will need a running instance of V3.
-Assuming you installed V3 as outlined above, run :code:`redbot-setup`
+To test your cog, you will need a running instance of Red.
+Assuming you installed Red as outlined above, run :code:`redbot-setup`
 and provide the requested information. Once that's done, run Red
 by doing :code:`redbot <instance name> --dev` to start Red.
 Complete the initial setup by providing a valid token and setting a
@@ -169,6 +169,4 @@ Becoming an Approved Cog Creator
 Additional resources
 --------------------
 
-Be sure to check out the :doc:`/guide_migration` for some resources
-on developing cogs for V3. This will also cover differences between V2 and V3 for
-those who developed cogs for V2.
+If you've developed cogs for V2, you might find `incompatible_changes/v2_migration` document helpful.

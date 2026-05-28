@@ -6,12 +6,12 @@
 Installing the pre-requirements
 -------------------------------
 
-Red Hat Enterprise Linux (RHEL) 9.4-9.x and its derivatives have all required packages available in official repositories.
+Red Hat Enterprise Linux (RHEL) 9.6-9.x and its derivatives have all required packages available in official repositories.
 Install them with dnf:
 
 .. prompt:: bash
 
-    sudo dnf -y install python3.11 python3.11-devel git java-17-openjdk-headless @development nano
+    sudo dnf -y install python3.11 python3.11-devel git java-25-openjdk-headless @development nano
 
 .. Include common instructions:
 

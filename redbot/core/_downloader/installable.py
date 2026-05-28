@@ -6,11 +6,11 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
 
+from packaging.version import Version
+
 from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
 from .json_mixins import RepoJSONMixin
-
-from redbot.core import VersionInfo
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
@@ -44,12 +44,12 @@ class Installable(RepoJSONMixin):
         Name(s) of the author(s).
     end_user_data_statement : `str`
         End user data statement of the module.
-    min_bot_version : `VersionInfo`
+    min_bot_version : `packaging.version.Version`
         The minimum bot version required for this Installable.
-    max_bot_version : `VersionInfo`
+    max_bot_version : `packaging.version.Version`
         The maximum bot version required for this Installable.
         Ignored if `min_bot_version` is newer than `max_bot_version`.
-    min_python_version : `tuple` of `int`
+    min_python_version : `packaging.version.Version`
         The minimum python version required for this cog.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
@@ -67,7 +67,14 @@ class Installable(RepoJSONMixin):
 
     """
 
-    def __init__(self, location: Path, repo: Optional[Repo] = None, commit: str = ""):
+    def __init__(
+        self,
+        location: Path,
+        repo: Optional[Repo] = None,
+        commit: str = "",
+        *,
+        info_file: Optional[Path] = None,
+    ):
         """Base installable initializer.
 
         Parameters
@@ -87,9 +94,9 @@ class Installable(RepoJSONMixin):
         self.commit = commit
 
         self.end_user_data_statement: str
-        self.min_bot_version: VersionInfo
-        self.max_bot_version: VersionInfo
-        self.min_python_version: Tuple[int, int, int]
+        self.min_bot_version: Version
+        self.max_bot_version: Version
+        self.min_python_version: Version
         self.hidden: bool
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL
@@ -97,7 +104,7 @@ class Installable(RepoJSONMixin):
         self.tags: Tuple[str, ...]
         self.type: InstallableType
 
-        super().__init__(location)
+        super().__init__(location, info_file=info_file)
 
     def __eq__(self, other: Any) -> bool:
         # noinspection PyProtectedMember
@@ -111,14 +118,14 @@ class Installable(RepoJSONMixin):
         """`str` : The name of this package."""
         return self._location.stem
 
-    async def copy_to(self, target_dir: Path) -> bool:
+    async def copy_to(self, target_dir: Path) -> Optional[Path]:
         """
         Copies this cog/shared_lib to the given directory. This
         will overwrite any files in the target directory.
 
         :param pathlib.Path target_dir: The installation directory to install to.
-        :return: Status of installation
-        :rtype: bool
+        :return: Install location of the cog or None in case of copy failure.
+        :rtype: `Path`, optional
         """
         copy_func: Callable[..., Any]
         if self._location.is_file():
@@ -126,13 +133,14 @@ class Installable(RepoJSONMixin):
         else:
             copy_func = functools.partial(shutil.copytree, dirs_exist_ok=True)
 
+        dst = target_dir / self._location.name
         # noinspection PyBroadException
         try:
-            copy_func(src=str(self._location), dst=str(target_dir / self._location.name))
+            copy_func(src=str(self._location), dst=str(dst))
         except:  # noqa: E722
             log.exception("Error occurred when copying path: %s", self._location)
-            return False
-        return True
+            return None
+        return dst
 
     def _read_info_file(self) -> None:
         super()._read_info_file()
@@ -160,8 +168,13 @@ class InstalledModule(Installable):
         commit: str = "",
         pinned: bool = False,
         json_repo_name: str = "",
+        *,
+        info_file: Optional[Path] = None,
+        install_location: Path,
     ):
-        super().__init__(location=location, repo=repo, commit=commit)
+        info_file = info_file or install_location / self.INFO_FILE_NAME
+        super().__init__(location=location, repo=repo, commit=commit, info_file=info_file)
+        self._install_location = install_location
         self.pinned: bool = pinned if self.type is InstallableType.COG else False
         # this is here so that Downloader could use real repo name instead of "MISSING_REPO"
         self._json_repo_name = json_repo_name
@@ -178,10 +191,10 @@ class InstalledModule(Installable):
 
     @classmethod
     def from_json(
-        cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager
+        cls, data: Dict[str, Union[str, bool]], repo_mgr: RepoManager, *, base_target_dir: Path
     ) -> InstalledModule:
         repo_name = cast(str, data["repo_name"])
-        cog_name = cast(str, data["module_name"])
+        module_name = cast(str, data["module_name"])
         commit = cast(str, data.get("commit", ""))
         pinned = cast(bool, data.get("pinned", False))
 
@@ -192,14 +205,26 @@ class InstalledModule(Installable):
         else:
             repo_folder = repo_mgr.repos_folder / "MISSING_REPO"
 
-        location = repo_folder / cog_name
+        location = repo_folder / module_name
+        install_location = base_target_dir / module_name
 
         return cls(
-            location=location, repo=repo, commit=commit, pinned=pinned, json_repo_name=repo_name
+            location=location,
+            repo=repo,
+            commit=commit,
+            pinned=pinned,
+            json_repo_name=repo_name,
+            install_location=install_location,
         )
 
     @classmethod
-    def from_installable(cls, module: Installable, *, pinned: bool = False) -> InstalledModule:
+    def from_installable(
+        cls, module: Installable, install_location: Path, *, pinned: bool = False
+    ) -> InstalledModule:
         return cls(
-            location=module._location, repo=module.repo, commit=module.commit, pinned=pinned
+            location=module._location,
+            repo=module.repo,
+            commit=module.commit,
+            pinned=pinned,
+            install_location=install_location,
         )

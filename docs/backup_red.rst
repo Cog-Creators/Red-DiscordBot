@@ -4,32 +4,140 @@
 Backing Up and Restoring Red
 ============================
 
-Red can be backed up and restored to any device as long as it is a supported operating system. See page: :ref:`end-user-guarantees`.
+Red can be backed up and restored to any system as long as it is a supported per our `end-user-guarantees`.
+The system it's restored to can be different from the system that was backed up.
 
-Backup steps are to be done in order and carefully to avoid any issues.
+.. note::
 
-#. Take note of the installed cogs with ``[p]cogs``; and cog repositories with ``[p]load downloader``, then ``[p]repo list`` (``[p]`` is your bot's prefix).
+    Some 3rd-party cogs may not support all systems that Core Red supports and such cogs may therefore not work,
+    if restored to an unsupported system. This does not affect cogs that do not impose additional restrictions.
+
+.. contents::
+    :local:
+    :depth: 2
+
+Creating backups
+****************
+
+Windows
+-------
+
+To make a backup, perform the following steps:
+
 #. Stop the bot, ideally with ``[p]shutdown``.
-#. Activate your venv, and run ``redbot-setup backup <instancename>``, replacing ``<instancename>`` with the name of your instance.
-#. Copy your backup file to the new machine/location.
-#. Extract the file to a location of your choice (remember the full path and make sure that the user you are going to install/run Red under can access this path).
-#. :ref:`Install Red <install-guides>` as normal on the new machine/location.
-#. Run ``redbot-setup`` in your venv to create a new instance, using the path you remembered above as your data path.
-#. Start your new instance.
-#. Re-add the cog repositories using the same names as before.
-#. Do ``[p]cog update``.
-#. Re-add any cogs that were not re-installed (you may have to uninstall them first as Downloader may think they are still installed).
+#. Activate your venv.
 
-    .. note::
+    .. prompt:: batch
 
-        The config (data) from cogs has been saved, but not the code itself.
+        "%userprofile%\redenv\Scripts\activate.bat"
+#. Backup your Red instance with the following command:
 
-    .. tip::
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
 
-        You can fix permissions (if needed) on your directory using:
+        redbot-setup backup <your instance name>
 
-        .. code-block:: bash
+    .. attention::
 
-            sudo chown -R <user>:<user> ~/.local
+        Replace ``<your instance name>`` with the name of the instance you want to backup.
+#. The command will create a backup file for you and show you the path to it.
 
-        Replace ``<user>`` with your actual username.
+.. tip::
+    
+    If you want to backup your instance to a custom folder,
+    you can run the ``redbot-setup backup`` command as shown below,
+    replacing ``C:\path\to\backup\folder`` with the path to the folder that
+    you want to backup your instance to:
+
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
+
+        redbot-setup backup <your instance name> C:\path\to\backup\folder
+
+Linux & Mac
+-----------
+
+To make a backup, perform the following steps:
+
+#. Stop the bot, ideally with ``[p]shutdown``.
+#. Activate your venv.
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
+#. Backup your Red instance with the following command:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot-setup backup <your instance name>
+
+    .. attention::
+
+        Replace ``<your instance name>`` with the name of the instance you want to backup.
+#. The command will create a backup file for you and show you the path to it.
+
+.. tip::
+    
+    If you want to backup your instance to a custom folder,
+    you can run the ``redbot-setup backup`` command as shown below,
+    replacing ``/path/to/backup/folder`` with the path to the folder that
+    you want to backup your instance to:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot-setup backup <your instance name> /path/to/backup/folder
+
+Restoring backups
+*****************
+
+Windows
+-------
+
+To restore a backup, perform the following steps:
+
+#. `Install Red <windows-install-guide>` on the new machine/location, skipping the ``redbot-setup`` step.
+#. Activate your venv.
+
+    .. prompt:: batch
+
+        "%userprofile%\redenv\Scripts\activate.bat"
+#. Restore your Red instance with the following command:
+
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
+
+        redbot-setup restore C:\path\to\backup\file.tar.gz
+
+    .. attention::
+
+        Replace ``C:\path\to\backup\file.tar.gz`` with the path to the backup file
+        that you want to restore from.
+
+#. The command will guide you through the restore process.
+
+Linux & Mac
+-----------
+
+To restore a backup, perform the following steps:
+
+#. `Install Red <install-guides>` on the new machine/location, skipping the ``redbot-setup`` step.
+#. Activate your venv.
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
+#. Restore your Red instance with the following command:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot-setup restore /path/to/backup/file.tar.gz
+
+    .. attention::
+
+        Replace ``/path/to/backup/file.tar.gz`` with the path to the backup file
+        that you want to restore from.
+
+#. The command will guide you through the restore process.

@@ -147,11 +147,13 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        can_control = await self._can_instaskip(ctx, ctx.author) or await self.is_requester_alone(
-            ctx
+        can_control = (
+            not (dj_enabled or vote_enabled)
+            or await self._can_instaskip(ctx, ctx.author)
+            or await self.is_requester_alone(ctx)
         )
         has_queue = bool(player.queue) or autoplay
-        if await ctx.bot._config.use_buttons():
+        if await ctx.bot.use_buttons():
             if (dj_enabled or vote_enabled) and not can_control:
                 message = await self.send_embed_msg(ctx, embed=embed, footer=text)
             else:
