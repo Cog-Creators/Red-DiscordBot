@@ -51,12 +51,12 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
-        if ctx.assume_yes:
-            return True
-
         if number > 2**63 - 1:
             await ctx.send(_("Try a smaller number instead."))
             return False
+
+        if ctx.assume_yes:
+            return True
 
         prompt = await ctx.send(
             _("Are you sure you want to delete {number} messages?").format(
