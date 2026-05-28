@@ -294,9 +294,9 @@ Decide whether the name of the moderator muting a user should be included in the
 
 .. _mutes-command-muteset-unmutesenddm:
 
-""""""""""""""""""""""
+""""""""""""""""""""
 muteset unmutesenddm
-""""""""""""""""""""""
+""""""""""""""""""""
 
 .. note:: |mod-lock|
 
