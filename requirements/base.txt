@@ -22,17 +22,25 @@ discord-py==2.7.1
     # via
     #   -r base.in
     #   red-lavalink
+filelock==3.16.1
+    # via python-discovery
 frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
 idna==3.11
     # via yarl
+linkify-it-py==2.0.3
+    # via markdown-it-py
 markdown==3.7
     # via -r base.in
 markdown-it-py==3.0.0
-    # via rich
+    # via
+    #   rich
+    #   textual
 mdurl==0.1.2
+    # via markdown-it-py
+mdit-py-plugins==0.4.2
     # via markdown-it-py
 multidict==6.1.0
     # via
@@ -43,14 +51,20 @@ orjson==3.10.15
 packaging==26.0
     # via -r base.in
 platformdirs==4.3.6
-    # via -r base.in
+    # via
+    #   -r base.in
+    #   textual
 propcache==0.2.0
     # via yarl
 psutil==7.2.2
     # via -r base.in
 pygments==2.19.2
-    # via rich
+    # via
+    #   rich
+    #   textual
 python-dateutil==2.9.0.post0
+    # via -r base.in
+python-discovery==1.2.1
     # via -r base.in
 pyyaml==6.0.3
     # via -r base.in
@@ -62,16 +76,25 @@ red-commons==1.0.0
     #   red-lavalink
 red-lavalink==0.11.1
     # via -r base.in
-rich==14.3.3
+redbot-update==1.2.0
     # via -r base.in
+rich==14.3.3
+    # via
+    #   -r base.in
+    #   textual
 schema==0.7.8
     # via -r base.in
 six==1.17.0
     # via python-dateutil
+textual==6.2.1
+    # via -r base.in
 typing-extensions==4.13.2
     # via
     #   -r base.in
     #   multidict
+    #   textual
+uc-micro-py==1.0.3
+    # via linkify-it-py
 yarl==1.15.2
     # via
     #   -r base.in
@@ -88,7 +111,7 @@ importlib-metadata==8.5.0; python_version != "3.10" and python_version != "3.11"
     # via markdown
 pytz==2026.1.post1; python_version == "3.8"
     # via babel
-uvloop==0.21.0; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
+uvloop==0.22.1; (sys_platform != "win32" and platform_python_implementation == "CPython") and sys_platform != "win32"
     # via -r base.in
 zipp==3.20.2; python_version != "3.10" and python_version != "3.11"
     # via importlib-metadata

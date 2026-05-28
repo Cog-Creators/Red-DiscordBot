@@ -872,7 +872,7 @@ class RedHelpFormatter(HelpFormatterABC):
             and help_settings.use_menus is HelpMenuSetting.reactions
         ):
             use_DMs = help_settings.max_pages_in_guild == 0
-            destination = ctx.author if use_DMs else ctx.channel
+            destination = ctx.author if use_DMs and ctx.interaction is None else ctx
             # Specifically ensuring the menu's message is sent prior to returning
             m = await (destination.send(embed=pages[0]) if embed else destination.send(pages[0]))
             c = menus.DEFAULT_CONTROLS if len(pages) > 1 else {"\N{CROSS MARK}": menus.close_menu}
@@ -892,12 +892,13 @@ class RedHelpFormatter(HelpFormatterABC):
             delete_delay = help_settings.delete_delay
 
             messages: List[discord.Message] = []
+            page_destination = ctx if ctx.interaction and not use_DMs else destination
             for page in pages:
                 try:
                     if embed:
-                        msg = await destination.send(embed=page)
+                        msg = await page_destination.send(embed=page)
                     else:
-                        msg = await destination.send(page)
+                        msg = await page_destination.send(page)
                 except discord.Forbidden:
                     return await ctx.send(
                         _(
@@ -907,8 +908,12 @@ class RedHelpFormatter(HelpFormatterABC):
                     )
                 else:
                     messages.append(msg)
-            if use_DMs and help_settings.use_tick:
-                await ctx.tick()
+                    page_destination = destination
+            if use_DMs:
+                if ctx.interaction:
+                    await ctx.send(_("I have sent the help message to your DMs."), ephemeral=True)
+                elif help_settings.use_tick:
+                    await ctx.tick()
             # The if statement takes into account that 'destination' will be
             # the context channel in non-DM context.
             if (

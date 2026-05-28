@@ -866,10 +866,11 @@ class Repo(RepoJSONMixin):
         if not target_dir.exists():
             raise ValueError("That target directory does not exist.")
 
-        if not await cog.copy_to(target_dir=target_dir):
+        install_location = await cog.copy_to(target_dir=target_dir)
+        if not install_location:
             raise errors.CopyingError("There was an issue during copying of cog's files")
 
-        return InstalledModule.from_installable(cog)
+        return InstalledModule.from_installable(cog, install_location)
 
     async def install_libraries(
         self, target_dir: Path, req_target_dir: Path, libraries: Iterable[Installable] = ()
@@ -907,11 +908,11 @@ class Repo(RepoJSONMixin):
             for lib in libraries:
                 if not (
                     await self.install_requirements(cog=lib, target_dir=req_target_dir)
-                    and await lib.copy_to(target_dir=target_dir)
+                    and (install_location := await lib.copy_to(target_dir=target_dir))
                 ):
                     failed.append(lib)
                 else:
-                    installed.append(InstalledModule.from_installable(lib))
+                    installed.append(InstalledModule.from_installable(lib, install_location))
             return (tuple(installed), tuple(failed))
         return ((), ())
 

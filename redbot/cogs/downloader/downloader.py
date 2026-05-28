@@ -4,7 +4,8 @@ import re
 from typing import Tuple, Iterable, Collection, Optional, Set, List
 
 import discord
-from redbot.core import _downloader, commands, version_info as red_version_info
+from redbot import __version__
+from redbot.core import _downloader, commands
 from redbot.core._downloader import errors
 from redbot.core._downloader.installable import InstalledModule
 from redbot.core.bot import Red
@@ -49,6 +50,17 @@ class Downloader(commands.Cog):
     async def red_delete_data_for_user(self, **kwargs):
         """Nothing to delete"""
         return
+
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    @property
+    def _repo_manager(self):
+        return _downloader._repo_manager
+
+    # This is a compatibility shim for people using Downloader internal pre-3.5.25.
+    # It will probably get removed in Red 3.6.
+    async def installed_cogs(self) -> Tuple[InstalledModule, ...]:
+        return await _downloader.installed_cogs()
 
     @staticmethod
     async def send_pagified(target: discord.abc.Messageable, content: str) -> None:
@@ -474,15 +486,20 @@ class Downloader(commands.Cog):
                     )
                     + message
                 )
-        # "---" added to separate cog install messages from Downloader's message
-        await self.send_pagified(ctx, f"{message}{deprecation_notice}\n---")
-        for cog in install_result.installed_cogs:
-            if cog.install_msg:
-                await ctx.send(
-                    cog.install_msg.replace("[p]", ctx.clean_prefix).replace(
-                        "[botname]", ctx.me.display_name
-                    )
+
+        message += deprecation_notice
+        cogs_with_install_msg = [cog for cog in install_result.installed_cogs if cog.install_msg]
+        if cogs_with_install_msg:
+            # "---" added to separate cog install messages from Downloader's message
+            message += "\n---"
+        await self.send_pagified(ctx, message)
+
+        for cog in cogs_with_install_msg:
+            await ctx.send(
+                cog.install_msg.replace("[p]", ctx.clean_prefix).replace(
+                    "[botname]", ctx.me.display_name
                 )
+            )
 
     @cog.command(name="uninstall", require_var_positional=True)
     async def _cog_uninstall(self, ctx: commands.Context, *cogs: InstalledCog) -> None:
@@ -940,9 +957,7 @@ class Downloader(commands.Cog):
             ) + humanize_list(
                 [
                     inline(cog.name)
-                    + _(" (Minimum: {min_version})").format(
-                        min_version=".".join([str(n) for n in cog.min_python_version])
-                    )
+                    + _(" (Minimum: {min_version})").format(min_version=cog.min_python_version)
                     for cog in update_check_result.incompatible_python_version
                 ]
             )
@@ -957,7 +972,7 @@ class Downloader(commands.Cog):
                     "\nThis cog requires different Red version than you currently "
                     "have ({current_version}): "
                 )
-            ).format(current_version=red_version_info) + humanize_list(
+            ).format(current_version=__version__) + humanize_list(
                 [
                     inline(cog.name)
                     + _(" (Minimum: {min_version}").format(min_version=cog.min_bot_version)

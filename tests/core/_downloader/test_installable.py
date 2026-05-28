@@ -2,10 +2,10 @@ import json
 from pathlib import Path
 
 import pytest
+from packaging.version import Version
 
 from redbot.pytest.downloader import *
 from redbot.core._downloader.installable import Installable, InstallableType
-from redbot.core import VersionInfo
 
 
 def test_process_info_file(installable):
@@ -13,7 +13,9 @@ def test_process_info_file(installable):
         if k == "type":
             assert installable.type is InstallableType.COG
         elif k in ("min_bot_version", "max_bot_version"):
-            assert getattr(installable, k) == VersionInfo.from_str(v)
+            assert getattr(installable, k) == Version(v)
+        elif k == "min_python_version":
+            assert installable.min_python_version == Version(".".join(map(str, v)))
         else:
             assert getattr(installable, k) == v
 
@@ -23,7 +25,9 @@ def test_process_lib_info_file(library_installable):
         if k == "type":
             assert library_installable.type is InstallableType.SHARED_LIBRARY
         elif k in ("min_bot_version", "max_bot_version"):
-            assert getattr(library_installable, k) == VersionInfo.from_str(v)
+            assert getattr(library_installable, k) == Version(v)
+        elif k == "min_python_version":
+            assert library_installable.min_python_version == Version(".".join(map(str, v)))
         elif k == "hidden":
             # libraries are always hidden, even if False
             assert library_installable.hidden is True

@@ -172,11 +172,9 @@ def red(config_fr):
 
     cli_flags = parse_cli_flags(["ignore_me"])
 
-    description = "Red v3 - Alpha"
-
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags=cli_flags, description=description, dm_help=None, owner_ids=set())
+    red = Red(cli_flags=cli_flags)
 
     yield red
 

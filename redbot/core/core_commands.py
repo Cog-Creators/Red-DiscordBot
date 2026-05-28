@@ -38,6 +38,7 @@ from typing import (
 
 import aiohttp
 import discord
+from packaging.version import Version
 from redbot.core.data_manager import storage_type
 
 from . import (
@@ -53,7 +54,7 @@ from . import (
 )
 from ._diagnoser import IssueDiagnoser
 from .utils import AsyncIter, can_user_send_messages_in
-from .utils._internal_utils import fetch_latest_red_version_info
+from .utils._internal_utils import fetch_latest_red_version
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import (
     box,
@@ -422,11 +423,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         custom_info = await self.bot._config.custom_info()
 
         try:
-            pypi_version, __ = await fetch_latest_red_version_info()
+            latest = await fetch_latest_red_version()
         except (aiohttp.ClientError, TimeoutError) as exc:
             log.error("Failed to fetch latest version information from PyPI.", exc_info=exc)
             pypi_version = None
-        outdated = pypi_version and pypi_version > red_version_info
+        else:
+            pypi_version = latest.version
+        outdated = pypi_version and pypi_version > Version(__version__)
 
         if embed_links:
             dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
@@ -3705,8 +3708,26 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             if ctx.bot_permissions.manage_messages:
                 await ctx.message.delete()
+
+            angle_bracket_warning = None
+
+            for token_name, token in tokens.items():
+                if token.startswith("<") and token.endswith(">"):
+                    angle_bracket_warning = _(
+                        "You may have failed to properly format your `{token_name}`. If you were told to enter a token"
+                        " with an example such as `[p]set api {service} {token_name} <your_{token_name}_here>`, and your {token_name}"
+                        " was `HREDFGWE`, make sure to run `[p]set api {service} {token_name} HREDFGWE` and not "
+                        "`[p]set api {service} {token_name} <HREDFGWE>`."
+                    ).format(token_name=token_name, service=service)
+                    break
+
             await ctx.bot.set_shared_api_tokens(service, **tokens)
-            await ctx.send(_("`{service}` API tokens have been set.").format(service=service))
+
+            message = _("`{service}` API tokens have been set.").format(service=service)
+            if angle_bracket_warning:
+                message += "\n\n" + _("**Warning:** ") + angle_bracket_warning
+
+            await ctx.send(message)
 
     @_set_api.command(name="list")
     async def _set_api_list(self, ctx: commands.Context):

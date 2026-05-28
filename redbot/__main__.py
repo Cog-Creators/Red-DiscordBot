@@ -25,7 +25,7 @@ import rich
 import redbot.logging
 from redbot import __version__
 from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
-from redbot.core._cli import interactive_config, confirm, parse_cli_flags
+from redbot.core._cli import interactive_config, confirm, parse_cli_flags, new_event_loop
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
@@ -182,32 +182,10 @@ async def _edit_owner(red, owner, no_prompt):
 
 def _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt):
     if new_name:
-        name = new_name
-        if name in _get_instance_names() and not confirm_overwrite:
-            name = old_name
-            print(
-                "An instance with this name already exists.\n"
-                "If you want to remove the existing instance and replace it with this one,"
-                " run this command with --overwrite-existing-instance flag."
-            )
+        name = get_name(new_name, confirm_overwrite=confirm_overwrite)
     elif not no_prompt and confirm("Would you like to change the instance name?", default=False):
-        name = get_name("")
-        if name in _get_instance_names():
-            print(
-                "WARNING: An instance already exists with this name. "
-                "Continuing will overwrite the existing instance config."
-            )
-            if not confirm(
-                "Are you absolutely certain you want to continue with this instance name?",
-                default=False,
-            ):
-                print("Instance name will remain unchanged.")
-                name = old_name
-            else:
-                print("Instance name updated.")
-        else:
-            print("Instance name updated.")
-        print()
+        name = get_name(confirm_overwrite=confirm_overwrite)
+        print("Instance name updated.\n")
     else:
         name = old_name
     return name
@@ -272,7 +250,7 @@ def early_exit_runner(
     """
     This one exists to not log all the things like it's a full run of the bot.
     """
-    loop = asyncio.new_event_loop()
+    loop = new_event_loop()
     asyncio.set_event_loop(loop)
     try:
         if not cli_flags.instance_name:
@@ -281,7 +259,7 @@ def early_exit_runner(
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
         driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
@@ -317,7 +295,10 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
     redbot.logging.init_logging(
         level=cli_flags.logging_level,
         location=data_manager.core_data_path() / "logs",
-        cli_flags=cli_flags,
+        rich_logging=cli_flags.rich_logging,
+        rich_tracebacks=cli_flags.rich_tracebacks,
+        rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
+        rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
 
     log.debug("====Basic Config====")
@@ -479,7 +460,7 @@ def main():
         early_exit_runner(cli_flags, edit_instance)
         return
     try:
-        loop = asyncio.new_event_loop()
+        loop = new_event_loop()
         asyncio.set_event_loop(loop)
 
         if cli_flags.no_instance:
@@ -494,7 +475,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags, description="Red V3", dm_help=None)
+        red = Red(cli_flags=cli_flags)
 
         if os.name != "nt":
             # None of this works on windows.
