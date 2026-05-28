@@ -16,7 +16,7 @@ from redbot.core.utils.chat_formatting import (
     format_perms_list,
 )
 from redbot.core.utils.mod import get_audit_reason
-from redbot.core.utils.predicates import MessagePredicate
+from redbot.core.utils.views import ConfirmView
 from .abc import MixinMeta
 from .utils import is_allowed_by_hierarchy
 
@@ -647,7 +647,7 @@ class KickBanMixin(MixinMeta):
         elif in_server:
             if not await is_allowed_by_hierarchy(self.bot, self.config, guild, author, member):
                 await ctx.send(
-                    (
+                    _(
                         "I cannot let you do that. You are "
                         "not higher than the user in the role "
                         "hierarchy."
@@ -672,63 +672,37 @@ class KickBanMixin(MixinMeta):
             return
         invite = await self.get_invite_for_reinvite(ctx, int(duration.total_seconds() + 86400))
 
-        # Check if user is already banned/tempbanned and prompt for a downgrade
-        async def prompt_downgrade(banned_until):
-            if ctx.assume_yes:
-                return True
-
-            if banned_until:
-                prompt = await ctx.send(
-                    (
-                        f"User is already tempbanned expiring <t:{int(banned_until)}:R>, proceed?"
-                        f" (yes/no)"
-                    )
-                )
-            else:
-                prompt = await ctx.send(
-                    (f"This will downgrade the ban to a tempban, proceed?" f" (yes/no)")
-                )
-            response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
-
-            if response.content.lower().startswith("y"):
-                with contextlib.suppress(discord.NotFound):
-                    await prompt.delete()
-                with contextlib.suppress(discord.HTTPException):
-                    await response.delete()
-                    return True
-            else:
-                await ctx.send("Cancelled.")
-                return False
-
-            if response.content.lower().startswith("y"):
-                with contextlib.suppress(discord.NotFound):
-                    await prompt.delete()
-                with contextlib.suppress(discord.HTTPException):
-                    await response.delete()
-                return True
-            else:
-                await ctx.send("Cancelled.")
-                return False
-
         try:
             await guild.fetch_ban(member)
         except discord.NotFound:
             pass
         else:
-            async with self.config.guild(guild).current_tempbans() as current_tempbans:
-                banned_until = False
-                if member.id in current_tempbans:
-                    banned_until = await self.config.member_from_ids(
-                        guild.id, member.id
-                    ).banned_until()
-            if not await prompt_downgrade(banned_until):
-                return
+            current_tempbans = await self.config.guild(guild).current_tempbans()
+            banned_until = False
+            if member.id in current_tempbans:
+                banned_until = await self.config.member_from_ids(
+                    guild.id, member.id
+                ).banned_until()
+            if not ctx.assume_yes:
+                content = (
+                    _(
+                        "User is already tempbanned (ban expires {relative_time}),"
+                        " do you want to proceed?"
+                    ).format(relative_time=f"<t:{int(banned_until)}:R>")
+                    if banned_until
+                    else _("This will downgrade the ban to a tempban, do you want to proceed?")
+                )
+                view = ConfirmView(ctx.author)
+                view.message = await ctx.send(content, view=view)
+                await view.wait()
+                if not view.result:
+                    return
 
         await self.config.member_from_ids(guild.id, member.id).banned_until.set(
             unban_time.timestamp()
         )
         async with self.config.guild(guild).current_tempbans() as current_tempbans:
-            if not member.id in current_tempbans:
+            if member.id not in current_tempbans:
                 current_tempbans.append(member.id)
 
         with contextlib.suppress(discord.HTTPException):
