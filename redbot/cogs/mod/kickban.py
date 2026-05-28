@@ -696,6 +696,7 @@ class KickBanMixin(MixinMeta):
                 view.message = await ctx.send(content, view=view)
                 await view.wait()
                 if not view.result:
+                    await ctx.send(_("Okay, I will not be doing that then."))
                     return
 
         await self.config.member_from_ids(guild.id, member.id).banned_until.set(
