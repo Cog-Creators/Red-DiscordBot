@@ -27,6 +27,7 @@ right-click on it and then click "Run as administrator".
 Then run each of the following commands:
 
 .. prompt:: powershell
+    :modifiers: red-install-guide-elevated
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -38,6 +39,7 @@ Then run each of the following commands:
 For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
+    :modifiers: red-install-guide-elevated
 
     choco upgrade temurin25 -y
 
