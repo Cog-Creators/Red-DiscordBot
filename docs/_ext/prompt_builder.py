@@ -81,6 +81,12 @@ class PromptBuilder(TextBuilder):
 
         def run(self) -> List[prompt]:
             self.assert_has_content()
+            arg_count = len(self.arguments)
+            for idx, option_name in enumerate(("language", "prompts", "modifiers")):
+                if arg_count > idx:
+                    if self.options.get(option_name):
+                        break
+                    self.options[option_name] = self.arguments[idx]
             rawsource = "\n".join(self.content)
             language = self.options.get("language") or "text"
             prompts = [
