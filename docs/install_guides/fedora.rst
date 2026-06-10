@@ -1,4 +1,17 @@
 .. _install-fedora:
+.. os-image-location::
+
+    [fedora-43]
+    download_type = 'checksum-file'
+    url = 'https://download.fedoraproject.org/pub/fedora/linux/releases/43/Cloud/x86_64/images/Fedora-Cloud-43-1.6-x86_64-CHECKSUM'
+    checksum_style = 'bsd'
+    filename_pattern = 'Fedora-Cloud-Base-Generic-.*\.qcow2'
+
+    [fedora-44]
+    download_type = 'checksum-file'
+    url = 'https://download.fedoraproject.org/pub/fedora/linux/releases/44/Cloud/x86_64/images/Fedora-Cloud-44-1.7-x86_64-CHECKSUM'
+    checksum_style = 'bsd'
+    filename_pattern = 'Fedora-Cloud-Base-Generic-.*\.qcow2'
 
 ==============================
 Installing Red on Fedora Linux

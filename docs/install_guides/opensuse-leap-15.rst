@@ -1,4 +1,11 @@
 .. _install-opensuse-leap-15:
+.. os-image-location::
+
+    [opensuse-leap-156]
+    download_type = 'checksum-file'
+    url = 'https://download.opensuse.org/distribution/leap/15.6/appliances/openSUSE-Leap-15.6-Minimal-VM.x86_64-Cloud.qcow2.sha256'
+    filename_pattern = '.*\.qcow2'
+    expected_java_version = 21
 
 =====================================
 Installing Red on openSUSE Leap 15.6+

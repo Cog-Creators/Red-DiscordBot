@@ -1,4 +1,18 @@
 .. _install-ubuntu-2404:
+.. os-image-location::
+
+    [ubuntu-2404]
+    download_type = 'checksum-file'
+    url = 'https://cloud-images.ubuntu.com/noble/current/SHA256SUMS'
+    filename_pattern = 'noble-server-cloudimg-amd64\.img'
+
+    [ubuntu-2404-raspi]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    machine_type = 'raspi3b'
+    image_format = 'raw+xz'
+    url = 'https://cdimage.ubuntu.com/ubuntu-server/noble/daily-preinstalled/current/SHA256SUMS'
+    filename_pattern = 'noble-preinstalled-server-arm64\+raspi\.img\.xz'
 
 ==================================
 Installing Red on Ubuntu 24.04 LTS

@@ -1,4 +1,10 @@
 .. _install-amazon-linux-2023:
+.. os-image-location::
+
+    [amazon-linux-2023]
+    download_type = 'checksum-file'
+    url = 'https://cdn.amazonlinux.com/al2023/os-images/latest/kvm/SHA256SUMS'
+    filename_pattern = '.*\.qcow2'
 
 ===================================
 Installing Red on Amazon Linux 2023

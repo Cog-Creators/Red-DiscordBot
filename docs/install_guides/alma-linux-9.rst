@@ -1,4 +1,10 @@
 .. _install-alma-linux-9:
+.. os-image-location::
+
+    [alma-linux-9]
+    download_type = 'checksum-file'
+    url = 'https://repo.almalinux.org/almalinux/9/cloud/x86_64/images/CHECKSUM'
+    filename_pattern = 'AlmaLinux-9-GenericCloud-latest\.x86_64\.qcow2'
 
 ==============================
 Installing Red on Alma Linux 9

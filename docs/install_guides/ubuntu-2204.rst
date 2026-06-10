@@ -1,4 +1,18 @@
 .. _install-ubuntu-2204:
+.. os-image-location::
+
+    [ubuntu-2204]
+    download_type = 'checksum-file'
+    url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
+    filename_pattern = 'jammy-server-cloudimg-amd64-disk-kvm\.img'
+
+    [ubuntu-2204-raspi]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    machine_type = 'raspi3b'
+    image_format = 'raw+xz'
+    url = 'https://cdimage.ubuntu.com/releases/jammy/release/SHA256SUMS'
+    filename_pattern = 'ubuntu-22\.04\.\d+-preinstalled-server-arm64\+raspi\.img\.xz'
 
 ==================================
 Installing Red on Ubuntu 22.04 LTS

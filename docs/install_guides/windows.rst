@@ -1,4 +1,25 @@
 .. _windows-install-guide:
+.. os-image-location::
+
+    # The below links are to **Evaluation** ISOs, which can be used for evaluation, **test**, or demonstration purposes.
+    # DO NOT change this to non-evaluation ISOs as those can only be used legally with a valid license.
+    [windows-10]
+    os = 'windows'
+    download_type = 'direct-url'
+    image_format = 'raw'
+    # https://web.archive.org/web/20250701150148/https://www.microsoft.com/en-us/evalcenter/download-windows-10-enterprise
+    url = 'https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66750/19045.2006.220908-0225.22h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+    checksum = 'sha256:ef7312733a9f5d7d51cfa04ac497671995674ca5e1058d5164d6028f0938d668'
+
+    [windows-11]
+    os = 'windows'
+    download_type = 'direct-url'
+    image_format = 'raw'
+    # Windows 11 23H2 is the last version that doesn't require UEFI
+    # which our test harness doesn't currently support.
+    # https://web.archive.org/web/20240615015835/https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
+    url = 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/22631.2428.231001-0608.23H2_NI_RELEASE_SVC_REFRESH_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+    checksum = 'sha256:c8dbc96b61d04c8b01faf6ce0794fdf33965c7b350eaa3eb1e6697019902945c'
 
 =========================
 Installing Red on Windows
