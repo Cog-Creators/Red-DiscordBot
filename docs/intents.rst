@@ -12,11 +12,11 @@ our stance regarding "public bots", and the discord bot verification process.
 
 To clarify:
 
-- **Small bots** are bots under 100 servers. They currently do not need to undergo Discord's
-  bot verification process
-- **Public bots** (or big bots) are bots that have reached 100 servers. They need to be
+- **Small bots** are bots accessible to fewer than 10,000 unique users. They currently do not need to undergo Discord's
+  bot verification process.
+- **Public bots** (or big bots) are bots that have reached 10,000 total unique users. They need to be
   `verified <https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified>`_
-  by Discord to join more than 100 servers and gain privileged intents
+  by Discord to gain privileged intents.
 
 .. warning::
 
@@ -51,7 +51,7 @@ Bot verification process
 ------------------------
 
 When your bot ceases to be a small bot Discord will require you to verify your bot before allowing
-it to join more servers and gain privileged intents. If you've read the previous section,
+it to continue using privileged intents. If you've read the previous section,
 you will know that we do **not** support public bots. Logically, we also do not provide help for
 the verification process.
 
