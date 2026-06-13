@@ -6,6 +6,12 @@
     url = 'https://cdn.amazonlinux.com/al2023/os-images/latest/kvm/SHA256SUMS'
     filename_pattern = '.*\.qcow2'
 
+    [amazon-linux-2023-arm]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    url = 'https://cdn.amazonlinux.com/al2023/os-images/latest/kvm-arm64/SHA256SUMS'
+    filename_pattern = '.*\.qcow2'
+
 ===================================
 Installing Red on Amazon Linux 2023
 ===================================

@@ -6,7 +6,13 @@
     url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
     filename_pattern = 'jammy-server-cloudimg-amd64-disk-kvm\.img'
 
-    [ubuntu-2204-raspi]
+    [ubuntu-2204-arm]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
+    filename_pattern = 'jammy-server-cloudimg-arm64\.img'
+
+    [ubuntu-2204-arm-raspi]
     download_type = 'checksum-file'
     arch = 'aarch64'
     machine_type = 'raspi3b'

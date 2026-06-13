@@ -6,7 +6,13 @@
     url = 'https://cloud-images.ubuntu.com/noble/current/SHA256SUMS'
     filename_pattern = 'noble-server-cloudimg-amd64\.img'
 
-    [ubuntu-2404-raspi]
+    [ubuntu-2404-arm]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    url = 'https://cloud-images.ubuntu.com/noble/current/SHA256SUMS'
+    filename_pattern = 'noble-server-cloudimg-arm64\.img'
+
+    [ubuntu-2404-arm-raspi]
     download_type = 'checksum-file'
     arch = 'aarch64'
     machine_type = 'raspi3b'
