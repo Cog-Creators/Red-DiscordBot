@@ -4,7 +4,7 @@
     [ubuntu-2204]
     download_type = 'checksum-file'
     url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
-    filename_pattern = 'jammy-server-cloudimg-amd64-disk-kvm\.img'
+    filename_pattern = 'jammy-server-cloudimg-amd64\.img'
 
     [ubuntu-2204-arm]
     download_type = 'checksum-file'
