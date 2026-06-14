@@ -15,11 +15,8 @@
     os = 'windows'
     download_type = 'direct-url'
     image_format = 'raw'
-    # Windows 11 23H2 is the last version that doesn't require UEFI
-    # which our test harness doesn't currently support.
-    # https://web.archive.org/web/20240615015835/https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise
-    url = 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/22631.2428.231001-0608.23H2_NI_RELEASE_SVC_REFRESH_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
-    checksum = 'sha256:c8dbc96b61d04c8b01faf6ce0794fdf33965c7b350eaa3eb1e6697019902945c'
+    url = 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+    checksum = 'sha256:a61adeab895ef5a4db436e0a7011c92a2ff17bb0357f58b13bbc4062e535e7b9'
 
 =========================
 Installing Red on Windows
