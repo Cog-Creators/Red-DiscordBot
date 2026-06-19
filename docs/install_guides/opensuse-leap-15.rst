@@ -1,22 +1,8 @@
 .. _install-opensuse-leap-15:
-.. os-image-location::
 
-    [opensuse-leap-156]
-    download_type = 'checksum-file'
-    url = 'https://download.opensuse.org/distribution/leap/15.6/appliances/openSUSE-Leap-15.6-Minimal-VM.x86_64-Cloud.qcow2.sha256'
-    filename_pattern = '.*\.qcow2'
-    expected_java_version = 21
-
-    [opensuse-leap-156-arm]
-    download_type = 'checksum-file'
-    arch = 'aarch64'
-    url = 'https://download.opensuse.org/distribution/leap/15.6/appliances/openSUSE-Leap-15.6-Minimal-VM.aarch64-Cloud.qcow2.sha256'
-    filename_pattern = '.*\.qcow2'
-    expected_java_version = 21
-
-=====================================
-Installing Red on openSUSE Leap 15.6+
-=====================================
+====================================
+Installing Red on openSUSE Leap 15.6
+====================================
 
 .. include:: _includes/supported-arch-x64+aarch64.rst
 
@@ -26,7 +12,13 @@ Installing Red on openSUSE Leap 15.6+
 Installing the pre-requirements
 -------------------------------
 
-openSUSE Leap 15.6+ has all required dependencies available in official repositories. Install them
+.. warning::
+
+    openSUSE Leap 15.6 has reached end of life and these instructions may not work.
+    We will start supporting openSUSE Leap 16.0 in Red 3.6.0 but until then,
+    you may need to use another OS, if you run into difficulties.
+
+openSUSE Leap 15.6 has all required dependencies available in official repositories. Install them
 with zypper:
 
 .. prompt:: bash
