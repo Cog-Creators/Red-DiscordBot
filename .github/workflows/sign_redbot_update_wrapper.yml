@@ -1,0 +1,67 @@
+name: Sign redbot-update wrapper
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      wrapper_version:
+        required: true
+        default: '1.2.0'
+
+jobs:
+  sign_redbot_update_wrapper:
+    name: Sign redbot-update wrapper
+    environment: SignPath
+    runs-on: ubuntu-latest
+    env:
+      INPUTS_WRAPPER_VERSION: ${{ inputs.wrapper_version || '1.2.0' }}
+    steps:
+      - name: Prepare directories
+        run: mkdir -p archives unpacked/amd64 unpacked/arm64 unsigned/amd64 unsigned/arm64
+
+      - name: Download redbot-update-wrapper
+        working-directory: archives
+        run: |
+          wget "https://github.com/Cog-Creators/redbot-update-wrapper/releases/download/${INPUTS_WRAPPER_VERSION}/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_arm64.whl"
+          wget "https://github.com/Cog-Creators/redbot-update-wrapper/releases/download/${INPUTS_WRAPPER_VERSION}/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_amd64.whl"
+
+      - name: Unpack redbot-update-wrapper amd64
+        working-directory: unpacked/amd64
+        run: |
+          unzip "../../archives/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_amd64.whl"
+
+      - name: Unpack redbot-update-wrapper arm64
+        working-directory: unpacked/arm64
+        run: |
+          unzip "../../archives/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_arm64.whl"
+
+      - name: Prepare artifacts
+        run: |
+          mv "unpacked/amd64/redbot_update-${INPUTS_WRAPPER_VERSION}.data/scripts/redbot-update.exe" unsigned/amd64
+          mv "unpacked/arm64/redbot_update-${INPUTS_WRAPPER_VERSION}.data/scripts/redbot-update.exe" unsigned/arm64
+
+      - name: Upload unsigned artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsigned
+          path: unsigned/*/*.exe
+
+      - name: Submit signing request
+        uses: signpath/github-action-submit-signing-request@v2
+        if: github.event_name != 'pull_request'
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: test-signing
+          github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v7
+        if: github.event_name != 'pull_request'
+        with:
+          name: signed
+          path: signed/*/*.exe
