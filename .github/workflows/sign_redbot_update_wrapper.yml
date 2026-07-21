@@ -4,9 +4,10 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
-      wrapper_version:
+      # since tags on redbot-update-wrapper are not immutable, commit should be specified instead
+      wrapper_commit:
         required: true
-        default: '1.2.0'
+        default: '1e9c39708d21badd3d0b3af5cceb072f93754a73'  # 1.2.0
 
 jobs:
   sign_redbot_update_wrapper:
@@ -14,31 +15,29 @@ jobs:
     environment: SignPath
     runs-on: ubuntu-latest
     env:
-      INPUTS_WRAPPER_VERSION: ${{ inputs.wrapper_version || '1.2.0' }}
+      INPUTS_WRAPPER_COMMIT: ${{ inputs.wrapper_commit || '1e9c39708d21badd3d0b3af5cceb072f93754a73' }}
+      CGO_ENABLED: '0'
     steps:
       - name: Prepare directories
-        run: mkdir -p archives unpacked/amd64 unpacked/arm64 unsigned/amd64 unsigned/arm64
+        run: mkdir -p archives source unsigned/amd64 unsigned/arm64
 
-      - name: Download redbot-update-wrapper
+      - name: Download redbot-update-wrapper repository tarball
         working-directory: archives
         run: |
-          wget "https://github.com/Cog-Creators/redbot-update-wrapper/releases/download/${INPUTS_WRAPPER_VERSION}/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_arm64.whl"
-          wget "https://github.com/Cog-Creators/redbot-update-wrapper/releases/download/${INPUTS_WRAPPER_VERSION}/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_amd64.whl"
+          wget "https://github.com/Cog-Creators/redbot-update-wrapper/archive/${INPUTS_WRAPPER_COMMIT}.tar.gz"
 
-      - name: Unpack redbot-update-wrapper amd64
-        working-directory: unpacked/amd64
+      - name: Unpack redbot-update-wrapper repository tarball
+        working-directory: source
         run: |
-          unzip "../../archives/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_amd64.whl"
+          tar --strip-components=1 -xvf "../archives/${INPUTS_WRAPPER_COMMIT}.tar.gz"
 
-      - name: Unpack redbot-update-wrapper arm64
-        working-directory: unpacked/arm64
+      - name: Build unsigned artifacts
+        working-directory: source
         run: |
-          unzip "../../archives/redbot_update-${INPUTS_WRAPPER_VERSION}-py3-none-win_arm64.whl"
-
-      - name: Prepare artifacts
-        run: |
-          mv "unpacked/amd64/redbot_update-${INPUTS_WRAPPER_VERSION}.data/scripts/redbot-update.exe" unsigned/amd64
-          mv "unpacked/arm64/redbot_update-${INPUTS_WRAPPER_VERSION}.data/scripts/redbot-update.exe" unsigned/arm64
+          go generate ./go/cmd/redbot-update
+          for arch in amd64 arm64; do
+            GOOS=windows GOARCH="$arch" go build '-ldflags=-s -w' -o "../unsigned/$arch/redbot-update.exe" ./go/cmd/redbot-update
+          done
 
       - name: Upload unsigned artifact
         id: upload-unsigned-artifact
