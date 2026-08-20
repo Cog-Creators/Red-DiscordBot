@@ -1,10 +1,10 @@
 import asyncio
-from collections import defaultdict, deque
 from datetime import timedelta
 
+import discord
 from redbot.core import commands, i18n
 from redbot.core.utils import AsyncIter
-from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline
+from redbot.core.utils.chat_formatting import box, humanize_timedelta, inline, pagify
 
 from .abc import MixinMeta
 
@@ -294,45 +294,123 @@ class ModSettings(MixinMeta):
 
     @modset.command()
     @commands.guild_only()
-    async def deleterepeats(self, ctx: commands.Context, repeats: int = None):
+    async def deleterepeats(
+        self,
+        ctx: commands.Context,
+        repeats: int = None,
+        *channels: discord.TextChannel,
+    ):
         """Enable auto-deletion of repeated messages.
 
-        Must be between 2 and 20.
+        Repeats must be between 2 and 20.
 
         Set to -1 to disable this feature.
+
+        Channel specific overrides can be created by using this command
+        with a passed in value for `channels`.
+
+        If one or more channels are provided, `repeats` can be set to 0
+        to make those channels use the server default.
         """
         guild = ctx.guild
-        if repeats is not None:
-            if repeats == -1:
-                await self.config.guild(guild).delete_repeats.set(repeats)
-                self.cache.pop(guild.id, None)  # remove cache with old repeat limits
-                await ctx.send(_("Repeated messages will be ignored."))
-            elif 2 <= repeats <= 20:
-                await self.config.guild(guild).delete_repeats.set(repeats)
-                # purge and update cache to new repeat limits
-                self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
-                await ctx.send(
-                    _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+        if repeats is None:
+            if channels:
+                await self._deleterepeats_show(ctx, channels)
+            else:
+                await self._deleterepeats_show(ctx, [None])
+            return
+
+        if channels:
+            if repeats == 0:
+                for channel in channels:
+                    await self.config.channel(channel).delete_repeats.set(None)
+                    self.cache.pop(channel.id, None)
+                await self._send_paginated(
+                    ctx,
+                    _("The following channels will now use the server default: {channels}").format(
+                        channels=", ".join(c.mention for c in channels)
+                    ),
                 )
+            elif repeats == -1 or 2 <= repeats <= 20:
+                for channel in channels:
+                    await self.config.channel(channel).delete_repeats.set(repeats)
+                    self.cache.pop(channel.id, None)
+                if repeats == -1:
+                    await self._send_paginated(
+                        ctx,
+                        _("Repeated messages will be ignored in: {channels}").format(
+                            channels=", ".join(c.mention for c in channels)
+                        ),
+                    )
+                else:
+                    await self._send_paginated(
+                        ctx,
+                        _(
+                            "Messages repeated up to {num} times will be deleted in: {channels}"
+                        ).format(num=repeats, channels=", ".join(c.mention for c in channels)),
+                    )
             else:
                 await ctx.send(
                     _(
-                        "Number of repeats must be between 2 and 20"
-                        " or equal to -1 if you want to disable this feature!"
+                        "Number of repeats must be between 2 and 20, -1 to disable this"
+                        " feature, or 0 to use the server default for those channels."
                     )
                 )
+            return
+
+        if repeats == -1:
+            await self.config.guild(guild).delete_repeats.set(repeats)
+            for guild_channel in guild.text_channels:
+                self.cache.pop(guild_channel.id, None)
+            await ctx.send(_("Repeated messages will be ignored."))
+        elif 2 <= repeats <= 20:
+            await self.config.guild(guild).delete_repeats.set(repeats)
+            for guild_channel in guild.text_channels:
+                self.cache.pop(guild_channel.id, None)
+            await ctx.send(
+                _("Messages repeated up to {num} times will be deleted.").format(num=repeats)
+            )
         else:
-            repeats = await self.config.guild(guild).delete_repeats()
-            if repeats != -1:
-                await ctx.send(
-                    _(
-                        "Bot will delete repeated messages after"
-                        " {num} repeats. Set this value to -1 to"
-                        " ignore repeated messages"
-                    ).format(num=repeats)
+            await ctx.send(
+                _(
+                    "Number of repeats must be between 2 and 20"
+                    " or equal to -1 if you want to disable this feature!"
                 )
+            )
+
+    async def _deleterepeats_show(self, ctx, channels):
+        guild = ctx.guild
+        guild_repeats = await self.config.guild(guild).delete_repeats()
+        lines = []
+        for channel in channels:
+            if channel is None:
+                repeats = guild_repeats
+                label = _("Server default")
             else:
-                await ctx.send(_("Repeated messages will be ignored."))
+                repeats = await self.config.channel(channel).delete_repeats()
+                label = channel.mention
+                if repeats is None:
+                    lines.append(
+                        _("{label}: follows the server default ({num_or_off})").format(
+                            label=label,
+                            num_or_off=_("disabled")
+                            if guild_repeats == -1
+                            else _("after {num} repeats").format(num=guild_repeats),
+                        )
+                    )
+                    continue
+            if repeats == -1:
+                lines.append(_("{label}: disabled").format(label=label))
+            else:
+                lines.append(
+                    _("{label}: deletes after {num} repeats").format(label=label, num=repeats)
+                )
+        for page in pagify("\n".join(lines)):
+            await ctx.send(box(page))
+
+    async def _send_paginated(self, ctx, text: str):
+        for page in pagify(text):
+            await ctx.send(page)
 
     @modset.command()
     @commands.guild_only()
