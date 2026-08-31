@@ -48,6 +48,31 @@ Basic Usage
             # Use the API key to access content as you normally would
 
 
+**********************
+Prompting for API Keys
+**********************
+
+Instead of asking the bot owner to type ``[p]set api ...`` by hand, a cog can prompt them with a secure button using ``SetApiView`` from ``redbot.core.utils.views``. It shows an owner-only button that opens a modal where the keys are entered, and saves them with ``set_shared_api_tokens`` when submitted.
+
+.. code-block:: python
+
+    from redbot.core.utils.views import SetApiView
+
+    class MyCog(commands.Cog):
+        @commands.is_owner()
+        @commands.command()
+        async def setyoutube(self, ctx: commands.Context):
+            default_keys = {"api_key": ""}
+            view = SetApiView(default_service="youtube", default_keys=default_keys)
+            await ctx.send("Use the button below to enter your YouTube API key.", view=view)
+
+``default_service`` pre-fills and locks the service name, so the owner only enters the keys. Omit it to let the owner choose the service themselves. ``default_keys`` is a mapping of the key names the service expects (the values may be empty); it pre-populates the modal and restricts saving to those key names.
+
+The owner enters one ``key value`` pair per line in the modal. For the example above the field is pre-filled with ``api_key YOUR_API_KEY``, and the ``api_key`` label must be kept when replacing the placeholder value. On submit, the tokens are saved for the service the same way as ``set_shared_api_tokens``.
+
+To embed the prompt in a custom ``discord.ui.View``, use ``SetApiModal`` directly and send it with ``interaction.response.send_modal(...)``. Both ``SetApiView`` and ``SetApiModal`` are owner-only.
+
+
 ***************
 Event Reference
 ***************
