@@ -52,25 +52,31 @@ Basic Usage
 Prompting for API Keys
 **********************
 
-Instead of asking the bot owner to type ``[p]set api ...`` by hand, a cog can prompt them with a secure button using ``SetApiView`` from ``redbot.core.utils.views``. It shows an owner-only button that opens a modal where the keys are entered, and saves them with ``set_shared_api_tokens`` when submitted.
+The primary way to set keys is ``[p]set api``. Run on its own, with no service or tokens, it opens a secure modal for the owner to fill in, so a cog does not need to add its own command for this.
+
+``SetApiView`` (from ``redbot.core.utils.views``) is most useful as a fallback when a required key is missing. When a command needs a key that has not been set, reply with the error and attach the button so the owner can set it in place. ``default_service`` and ``default_keys`` pre-fill the modal with the service and key names the cog expects.
 
 .. code-block:: python
 
     from redbot.core.utils.views import SetApiView
 
     class MyCog(commands.Cog):
-        @commands.is_owner()
         @commands.command()
-        async def setyoutube(self, ctx: commands.Context):
-            default_keys = {"api_key": ""}
-            view = SetApiView(default_service="youtube", default_keys=default_keys)
-            await ctx.send("Use the button below to enter your YouTube API key.", view=view)
+        async def weather(self, ctx: commands.Context, *, city: str):
+            tokens = await self.bot.get_shared_api_tokens("weather")
+            if not tokens.get("api_key"):
+                view = SetApiView(default_service="weather", default_keys={"api_key": ""})
+                await ctx.send(
+                    "The weather API key has not been set. "
+                    "Use the button below to set it (bot owner only).",
+                    view=view,
+                )
+                return
+            # use tokens["api_key"] as normal
 
-``default_service`` pre-fills and locks the service name, so the owner only enters the keys. Omit it to let the owner choose the service themselves. ``default_keys`` is a mapping of the key names the service expects (the values may be empty); it pre-populates the modal and restricts saving to those key names.
+``default_service`` pre-fills and locks the service name. ``default_keys`` is a mapping of the key names the service expects (values may be empty) and pre-populates the modal. The owner enters one ``key value`` pair per line, keeping the key label; for the example above the field is pre-filled with ``api_key YOUR_API_KEY``, and replacing the line with just the value is rejected. On submit the tokens are saved with ``set_shared_api_tokens``.
 
-The owner enters one ``key value`` pair per line in the modal. For the example above the field is pre-filled with ``api_key YOUR_API_KEY``, and the ``api_key`` label must be kept when replacing the placeholder value. On submit, the tokens are saved for the service the same way as ``set_shared_api_tokens``.
-
-To embed the prompt in a custom ``discord.ui.View``, use ``SetApiModal`` directly and send it with ``interaction.response.send_modal(...)``. Both ``SetApiView`` and ``SetApiModal`` are owner-only.
+To embed the prompt in a custom ``discord.ui.View``, use ``SetApiModal`` directly and send it with ``interaction.response.send_modal(...)``. ``SetApiView`` and ``SetApiModal`` are both owner-only.
 
 
 ***************
