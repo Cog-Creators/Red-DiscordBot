@@ -75,6 +75,21 @@ def sizeof_fmt(num: Union[float, int]) -> str:
     return f"{num:.1f}Y"
 
 
+def truncate(text: str, *, max_length: int, placeholder: str = "\N{HORIZONTAL ELLIPSIS}") -> str:
+    """Shorten ``text`` so that it is at most ``max_length`` characters long.
+
+    When ``text`` is too long it is cut and ``placeholder`` is appended, so that the
+    returned string (placeholder included) never goes over ``max_length``. Unlike
+    ``textwrap.shorten`` this leaves the text untouched, without collapsing whitespace,
+    which we want when the text is something like a Lavalink traceback.
+    """
+    if len(text) <= max_length:
+        return text
+    if max_length <= len(placeholder):
+        return placeholder[:max_length]
+    return text[: max_length - len(placeholder)] + placeholder
+
+
 class CacheLevel:
     __slots__ = ("value",)
 
