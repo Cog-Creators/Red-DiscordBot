@@ -39,7 +39,7 @@ Basic Usage
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         @commands.command()
         async def youtube(self, ctx, user: str):
             youtube_keys = await self.bot.get_shared_api_tokens("youtube")
