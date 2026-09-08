@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import datetime
 from pathlib import Path
-from typing import Dict
 
 import discord
 import lavalink
@@ -10,6 +11,8 @@ from discord.backoff import ExponentialBackoff
 from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
+from redbot.core.utils.chat_formatting import text_to_file
+
 from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
@@ -18,6 +21,28 @@ log = getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = getLogger("red.Audio.WS.Audio")
 
 _ = Translator("Audio", Path(__file__))
+
+_EMBED_DESCRIPTION_LIMIT = 4096
+_TRACK_ERROR_FILENAME = "lavalink-track-error.txt"
+
+
+def _format_track_error(full_error: str) -> tuple[str, bool]:
+    if len(full_error) <= _EMBED_DESCRIPTION_LIMIT:
+        return full_error, False
+
+    notice = _(
+        "\n\n... The middle of this error was omitted because it is too long. "
+        "The complete error is attached as `{error_file}` and is also available "
+        "in Lavalink's `{log_file}`. ...\n\n"
+    ).format(error_file=_TRACK_ERROR_FILENAME, log_file="spring.log")
+    notice = notice[: _EMBED_DESCRIPTION_LIMIT - 2]
+    remaining_length = _EMBED_DESCRIPTION_LIMIT - len(notice)
+    beginning_length = (remaining_length + 1) // 2
+    end_length = remaining_length - beginning_length
+    return (
+        full_error[:beginning_length] + notice + full_error[-end_length:],
+        True,
+    )
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -310,6 +335,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                     return
                 else:
                     description = description or ""
+                    send_kwargs = {}
                     if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
                         embed = discord.Embed(
                             colour=await self.bot.get_embed_color(message_channel),
@@ -319,18 +345,24 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             ).format(error=description),
                         )
                     else:
+                        full_error = "{}\n{}".format(
+                            extra["message"].replace("\n", ""), description
+                        )
+                        embed_description, error_was_truncated = _format_track_error(full_error)
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(
-                                extra["message"].replace("\n", ""), description
-                            ),
+                            description=embed_description,
                         )
+                        if error_was_truncated:
+                            send_kwargs["file"] = text_to_file(
+                                full_error, filename=_TRACK_ERROR_FILENAME
+                            )
                         if current_id:
                             asyncio.create_task(
                                 self.api_interface.global_cache_api.report_invalid(current_id)
                             )
-                    await message_channel.send(embed=embed)
+                    await message_channel.send(embed=embed, **send_kwargs)
             if player.node.ready:
                 await player.skip()
 
@@ -338,7 +370,7 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
         self,
         guild: discord.Guild,
         player: lavalink.Player,
-        extra: Dict,
+        extra: dict,
         self_deaf: bool,
         disconnect: bool,
     ) -> None:
