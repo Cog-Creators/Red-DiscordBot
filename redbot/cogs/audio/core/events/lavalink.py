@@ -14,6 +14,8 @@ from ...errors import DatabaseError, TrackEnqueueError
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
+MAX_EMBED_DESCRIPTION_LENGTH = 4096
+
 log = getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = getLogger("red.Audio.WS.Audio")
 
@@ -330,6 +332,10 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                             asyncio.create_task(
                                 self.api_interface.global_cache_api.report_invalid(current_id)
                             )
+                    if embed.description and len(embed.description) > MAX_EMBED_DESCRIPTION_LENGTH:
+                        embed.description = (
+                            embed.description[: MAX_EMBED_DESCRIPTION_LENGTH - 3] + "..."
+                        )
                     await message_channel.send(embed=embed)
             if player.node.ready:
                 await player.skip()
