@@ -1111,25 +1111,6 @@ class Downloader(commands.Cog):
 
         await ctx.invoke(ctx.bot.get_cog("Core").reload, *updated_cognames)
 
-    def cog_name_from_instance(self, instance: object) -> str:
-        """Determines the cog name that Downloader knows from the cog instance.
-
-        Probably.
-
-        Parameters
-        ----------
-        instance : object
-            The cog instance.
-
-        Returns
-        -------
-        str
-            The name of the cog according to Downloader..
-
-        """
-        splitted = instance.__module__.split(".")
-        return splitted[0]
-
     @commands.command()
     async def findcog(self, ctx: commands.Context, command_name: str) -> None:
         """Find which cog a command comes from.
@@ -1151,8 +1132,21 @@ class Downloader(commands.Cog):
 
         # Check if in installed cogs
         cog = command.cog
-        if cog:
-            cog_pkg_name = self.cog_name_from_instance(cog)
+        if not cog:
+            await ctx.send(_("This command is not provided by a cog."))
+            return
+
+        try:
+            top_level_package, subpackage, cog_pkg_name, *__ = cog.__module__.split(".", 3)
+            if top_level_package != "redbot":
+                raise ValueError
+        except ValueError:
+            await ctx.send(_("The cog package for the given command could not be determined."))
+            return
+
+        cog_name = cog.__class__.__name__
+        repo_branch = None
+        if subpackage == "ext_cogs":
             installed, cog_installable = await _downloader.is_installed(cog_pkg_name)
             if installed:
                 made_by = (
@@ -1170,25 +1164,18 @@ class Downloader(commands.Cog):
                     if cog_installable.repo is None
                     else cog_installable.repo.name
                 )
+                repo_branch = cog_installable.repo and cog_installable.repo.branch
                 cog_pkg_name = cog_installable.name
-            elif cog.__module__.startswith("redbot."):  # core commands or core cog
-                made_by = "Cog Creators"
-                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-                module_fragments = cog.__module__.split(".")
-                if module_fragments[1] == "core":
-                    cog_pkg_name = "N/A - Built-in commands"
-                else:
-                    cog_pkg_name = module_fragments[2]
-                repo_name = "Red-DiscordBot"
             else:  # assume not installed via downloader
                 made_by = _("Unknown")
                 repo_url = _("None - this cog wasn't installed via downloader")
                 repo_name = _("Unknown")
-            cog_name = cog.__class__.__name__
-        else:
-            msg = _("This command is not provided by a cog.")
-            await ctx.send(msg)
-            return
+        else:  # core commands or core cog
+            made_by = "Cog Creators"
+            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
+            if subpackage == "core":
+                cog_pkg_name = "N/A - Built-in commands"
+            repo_name = "Red-DiscordBot"
 
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
@@ -1198,10 +1185,8 @@ class Downloader(commands.Cog):
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
-            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
-                embed.add_field(
-                    name=_("Repo branch:"), value=cog_installable.repo.branch, inline=False
-                )
+            if repo_branch:
+                embed.add_field(name=_("Repo branch:"), value=repo_branch, inline=False)
             await ctx.send(embed=embed)
 
         else:
@@ -1220,10 +1205,8 @@ class Downloader(commands.Cog):
                 repo_url=repo_url,
                 repo_name=repo_name,
             )
-            if installed and cog_installable.repo is not None and cog_installable.repo.branch:
-                msg += _("Repo branch: {branch_name}\n").format(
-                    branch_name=cog_installable.repo.branch
-                )
+            if repo_branch:
+                msg += _("Repo branch: {branch_name}\n").format(branch_name=repo_branch)
             await ctx.send(box(msg))
 
     @staticmethod
