@@ -100,7 +100,18 @@ class SpotifyWrapper:
         if params is None:
             params = {}
         async with self.session.request("GET", url, params=params, headers=headers) as r:
-            data = await r.json(loads=json.loads)
+            try:
+                data = await r.json(loads=json.loads)
+            except (aiohttp.ContentTypeError, json.JSONDecodeError):
+                log.verbose(
+                    "Issue making GET request to %r: [%s] %r", url, r.status, await r.text()
+                )
+                raise SpotifyFetchError(
+                    message=_(
+                        "The Spotify API returned an unexpected response. "
+                        "Try again in a few minutes."
+                    )
+                )
             if r.status != 200:
                 log.verbose("Issue making GET request to %r: [%s] %r", url, r.status, data)
             return data
@@ -154,7 +165,18 @@ class SpotifyWrapper:
     ) -> MutableMapping:
         """Make a POST call to spotify."""
         async with self.session.post(url, data=payload, headers=headers) as r:
-            data = await r.json(loads=json.loads)
+            try:
+                data = await r.json(loads=json.loads)
+            except (aiohttp.ContentTypeError, json.JSONDecodeError):
+                log.verbose(
+                    "Issue making POST request to %r: [%s] %r", url, r.status, await r.text()
+                )
+                raise SpotifyFetchError(
+                    message=_(
+                        "The Spotify API returned an unexpected response. "
+                        "Try again in a few minutes."
+                    )
+                )
             if r.status != 200:
                 log.verbose("Issue making POST request to %r: [%s] %r", url, r.status, data)
             return data
