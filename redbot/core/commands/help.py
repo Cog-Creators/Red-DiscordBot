@@ -114,6 +114,9 @@ class HelpSettings:
         """
         settings = await context.bot._config.help.all()
         menus = settings.pop("use_menus", 0)
+        if context.guild:
+            if (max_pages := await context.bot._config.guild(context.guild).help_pages()) >= 0:
+                settings["max_pages_in_guild"] = max_pages
         return cls(**settings, use_menus=HelpMenuSetting(menus))
 
     @property
