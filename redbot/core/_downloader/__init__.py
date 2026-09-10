@@ -109,6 +109,11 @@ async def _migrate_config() -> None:
         schema_version += 1
         await _config.schema_version.set(schema_version)
 
+    if schema_version == 2:
+        await _schema_2_to_3()
+        schema_version += 1
+        await _config.schema_version.set(schema_version)
+
 
 async def _schema_0_to_1():
     """
@@ -133,6 +138,39 @@ async def _schema_0_to_1():
     await _config.clear_raw("installed")
     # no reliable way to get installed libraries (i.a. missing repo name)
     # but it only helps `[p]cog update` run faster so it's not an issue
+
+
+async def _schema_2_to_3():
+    """
+    This migrates case-sensitive repo names to be case-insensitive
+    and ensures they only contain characters valid per `[p]repo add`'s regex.
+    """
+    old_conf = await _config.installed_cogs()
+
+    repo_mgr = RepoManager()
+    name_mapping = await repo_mgr._downloader_schema_2_to_3_migrate(old_conf.keys())
+
+    new_conf = {}
+    for old_name, new_name in name_mapping.items():
+        new_conf[new_name] = {
+            cog_name: {**cog_info, "repo_name": new_name}
+            for cog_name, cog_info in old_conf.get(old_name, {}).items()
+        }
+    await _config.installed_cogs.set(new_conf)
+    await repo_mgr._downloader_schema_2_to_3_clear_old_config()
+
+
+async def rename_repo(current_name: str, new_name: str) -> None:
+    current_name = current_name.lower()
+    new_name = new_name.lower()
+
+    await _repo_manager.rename_repo(current_name, new_name)
+    async with _config.installed_cogs() as installed:
+        installed[new_name] = {
+            cog_name: {**cog_info, "repo_name": new_name}
+            for cog_name, cog_info in installed.get(current_name, {}).items()
+        }
+        installed.pop(current_name, None)
 
 
 def _create_lib_folder(*, remove_first: bool = False) -> None:
