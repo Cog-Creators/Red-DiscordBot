@@ -893,6 +893,19 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
         await self.config.guild(ctx.guild).maxlength.set(seconds)
 
+    @command_audioset.command(name="maxlengthbypass")
+    @commands.admin_or_permissions(manage_guild=True)
+    async def audioset_maxlength_bypass(self, ctx: commands.Context):
+        """Toggle whether mods/admins/DJs can bypass the max track length."""
+        bypass = await self.config.guild(ctx.guild).maxlength_bypass()
+        await self.config.guild(ctx.guild).maxlength_bypass.set(not bypass)
+        if not bypass:
+            await self.send_embed_msg(
+                ctx, title=_("Mods and DJs can now bypass the max track length.")
+            )
+        else:
+            await self.send_embed_msg(ctx, title=_("Max track length now applies to everyone."))
+
     @command_audioset.command(name="notify")
     @commands.guild_only()
     @commands.mod_or_permissions(manage_guild=True)
