@@ -39,7 +39,7 @@ activemutes
 
 .. code-block:: none
 
-    [p]activemutes 
+    [p]activemutes
 
 **Description**
 
@@ -113,7 +113,7 @@ muteset
 
 .. code-block:: none
 
-    [p]muteset 
+    [p]muteset
 
 **Description**
 
@@ -219,8 +219,8 @@ Sets the role to be applied when muting a user.
 If no role is setup the bot will attempt to mute a user
 by utilizing server timeouts.
 
-.. Note:: 
-    
+.. Note::
+
     If no role is setup a user may be able to leave the server
     and rejoin no longer being muted.
 
@@ -262,7 +262,7 @@ muteset settings
 
 .. code-block:: none
 
-    [p]muteset settings 
+    [p]muteset settings
 
 .. tip:: Alias: ``muteset showsettings``
 
@@ -287,6 +287,31 @@ muteset showmoderator
 **Description**
 
 Decide whether the name of the moderator muting a user should be included in the DM to that user.
+
+**Arguments**
+
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
+
+.. _mutes-command-muteset-unmutesenddm:
+
+""""""""""""""""""""
+muteset unmutesenddm
+""""""""""""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset unmutesenddm <true_or_false>
+
+**Description**
+
+Set whether unmute notifications should be sent to users in DMs.
+
+This setting is independent of ``[p]muteset senddm``, which controls
+DM notifications for mutes. Both can be toggled separately.
 
 **Arguments**
 
