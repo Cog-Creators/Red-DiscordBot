@@ -32,6 +32,7 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
         autoplay = await self.config.guild(ctx.guild).auto_play()
+        keep_in_queue = await self.config.guild(ctx.guild).keep_in_queue()
 
         queue_num_pages = math.ceil(len(queue) / 10)
         queue_idx_start = (page_num - 1) * 10
@@ -44,25 +45,26 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
         arrow = await self.draw_time(ctx)
         pos = self.format_time(player.position)
 
-        if player.current.is_stream:
-            dur = "LIVE"
-        else:
-            dur = self.format_time(player.current.length)
+        if player.current:
+            if player.current.is_stream:
+                dur = "LIVE"
+            else:
+                dur = self.format_time(player.current.length)
 
-        query = Query.process_input(player.current, self.local_folder_current_path)
-        current_track_description = await self.get_track_description(
-            player.current, self.local_folder_current_path
-        )
-        if query.is_stream:
-            queue_list += _("**Currently livestreaming:**\n")
-            queue_list += f"{current_track_description}\n"
-            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
-            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
-        else:
-            queue_list += _("Playing: ")
-            queue_list += f"{current_track_description}\n"
-            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
-            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            query = Query.process_input(player.current, self.local_folder_current_path)
+            current_track_description = await self.get_track_description(
+                player.current, self.local_folder_current_path
+            )
+            if query.is_stream:
+                queue_list += _("**Currently livestreaming:**\n")
+                queue_list += f"{current_track_description}\n"
+                queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            else:
+                queue_list += _("Playing: ")
+                queue_list += f"{current_track_description}\n"
+                queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+                queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         async for i, track in AsyncIter(queue[queue_idx_start:queue_idx_end]).enumerate(
             start=queue_idx_start
@@ -109,6 +111,18 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             + _("Repeat")
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
+        )
+        text += (
+            (" | " if text else "")
+            + _("Repeat Current")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+        )
+        text += (
+            (" | " if text else "")
+            + _("Keep in Queue")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if keep_in_queue else "\N{CROSS MARK}")
         )
         embed.set_footer(text=text)
         return embed

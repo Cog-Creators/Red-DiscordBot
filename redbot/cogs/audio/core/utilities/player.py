@@ -127,6 +127,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
+        player.repeat_current = False
         autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
@@ -161,7 +162,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
             return
 
         queue_to_append = []
-        if skip_to_track is not None and skip_to_track != 1:
+        if skip_to_track is not None:
             if skip_to_track < 1:
                 await self.send_embed_msg(
                     ctx, title=_("Track number must be equal to or greater than 1.")
@@ -175,15 +176,26 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     ),
                 )
                 return
-            embed = discord.Embed(
-                title=_("{skip_to_track} Tracks Skipped").format(skip_to_track=skip_to_track)
-            )
+            if skip_to_track - 1 >= player.next_queue_position:
+                skipped_count = skip_to_track - player.next_queue_position
+                embed = discord.Embed(
+                    title=_("{skipped_count} Tracks Skipped").format(skipped_count=skipped_count)
+                )
+            else:
+                embed = discord.Embed(
+                    title=_("Skipped to Track {skip_to_track}").format(skip_to_track=skip_to_track)
+                )
             await self.send_embed_msg(ctx, embed=embed)
-            if player.repeat:
-                queue_to_append = player.queue[0 : min(skip_to_track - 1, len(player.queue) - 1)]
-            player.queue = player.queue[
-                min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
-            ]
+            if player.keep_in_queue:
+                player.next_queue_position = skip_to_track - 1
+            else:
+                if player.repeat:
+                    queue_to_append = player.queue[
+                        0 : min(skip_to_track - 1, len(player.queue) - 1)
+                    ]
+                player.queue = player.queue[
+                    min(skip_to_track - 1, len(player.queue) - 1) : len(player.queue)
+                ]
         else:
             embed = discord.Embed(
                 title=_("Track Skipped"),
@@ -454,21 +466,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 ):
                     log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(track, guild_data["maxlength"]):
-                        track_len += 1
-                        track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
-                        player.add(ctx.author, track)
-                        self.bot.dispatch(
-                            "red_audio_track_enqueue", player.guild, track, ctx.author
-                        )
-
+                elif guild_data["maxlength"] > 0 and not self.is_track_length_allowed(
+                    track, guild_data["maxlength"]
+                ):
+                    continue
                 else:
                     track_len += 1
                     track.extras.update(
@@ -547,29 +548,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0:
-                    if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                        single_track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
-                        player.add(ctx.author, single_track)
-                        player.maybe_shuffle()
-                        self.bot.dispatch(
-                            "red_audio_track_enqueue",
-                            player.guild,
-                            single_track,
-                            ctx.author,
-                        )
-                    else:
-                        self.update_player_lock(ctx, False)
-                        return await self.send_embed_msg(
-                            ctx, title=_("Track exceeds maximum length.")
-                        )
-
+                elif guild_data["maxlength"] > 0 and not self.is_track_length_allowed(
+                    single_track, guild_data["maxlength"]
+                ):
+                    self.update_player_lock(ctx, False)
+                    return await self.send_embed_msg(ctx, title=_("Track exceeds maximum length."))
                 else:
                     single_track.extras.update(
                         {
@@ -679,10 +662,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
+        keep_in_queue = await self.config.guild(ctx.guild).keep_in_queue()
         volume = await self.config.guild(ctx.guild).volume()
         shuffle_bumped = await self.config.guild(ctx.guild).shuffle_bumped()
         player.repeat = repeat
         player.shuffle = shuffle
+        player.keep_in_queue = keep_in_queue
         player.shuffle_bumped = shuffle_bumped
         if player.volume != volume:
             await player.set_volume(volume)
