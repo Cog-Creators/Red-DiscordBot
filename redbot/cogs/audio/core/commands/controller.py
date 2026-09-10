@@ -32,52 +32,70 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Disconnect from the voice channel."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        else:
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-            )
-            vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-            player = lavalink.get_player(ctx.guild.id)
-            can_skip = await self._can_instaskip(ctx, ctx.author)
-            if (
-                (vote_enabled or (vote_enabled and dj_enabled))
-                and not can_skip
-                and not await self.is_requester_alone(ctx)
-            ):
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Disconnect"),
-                    description=_("There are other people listening - vote to skip instead."),
-                )
-            if dj_enabled and not vote_enabled and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Disconnect"),
-                    description=_("You need the DJ role to disconnect."),
-                )
-            if dj_enabled and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable to Disconnect"),
-                    description=_("You need the DJ role to disconnect."),
-                )
 
-            await self.send_embed_msg(ctx, title=_("Disconnecting..."))
-            self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
-            self.update_player_lock(ctx, False)
-            eq = player.fetch("eq")
-            player.queue = []
-            player.store("playing_song", None)
-            player.store("autoplay_notified", False)
-            if eq:
-                await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
-            await player.stop()
-            await player.disconnect()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
+        player = lavalink.get_player(ctx.guild.id)
+        channel = player.channel
+        if not channel:
+            return await self.send_embed_msg(
+                ctx, title=_("The bot is not connected to a voice channel.")
             )
-            self._ll_guild_updates.discard(ctx.guild.id)
-            await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
+
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        is_alone = await self.is_requester_alone(ctx, channel)
+        if is_alone or can_skip:
+            # User can always disconnect the bot, if there is nobody else in the player's channel
+            # or when they can instaskip.
+            pass
+        # There is someone else in the player's channel and the author can't instaskip,
+        # we have to ensure that none of the following are true for them to be allowed to DC:
+        elif vote_enabled:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_("There are other people listening - vote to skip instead."),
+            )
+        elif dj_enabled:
+            # DJ role would have granted the user the ability to instaskip,
+            # so we know they don't have it
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_("You need the DJ role to disconnect."),
+            )
+        elif not channel.permissions_for(ctx.author).connect and (
+            not ctx.author.voice or ctx.author.voice.channel != channel
+        ):
+            # The user cannot connect to player's current channel,
+            # so they shouldn't be able to affect what the bot is doing there.
+            # As a special case, if the user is already connected to the channel
+            # (perhaps they were moved by a mod), we should assume they can tell the bot to DC,
+            # since they can already perform any other player action by being in its channel.
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_(
+                    "There are other people listening in a voice channel you cannot access."
+                ),
+            )
+
+        await self.send_embed_msg(ctx, title=_("Disconnecting..."))
+        self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
+        self.update_player_lock(ctx, False)
+        eq = player.fetch("eq")
+        player.queue = []
+        player.store("playing_song", None)
+        player.store("autoplay_notified", False)
+        if eq:
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        await player.stop()
+        await player.disconnect()
+        await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set([])
+        self._ll_guild_updates.discard(ctx.guild.id)
+        await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
     @commands.command(name="now")
     @commands.guild_only()
