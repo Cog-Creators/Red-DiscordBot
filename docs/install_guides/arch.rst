@@ -30,11 +30,11 @@ The manual build process is the Arch-supported install method for AUR packages. 
 
 .. prompt:: bash
 
-    git clone https://aur.archlinux.org/python311.git /tmp/python311
-    cd /tmp/python311
+    git clone https://aur.archlinux.org/python311.git /var/tmp/python311
+    cd /var/tmp/python311
     makepkg -sicL
     cd -
-    rm -rf /tmp/python311
+    rm -rf /var/tmp/python311
 
 .. Include common instructions:
 
