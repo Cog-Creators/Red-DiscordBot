@@ -2,9 +2,48 @@
 .. os-image-location::
 
     [arch-linux]
-    download_type = 'checksum-file'
-    url = 'https://fastly.mirror.pkgbuild.com/images/latest/Arch-Linux-x86_64-cloudimg.qcow2.SHA256'
-    filename_pattern = '.*\.qcow2'
+    download_type = 'html'
+    url = 'https://fastly.mirror.pkgbuild.com/images/latest/'
+    url_xpath = '''
+    concat(
+        "../v",
+        substring-before(
+            substring-after(
+                .//*[
+                    starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+                    and ends-with(@href, ".qcow2")
+                ]/@href,
+                "Arch-Linux-x86_64-cloudimg-"
+            ),
+            ".qcow2"
+        ),
+        "/",
+        .//*[
+            starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+            and ends-with(@href, ".qcow2")
+        ]/@href
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../v",
+        substring-before(
+            substring-after(
+                .//*[
+                    starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+                    and ends-with(@href, ".qcow2.SHA256")
+                ]/@href,
+                "Arch-Linux-x86_64-cloudimg-"
+            ),
+            ".qcow2.SHA256"
+        ),
+        "/",
+        .//*[
+            starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+            and ends-with(@href, ".qcow2.SHA256")
+        ]/@href
+    )
+    '''
 
 ============================
 Installing Red on Arch Linux
