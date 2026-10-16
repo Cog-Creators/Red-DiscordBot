@@ -1,0 +1,12 @@
+{
+    "author": ["Ray"],
+    "description": "Interactive self-assignable roles wizard and reaction role management",
+    "install_msg": "RayzRoles loaded. Use `re <#channel>` to launch the role creation wizard.",
+    "short": "Interactive reaction and self-roles wizard",
+    "name": "RayzRoles",
+    "tags": ["roles", "selfroles", "reactionroles", "automation"],
+    "min_python_version": [3, 8, 1],
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
