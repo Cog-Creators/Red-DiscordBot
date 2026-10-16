@@ -311,21 +311,28 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                 else:
                     description = description or ""
                     if event_type == lavalink.LavalinkEvents.TRACK_STUCK:
+                        stuck_desc = _(
+                            "Playback of the song has stopped due to an unexpected error.\n{error}"
+                        ).format(error=description)
                         embed = discord.Embed(
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
-                            description=_(
-                                "Playback of the song has stopped due to an unexpected error.\n{error}"
-                            ).format(error=description),
+                            description=stuck_desc[:4000],
                         )
                     else:
+                        error_message = extra.get("message", "").replace("\n", "")
+                        desc_text = (
+                            f"{error_message}\n{description}" if description else error_message
+                        )
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(
-                                extra["message"].replace("\n", ""), description
-                            ),
                         )
+                        if len(desc_text) > 4000:
+                            embed.description = desc_text[:3900] + "..."
+                            embed.set_footer(text=_("Check logs for more information."))
+                        else:
+                            embed.description = desc_text
                         if current_id:
                             asyncio.create_task(
                                 self.api_interface.global_cache_api.report_invalid(current_id)
