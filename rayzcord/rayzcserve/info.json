@@ -1,0 +1,12 @@
+{
+    "author": ["Ray (rayzien)"],
+    "description": "Server-wide typography customization suite with 100+ Unicode fonts, symbol accents, and batch channel and role styling",
+    "install_msg": "RayzCServe loaded. Use `rcs` to launch the interactive server styling wizard or `rcs fonts` to browse styles.",
+    "short": "Server-wide 100+ typography and aesthetic font customization",
+    "name": "RayzCServe",
+    "tags": ["typography", "fonts", "styling", "server-management", "automation", "channels", "roles"],
+    "min_python_version": [3, 8, 1],
+    "hidden": false,
+    "disabled": false,
+    "type": "COG"
+}
