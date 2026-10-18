@@ -2,28 +2,72 @@
 .. os-image-location::
 
     [ubuntu-2604]
-    download_type = 'checksum-file'
-    url = 'https://cloud-images.ubuntu.com/resolute/current/SHA256SUMS'
-    filename_pattern = 'resolute-server-cloudimg-amd64\.img'
+    download_type = 'html'
+    url = 'https://cloud-images.ubuntu.com/resolute/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/resolute-server-cloudimg-amd64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2604-amd64v3]
-    download_type = 'checksum-file'
-    url = 'https://cloud-images.ubuntu.com/resolute/current/SHA256SUMS'
-    filename_pattern = 'resolute-server-cloudimg-amd64v3\.img'
+    download_type = 'html'
+    url = 'https://cloud-images.ubuntu.com/resolute/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/resolute-server-cloudimg-amd64v3.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2604-arm]
-    download_type = 'checksum-file'
+    download_type = 'html'
     arch = 'aarch64'
-    url = 'https://cloud-images.ubuntu.com/resolute/current/SHA256SUMS'
-    filename_pattern = 'resolute-server-cloudimg-arm64\.img'
+    url = 'https://cloud-images.ubuntu.com/resolute/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/resolute-server-cloudimg-arm64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2604-arm-raspi]
-    download_type = 'checksum-file'
+    download_type = 'html'
     arch = 'aarch64'
     machine_type = 'raspi3b'
     image_format = 'raw+xz'
-    url = 'https://cdimage.ubuntu.com/ubuntu-server/resolute/daily-preinstalled/current/SHA256SUMS'
-    filename_pattern = 'resolute-preinstalled-server-arm64\+raspi\.img\.xz'
+    url = 'https://cdimage.ubuntu.com/ubuntu-server/resolute/daily-preinstalled/current/'
+    url_xpath = '''
+    concat(
+        /html/head/link[@rel="canonical"]/@href, "/resolute-preinstalled-server-arm64+raspi.img.xz"
+    )
+    '''
+    checksum_file_url_xpath = '"SHA256SUMS"'
 
 ==================================
 Installing Red on Ubuntu 26.04 LTS
