@@ -17,7 +17,7 @@
     arch = 'aarch64'
     machine_type = 'raspi3b'
     image_format = 'raw+xz'
-    url = 'https://cdimage.ubuntu.com/releases/jammy/release/SHA256SUMS'
+    url = 'https://cdimage.ubuntu.com/ubuntu/releases/jammy/release/SHA256SUMS'
     filename_pattern = 'ubuntu-22\.04\.\d+-preinstalled-server-arm64\+raspi\.img\.xz'
 
 ==================================
