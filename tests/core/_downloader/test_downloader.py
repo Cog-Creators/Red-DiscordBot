@@ -15,6 +15,7 @@ from redbot.core._downloader.errors import (
     AmbiguousRevision,
     ExistingGitRepo,
     GitException,
+    NoRemoteURL,
     UnknownRevision,
 )
 
@@ -413,3 +414,43 @@ def test_tree_url_non_github(repo_manager):
 
     for test_case in cases:
         assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
+
+
+async def test_load_repos_reports_repos_that_fail_to_load(mocker, repo_manager, tmp_path):
+    """Regression test for GH-6635.
+
+    A folder in the repos directory that Downloader can't read as a repo (for
+    example because of a permission error) must not just silently vanish -
+    its name should end up in ``RepoManager.repos_failed_to_load`` so command
+    output (e.g. ``[p]repo list``) can point the bot owner at the logs instead
+    of just claiming there are no repos installed.
+    """
+    repos_folder = tmp_path / "repos"
+    mocker.patch.object(
+        type(repo_manager),
+        "repos_folder",
+        new_callable=mocker.PropertyMock,
+        return_value=repos_folder,
+    )
+    (repos_folder / "good_repo").mkdir(parents=True)
+    (repos_folder / "broken_repo").mkdir()
+
+    async def fake_current_url(self, folder=None):
+        if self.name == "broken_repo":
+            # This is what `Repo.current_url()` actually raises when the
+            # underlying `git remote get-url origin` call fails for any
+            # reason, including a permission error that stops git from
+            # reading the repo folder at all.
+            raise NoRemoteURL("Unable to discover a repo URL.", "git remote get-url origin")
+        return "https://example.com/example/good_repo.git"
+
+    mocker.patch.object(Repo, "current_url", autospec=True, side_effect=fake_current_url)
+    mocker.patch.object(Repo, "current_branch", autospec=True, return_value="main")
+    mocker.patch.object(Repo, "_update_available_modules", autospec=True, return_value=())
+
+    ret = await repo_manager._load_repos(set_repos=True)
+
+    assert set(ret) == {"good_repo"}
+    assert repo_manager.repos_failed_to_load == ("broken_repo",)
+    assert repo_manager.get_repo("good_repo") is not None
+    assert repo_manager.get_repo("broken_repo") is None
