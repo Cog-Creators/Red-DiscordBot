@@ -52,7 +52,8 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.8.1 or greater
+ - Python 3.8.1 (the oldest supported version; recommended for development so
+   accidental use of newer Python syntax is caught)
  - git
  - pip
  
@@ -63,6 +64,7 @@ If you're not on Windows, you should also have GNU make installed, and you can o
     ```bash
     make newenv
     ```
+    By default, this target runs `python3.8`. If you use another supported interpreter, pass its executable with `make PYTHON=/path/to/python newenv`.
     Red, its dependencies, and all required development tools, are now installed to a virtual environment located in the `.venv` subdirectory. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
 3. Activate the new virtual environment with one of the following commands:
     - Posix:
