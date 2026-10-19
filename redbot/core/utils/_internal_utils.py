@@ -40,10 +40,12 @@ from typing import (
 import aiohttp
 import discord
 import yarl
+from packaging.markers import Variable as _MarkerVariable
 from packaging.metadata import Metadata
+from packaging.ranges import VersionRange
 from packaging.requirements import Requirement
 from packaging.specifiers import SpecifierSet
-from packaging.utils import parse_sdist_filename
+from packaging.utils import canonicalize_name, parse_sdist_filename
 from packaging.version import Version
 import rapidfuzz
 import rich.progress
@@ -414,6 +416,16 @@ ReleaseFile = TypedDict(
     },
 )
 
+_REQUIRES_PYTHON_PKG_NAMES = tuple(
+    map(
+        canonicalize_name,
+        (
+            "Red-does-not-support-this-version-of-Python.-Please-follow-one-of-the-install-guides-at-docs.discord.red",
+            "package-does-not-support-this-version-of-python",
+        ),
+    )
+)
+
 
 class AvailableVersion:
     def __init__(self, version: Version, files: Dict[str, ReleaseFile]) -> None:
@@ -422,23 +434,99 @@ class AvailableVersion:
         required_pythons = {f.get("requires-python") or "" for f in files.values()}
         if len(required_pythons) > 1:
             raise ValueError("found multiple files with different Requires-Python values")
-        self.requires_python = SpecifierSet(required_pythons.pop())
+        self.base_requires_python = SpecifierSet(required_pythons.pop(), prereleases=True)
+        self._requires_python: Optional[SpecifierSet] = None
+        self._metadata: Optional[Metadata] = None
+
+    @property
+    def requires_python(self) -> SpecifierSet:
+        if self._requires_python is None:
+            raise TypeError(
+                "`requires_python` attribute is missing - call `fetch_extra_info()` first."
+            )
+        return self._requires_python
+
+    @property
+    def metadata(self) -> Metadata:
+        if self._metadata is None:
+            raise TypeError("`metadata` attribute is missing - call `fetch_extra_info()` first.")
+        return self._metadata
+
+    @classmethod
+    def _markers_to_version_range(cls, markers: Any) -> VersionRange:
+        # this is basically _evaluate_markers() adapted for python_version version ranges
+        # https://github.com/pypa/packaging/blob/07265129295b4b95b9143b50e3ce4709f31a8c49/src/packaging/markers.py#L260-L290
+        groups: List[List[VersionRange]] = [[]]
+        for marker in markers:
+            if isinstance(marker, list):
+                groups[-1].append(cls._markers_to_version_range(marker))
+            elif isinstance(marker, tuple):
+                lhs, op, rhs = marker
+
+                if isinstance(lhs, _MarkerVariable):
+                    marker_field = lhs.value
+                    marker_value = rhs.value
+                else:
+                    marker_field = rhs.value
+                    marker_value = lhs.value
+
+                if marker_field != "python_version":
+                    raise ValueError("Only 'python_version' field is supported in markers.")
+                groups[-1].append(
+                    SpecifierSet(f"{op} {marker_value}", prereleases=True).to_range()
+                )
+            elif marker == "or":
+                groups.append([])
+            elif marker == "and":
+                pass
+            else:
+                raise TypeError(f"Unexpected marker {marker!r}")
+
+        ret = VersionRange.empty(prereleases=True)
+        for group in groups:
+            group_version_range = VersionRange.full(prereleases=True)
+            for version_range in group:
+                group_version_range &= version_range
+            ret |= group_version_range
+
+        return version_range
+
+    async def fetch_extra_info(self) -> None:
+        if self._metadata is not None:
+            return
+        metadata = await self._fetch_core_metadata()
+        # requires https://github.com/pypa/packaging/pull/1270
+        version_range = self.base_requires_python.to_range()
+        for req in metadata.requires_dist or ():
+            if canonicalize_name(req.name) not in _REQUIRES_PYTHON_PKG_NAMES:
+                continue
+            if req.marker is None:
+                version_range &= VersionRange.empty(prereleases=True)
+                break
+            # there is no public API for Marker's tree structure:
+            # https://github.com/pypa/packaging/issues/496
+            version_range &= ~self._markers_to_version_range(req.marker._markers)
+        requires_python = version_range.to_specifier_set()
+        if requires_python is None:
+            raise RuntimeError("Could not calculate requires_python property.")
+        self._requires_python = requires_python
+        self._metadata = metadata
 
     @classmethod
     def from_json_dict(cls, data: Dict[str, Any]) -> Self:
         ret = cls(Version(data["version"]), data["files"])
-        if str(ret.requires_python) != data["requires_python"]:
+        if str(ret.base_requires_python) != data["base_requires_python"]:
             raise ValueError("requires_python key in given data is inconsistent with files")
         return ret
 
     def to_json_dict(self) -> Dict[str, Any]:
         return {
             "version": str(self.version),
-            "requires_python": str(self.requires_python),
+            "base_requires_python": str(self.base_requires_python),
             "files": self.files,
         }
 
-    async def fetch_core_metadata(self) -> Metadata:
+    async def _fetch_core_metadata(self) -> Metadata:
         for release_file in self.files.values():
             core_metadata_hashes = release_file.get("core-metadata", False)
             if core_metadata_hashes is False:
