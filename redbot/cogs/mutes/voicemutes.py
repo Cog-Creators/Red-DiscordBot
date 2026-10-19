@@ -221,7 +221,7 @@ class VoiceMutes(MixinMeta):
                         channel=channel,
                     )
                     await self._send_dm_notification(
-                        user, author, guild, _("Voice unmute"), reason
+                        user, author, guild, _("Voice unmute"), reason, is_unmute=True
                     )
                 else:
                     issue_list.append((user, result.reason))
