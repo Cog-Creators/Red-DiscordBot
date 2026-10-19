@@ -11,6 +11,7 @@ from red_commons.logging import getLogger
 
 from redbot.core.i18n import Translator, set_contextual_locales_from_guild
 from ...errors import DatabaseError, TrackEnqueueError
+from ...utils import truncate
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
 
@@ -18,6 +19,9 @@ log = getLogger("red.cogs.Audio.cog.Events.lavalink")
 ws_audio_log = getLogger("red.Audio.WS.Audio")
 
 _ = Translator("Audio", Path(__file__))
+
+# Discord rejects embeds whose description is longer than 4096 characters.
+EMBED_DESCRIPTION_MAX_LENGTH = 4096
 
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
@@ -314,16 +318,20 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             colour=await self.bot.get_embed_color(message_channel),
                             title=_("Track Stuck"),
-                            description=_(
-                                "Playback of the song has stopped due to an unexpected error.\n{error}"
-                            ).format(error=description),
+                            description=truncate(
+                                _(
+                                    "Playback of the song has stopped due to an unexpected error.\n{error}"
+                                ).format(error=description),
+                                max_length=EMBED_DESCRIPTION_MAX_LENGTH,
+                            ),
                         )
                     else:
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(
-                                extra["message"].replace("\n", ""), description
+                            description=truncate(
+                                "{}\n{}".format(extra["message"].replace("\n", ""), description),
+                                max_length=EMBED_DESCRIPTION_MAX_LENGTH,
                             ),
                         )
                         if current_id:
