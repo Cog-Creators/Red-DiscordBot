@@ -170,7 +170,7 @@ class Tunnel(metaclass=TunnelMeta):
                     # if this is None, it's not an image
                     continue
                 try:
-                    file = await a.to_file()
+                    file = await a.to_file(use_cached=use_cached, spoiler=a.is_spoiler())
                 except discord.HTTPException as e:
                     # this is required, because animated webp files aren't cached
                     if not (e.status == 415 and images_only and use_cached):
