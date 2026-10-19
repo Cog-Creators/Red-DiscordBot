@@ -2,23 +2,54 @@
 .. os-image-location::
 
     [ubuntu-2404]
-    download_type = 'checksum-file'
-    url = 'https://cloud-images.ubuntu.com/noble/current/SHA256SUMS'
-    filename_pattern = 'noble-server-cloudimg-amd64\.img'
+    download_type = 'html'
+    url = 'https://cloud-images.ubuntu.com/noble/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/noble-server-cloudimg-amd64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2404-arm]
-    download_type = 'checksum-file'
+    download_type = 'html'
     arch = 'aarch64'
-    url = 'https://cloud-images.ubuntu.com/noble/current/SHA256SUMS'
-    filename_pattern = 'noble-server-cloudimg-arm64\.img'
+    url = 'https://cloud-images.ubuntu.com/noble/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/noble-server-cloudimg-arm64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2404-arm-raspi]
-    download_type = 'checksum-file'
+    download_type = 'html'
     arch = 'aarch64'
     machine_type = 'raspi3b'
     image_format = 'raw+xz'
-    url = 'https://cdimage.ubuntu.com/ubuntu-server/noble/daily-preinstalled/current/SHA256SUMS'
-    filename_pattern = 'noble-preinstalled-server-arm64\+raspi\.img\.xz'
+    url = 'https://cdimage.ubuntu.com/ubuntu-server/noble/daily-preinstalled/current/'
+    url_xpath = '''
+    concat(
+        /html/head/link[@rel="canonical"]/@href, "/noble-preinstalled-server-arm64+raspi.img.xz"
+    )
+    '''
+    checksum_file_url_xpath = '"SHA256SUMS"'
 
 ==================================
 Installing Red on Ubuntu 24.04 LTS

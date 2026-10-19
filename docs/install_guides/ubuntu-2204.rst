@@ -2,15 +2,41 @@
 .. os-image-location::
 
     [ubuntu-2204]
-    download_type = 'checksum-file'
-    url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
-    filename_pattern = 'jammy-server-cloudimg-amd64\.img'
+    download_type = 'html'
+    url = 'https://cloud-images.ubuntu.com/jammy/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/jammy-server-cloudimg-amd64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2204-arm]
-    download_type = 'checksum-file'
+    download_type = 'html'
     arch = 'aarch64'
-    url = 'https://cloud-images.ubuntu.com/jammy/current/SHA256SUMS'
-    filename_pattern = 'jammy-server-cloudimg-arm64\.img'
+    url = 'https://cloud-images.ubuntu.com/jammy/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/jammy-server-cloudimg-arm64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
 
     [ubuntu-2204-arm-raspi]
     download_type = 'checksum-file'
