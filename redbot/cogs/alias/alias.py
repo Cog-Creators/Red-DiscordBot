@@ -1,33 +1,22 @@
 import asyncio
 import logging
 from copy import copy
-from re import search
-from string import Formatter
+from re import search, sub
 from typing import List, Literal
 
 import discord
+
 from redbot.core import Config, commands
+from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.utils.menus import menu
 
-from redbot.core.bot import Red
-from .alias_entry import AliasEntry, AliasCache, ArgParseError
+from .alias_entry import AliasCache, AliasEntry, ArgParseError
 
 _ = Translator("Alias", __file__)
 
 log = logging.getLogger("red.cogs.alias")
-
-
-class _TrackingFormatter(Formatter):
-    def __init__(self):
-        super().__init__()
-        self.max = -1
-
-    def get_value(self, key, args, kwargs):
-        if isinstance(key, int):
-            self.max = max((key, self.max))
-        return super().get_value(key, args, kwargs)
 
 
 @cog_i18n(_)
@@ -165,12 +154,19 @@ class Alias(commands.Cog):
         except commands.BadArgument:
             return
 
-        trackform = _TrackingFormatter()
-        command = trackform.format(alias.command, *args)
+        max_index = -1
+
+        def replace_positional(m):
+            nonlocal max_index
+            n = int(m.group(1))
+            max_index = max(max_index, n)
+            return args[n] if n < len(args) else m.group(0)
+
+        command = sub(r"\{(\d+)\}", replace_positional, alias.command)
 
         # noinspection PyDunderSlots
         new_message.content = "{}{} {}".format(
-            prefix, command, " ".join(args[trackform.max + 1 :])
+            prefix, command, " ".join(args[max_index + 1 :])
         ).strip()
 
         return new_message
