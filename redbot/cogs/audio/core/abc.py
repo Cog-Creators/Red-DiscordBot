@@ -396,7 +396,7 @@ class MixinMeta(ABC):
 
     @abstractmethod
     async def _apply_gains(self, guild_id: int, gains: List[float]) -> None:
-        NotImplementedError()
+        raise NotImplementedError()
 
     @abstractmethod
     async def _apply_gain(self, guild_id: int, band: int, gain: float) -> None:
