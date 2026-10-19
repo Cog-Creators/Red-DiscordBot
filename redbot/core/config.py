@@ -550,7 +550,10 @@ class Group(Value):
 
         for key, value in current.items():
             if isinstance(value, collections.abc.Mapping):
-                result = self.nested_update(value, defaults.get(key, {}))
+                nested_defaults = defaults.get(key, {})
+                if not isinstance(nested_defaults, collections.abc.Mapping):
+                    nested_defaults = {}
+                result = self.nested_update(value, nested_defaults)
                 defaults[key] = result
             else:
                 defaults[key] = pickle.loads(pickle.dumps(current[key], -1))
