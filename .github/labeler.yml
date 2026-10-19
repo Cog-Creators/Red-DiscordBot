@@ -309,6 +309,7 @@
   - docs/conf.py
   - docs/_ext/**/*
   - docs/_html/**/*
+  - docs/_static/**/*
   - docs/make.bat
   - docs/Makefile
   - docs/prolog.txt
