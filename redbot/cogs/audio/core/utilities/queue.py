@@ -110,6 +110,12 @@ class QueueUtilities(MixinMeta, metaclass=CompositeMetaClass):
             + ": "
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
+        text += (
+            (" | " if text else "")
+            + _("Repeat Current")
+            + ": "
+            + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+        )
         embed.set_footer(text=text)
         return embed
 

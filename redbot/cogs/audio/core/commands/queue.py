@@ -106,6 +106,12 @@ class QueueCommands(MixinMeta, metaclass=CompositeMetaClass):
                 + ": "
                 + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
             )
+            text += (
+                (" | " if text else "")
+                + _("Repeat Current")
+                + ": "
+                + ("\N{WHITE HEAVY CHECK MARK}" if player.repeat_current else "\N{CROSS MARK}")
+            )
             embed.set_footer(text=text)
             message = await self.send_embed_msg(ctx, embed=embed)
             dj_enabled = self._dj_status_cache.setdefault(ctx.guild.id, guild_data["dj_enabled"])
