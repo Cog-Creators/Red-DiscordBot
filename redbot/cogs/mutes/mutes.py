@@ -99,6 +99,9 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "default_time": 0,
             "dm": False,
             "show_mod": False,
+            "mute_show_extra": False,
+            "mute_extra_embed_title": "Message from staff",
+            "mute_extra_embed_contents": "Please set me",
         }
         self.config.register_global(schema_version=0)
         self.config.register_guild(**default_guild)
@@ -584,6 +587,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         if not reason:
             reason = _("No reason provided.")
 
+        mute_show_extra = await self.config.guild(guild).mute_show_extra()
+
         if await self.bot.embed_requested(user):
             em = discord.Embed(
                 title=title,
@@ -597,6 +602,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             em.add_field(name=_("Guild"), value=guild.name, inline=False)
             if show_mod:
                 em.add_field(name=_("Moderator"), value=moderator_str)
+            if mute_show_extra:
+                extra_embed_title = await self.config.guild(guild).mute_extra_embed_title()
+                extra_embed_contents = await self.config.guild(guild).mute_extra_embed_contents()
+                em.add_field(
+                    name=bold(extra_embed_title, escape_formatting=False),
+                    value=extra_embed_contents,
+                    inline=False,
+                )
             try:
                 await user.send(embed=em)
             except discord.Forbidden:
@@ -611,6 +624,10 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 else ""
             )
             message += f"\n{bold(_('Guild:'))} {guild.name}"
+            if mute_show_extra:
+                extra_embed_title = await self.config.guild(guild).mute_extra_embed_title()
+                extra_embed_contents = await self.config.guild(guild).mute_extra_embed_contents()
+                message += f"\n{bold(extra_embed_title)}: {extra_embed_contents}"
             try:
                 await user.send(message)
             except discord.Forbidden:
@@ -821,6 +838,64 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 )
             )
 
+    @muteset.group()
+    @commands.guild_only()
+    async def dm(self, ctx: commands.Context):
+        """Settings for the optional extra field in mute DMs."""
+
+    @dm.command(name="muteshowextrafield")
+    async def dm_muteshowextrafield(self, ctx: commands.Context, enabled: bool = None):
+        """Toggle whether to show an extra customizable field when muting.
+
+        This can be used to add additional information for the muted user, such as a mute appeal link.
+        """
+        guild = ctx.guild
+        if enabled is None:
+            setting = await self.config.guild(guild).mute_show_extra()
+            await ctx.send(
+                _("The extra embed field is currently set to: {setting}").format(setting=setting)
+            )
+            return
+        await self.config.guild(guild).mute_show_extra.set(enabled)
+        if enabled:
+            await ctx.send(
+                _(
+                    "An extra field will be shown when muting. Configure it with "
+                    "`{prefix}muteset dm muteextrafieldtitle` and "
+                    "`{prefix}muteset dm muteextrafieldcontents`"
+                ).format(prefix=ctx.prefix)
+            )
+        else:
+            await ctx.send(_("An extra field will no longer be shown when muting."))
+
+    @dm.command(name="muteextrafieldtitle")
+    async def dm_muteextrafieldtitle(self, ctx: commands.Context, *, title: str) -> None:
+        """Set the title for the optional extra embed field on mute.
+
+        Cannot be over 252 characters long.
+        """
+        guild = ctx.guild
+        if len(title) > 252:
+            await ctx.send(_("Embed title cannot be over 252 characters long."))
+        else:
+            await self.config.guild(guild).mute_extra_embed_title.set(title)
+            await ctx.send(_("Embed title has been set to `{title}`").format(title=title))
+
+    @dm.command(name="muteextrafieldcontents")
+    async def dm_muteextrafieldcontents(self, ctx: commands.Context, *, contents: str) -> None:
+        """Set the contents for the optional extra embed field on mute.
+
+        Cannot be over 1024 characters long.
+        """
+        guild = ctx.guild
+        if len(contents) > 1024:
+            await ctx.send(_("Embed contents cannot be over 1024 characters long."))
+        else:
+            await self.config.guild(guild).mute_extra_embed_contents.set(contents)
+            await ctx.send(
+                _("Embed contents has been set to `{contents}`").format(contents=contents)
+            )
+
     @muteset.command(name="settings", aliases=["showsettings"])
     @commands.mod_or_permissions(manage_channels=True)
     async def show_mutes_settings(self, ctx: commands.Context):
@@ -832,18 +907,29 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
         mute_role = ctx.guild.get_role(data["mute_role"])
         notification_channel = ctx.guild.get_channel(data["notification_channel"])
         default_time = timedelta(seconds=data["default_time"])
+        mute_show_extra = data["mute_show_extra"]
+        mute_extra_embed_title = data["mute_extra_embed_title"]
+        mute_extra_embed_contents = data["mute_extra_embed_contents"]
         msg = _(
             "Mute Role: {role}\n"
             "Notification Channel: {channel}\n"
             "Default Time: {time}\n"
             "Send DM: {dm}\n"
-            "Show moderator: {show_mod}"
+            "Show moderator: {show_mod}\n"
+            "Show optional information field in embed: {mute_show_extra}\n"
+            "Title of the optional extra field: {mute_extra_embed_title}\n"
+            "Contents of the optional extra field: {mute_extra_embed_contents}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),
             channel=notification_channel.mention if notification_channel else _("None"),
             time=humanize_timedelta(timedelta=default_time) if default_time else _("None"),
             dm=data["dm"],
             show_mod=data["show_mod"],
+            mute_show_extra=mute_show_extra,
+            mute_extra_embed_title=mute_extra_embed_title if mute_extra_embed_title else _("None"),
+            mute_extra_embed_contents=(
+                mute_extra_embed_contents if mute_extra_embed_contents else _("None")
+            ),
         )
         await ctx.maybe_send_embed(msg)
 
