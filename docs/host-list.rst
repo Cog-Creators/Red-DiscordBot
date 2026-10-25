@@ -151,3 +151,70 @@ Free Hosting
 
 | Excluding the above, there is no recommended free VPS host. Persuasion of
  another individual for hosting Red is an option, albeit low in success rate.
+
+.. warning::
+    Please be aware that the Terms and Conditions of \"free\" providers often include
+    the ability to terminate service at any time, for any reason, without warning or 
+    consent from you. Make frequent data backups and always have a plan B host.
+
+.. _host-list-securing-host:
+
+------------------
+Securing Your Host
+------------------
+
+.. note::
+    This section does not cover everything there is to know about system administration 
+    and security, only a few basics with a plea to remain smart and diligent, securing
+    your machine as much as possible from any and all threats.
+
+Installing Red and running your own bot is fun. Waking up to a crashed bot, server host compromise, 
+etc. is not. Most VPSes are \"unmanaged\" and provide what is known as \"root access\". This means 
+you are responsible for the server itself including maintenance, security patches, etc.
+
+The first order of business is securing your server. At a baseline, you should be using SSH keys 
+to login to your server on an account that is not root (disable root login). You can go further
+by closing off SSH to the internet and only accessing through IP whitelist or secure VPN, but we 
+are not covering that process in this guide.
+
+.. warning::
+    Closing off the SSH port prior to securing yourself a method of remote access can and will 
+    lock you out of your server. Ensure that you have done due diligence or have a backup plan 
+    such as KVM access through your hosting provider.
+
+Next, you should configure `Automatic updates <https://documentation.ubuntu.com/server/how-to/software/automatic-updates/>`__ 
+via the ``unattended-upgrades`` package. This ensures that you are automatically kept up to date with 
+the latest security patches. Most stable LTS distributions work well with this package and increase
+system security without compromising stability.
+
+.. note::
+    Even though you are receiving automatic updates, you should try and plan to restart your host 
+    monthly, allowing any kernel patches from updates requiring a restart to fully apply. Uptime based 
+    on time since last restart is not a bragging right, but a security blight.
+
+For a more in-depth guide to securing your Linux host, see `DigitalOcean's tutorial: Recommended Security Measures to Protect Your Servers <https://www.digitalocean.com/community/tutorials/recommended-security-measures-to-protect-your-servers>`_.
+
+.. _host-list-best-practices:
+
+------------------
+Bot Best Practices
+------------------
+
+:ref:`Public bots are not supported <intents-public-bots>`. Red was designed for server owners with a few servers. 
+Knowing this, you should be somewhat aware of what servers your bot is in, including their member count and what cogs you 
+make available to them. This allows you to choose the right amount of hardware to host your bot with.
+
+For example, if you plan to make the ``audio`` cog available to the servers your bot is in, you should increase 
+the amount of memory your host has to account for the increase in system requirements.
+
+If your bot/application is a part of a Team, you must understand that giving bot ownership permissions to the team 
+is similar to giving all team members (Developer role and above) semi-access to your server host. 
+Bot owners can access any data that is present on the host system.
+
+.. warning::
+    Only the person who is hosting Red should be owner. This has serious security implications.
+    This means passing ``--team-owners-are-members``, ``--owner``, and ``--co-owner`` flags in Red's launch parameters
+    is a security risk by default. Only people you trust entirely should have this level of access.
+
+Ultimately, as the owner, you are responsible for the security of your host and bot. You should know your way around
+them and be able to troubleshoot, maintain, and fix them if you are planning to host Red (especially for others).
