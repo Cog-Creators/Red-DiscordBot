@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   label_pull_requests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Apply Type Label
         uses: actions/labeler@v4

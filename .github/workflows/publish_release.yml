@@ -8,7 +8,7 @@ jobs:
   release_information:
     if: github.repository == 'Cog-Creators/Red-DiscordBot'
     name: GO HERE BEFORE APPROVING
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # Checkout repository and install Python
       - uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
 
   build:
     name: Build package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -82,7 +82,7 @@ jobs:
 
   generate_default_ll_server_config:
     name: Generate default application.yml
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -114,7 +114,7 @@ jobs:
       - generate_default_ll_server_config
     environment: Release
     name: Release to PyPI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       id-token: write
@@ -150,7 +150,7 @@ jobs:
     environment: Prepare Release
     needs: release_to_pypi
     name: Update Red version number to dev
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Get base branch
         env:
