@@ -72,8 +72,8 @@ RHEL 8 (latest)                    x86-64, aarch64           2029-05-31 (`End of
 RHEL 8.10                          x86-64, aarch64           2029-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
 RHEL 9 (latest)                    x86-64, aarch64           2032-05-31 (`End of Maintenance Support <https://access.redhat.com/support/policy/updates/errata#Life_Cycle_Dates>`__)
 RHEL 9.6                           x86-64, aarch64           2027-05-31 (`End of Extended Update Support <https://access.redhat.com/support/policy/updates/errata#Extended_Update_Support>`__)
-Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`Planned EOL <https://rockylinux.org/download>`__)
-Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`Planned EOL <https://rockylinux.org/download>`__)
+Rocky Linux 8                      x86-64, aarch64           2029-05-31 (`End of Life <https://docs.rockylinux.org/latest/releases/>`__)
+Rocky Linux 9                      x86-64, aarch64           2032-05-31 (`End of Life <https://docs.rockylinux.org/latest/releases/>`__)
 Ubuntu 22.04 LTS                   x86-64, aarch64           2027-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 Ubuntu 24.04 LTS                   x86-64, aarch64           2029-06-30 (`End of Standard Support <https://wiki.ubuntu.com/Releases#Current>`__)
 ================================   =======================   ============================================================
