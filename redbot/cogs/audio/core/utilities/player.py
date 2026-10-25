@@ -97,6 +97,9 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         if await self.bot.is_owner(member):
             return True
 
+        if await self.bot.is_admin(member):
+            return True
+
         if await self.bot.is_mod(member):
             return True
 
@@ -366,6 +369,8 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
         except KeyError:
             self.update_player_lock(ctx, True)
         guild_data = await self.config.guild(ctx.guild).all()
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        maxlength_bypass = guild_data["maxlength_bypass"]
         first_track_only = False
         single_track = None
         index = None
@@ -449,12 +454,12 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 if not await self.is_query_allowed(
                     self.config,
                     ctx,
-                    f"{track.title} {track.author} {track.uri} " f"{str(track_query)}",
+                    f"{track.title} {track.author} {track.uri} {str(track_query)}",
                     query_obj=track_query,
                 ):
                     log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                     continue
-                elif guild_data["maxlength"] > 0:
+                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
                     if self.is_track_length_allowed(track, guild_data["maxlength"]):
                         track_len += 1
                         track.extras.update(
@@ -547,7 +552,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     return await self.send_embed_msg(
                         ctx, title=_("This track is not allowed in this server.")
                     )
-                elif guild_data["maxlength"] > 0:
+                elif guild_data["maxlength"] > 0 and not (can_skip and maxlength_bypass):
                     if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                         single_track.extras.update(
                             {
@@ -581,7 +586,10 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
                     player.add(ctx.author, single_track)
                     player.maybe_shuffle()
                     self.bot.dispatch(
-                        "red_audio_track_enqueue", player.guild, single_track, ctx.author
+                        "red_audio_track_enqueue",
+                        player.guild,
+                        single_track,
+                        ctx.author,
                     )
             except IndexError:
                 self.update_player_lock(ctx, False)
