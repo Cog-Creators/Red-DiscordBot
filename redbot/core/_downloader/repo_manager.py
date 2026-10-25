@@ -1018,6 +1018,7 @@ class RepoManager:
 
     def __init__(self) -> None:
         self._repos: Dict[str, Repo] = {}
+        self._repos_failed_to_load: Tuple[str, ...] = ()
         self.config = Config.get_conf(self, identifier=170708480, force_registration=True)
         self.config.register_global(repos={})
 
@@ -1093,6 +1094,18 @@ class RepoManager:
     @property
     def repos(self) -> Tuple[Repo, ...]:
         return tuple(self._repos.values())
+
+    @property
+    def repos_failed_to_load(self) -> Tuple[str, ...]:
+        """Names of folders in the repos folder that could not be loaded as repos.
+
+        This is refreshed every time repos are (re)loaded, i.e. on bot startup.
+        A non-empty value usually means something is preventing Downloader from
+        reading one or more installed repos (such as incorrect file permissions
+        on the repos folder or one of its subfolders). See the bot's logs for
+        the actual error(s).
+        """
+        return self._repos_failed_to_load
 
     def get_all_repo_names(self) -> Tuple[str, ...]:
         """Get all repo names.
@@ -1212,6 +1225,7 @@ class RepoManager:
 
     async def _load_repos(self, set_repos: bool = False) -> Dict[str, Repo]:
         ret = {}
+        failed_to_load = []
         self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():
             if not folder.is_dir():
@@ -1221,8 +1235,18 @@ class RepoManager:
                 ret[folder.name] = await Repo.from_folder(folder, branch)
                 if branch == "":
                     await self.config.repos.set_raw(folder.name, value=ret[folder.name].branch)
-            except errors.NoRemoteURL:
-                log.warning("A remote URL does not exist for repo %s", folder.name)
+            except errors.NoRemoteURL as err:
+                log.warning(
+                    "A remote URL does not exist for repo %s."
+                    " If this is unexpected, this may indicate a problem (such as"
+                    " incorrect file permissions on this repo's folder) preventing"
+                    " Downloader from reading it rather than the folder actually"
+                    " lacking a git remote - see the error logged above, if any,"
+                    " for more information.",
+                    folder.name,
+                    exc_info=err,
+                )
+                failed_to_load.append(folder.name)
             except errors.DownloaderException as err:
                 log.error("Ignoring repo %s due to error.", folder.name, exc_info=err)
                 # Downloader should NOT remove the repo on generic errors like this one.
@@ -1230,7 +1254,9 @@ class RepoManager:
                 # but it's quite destructive for such a generic error.
                 # We can't **expect** that this error will always mean git repository is broken.
                 # GH-3867
+                failed_to_load.append(folder.name)
 
+        self._repos_failed_to_load = tuple(failed_to_load)
         if set_repos:
             self._repos = ret
         return ret
