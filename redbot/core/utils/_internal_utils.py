@@ -282,6 +282,7 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
         os.path.join("Downloader", "lib", ""),
         os.path.join("CogManager", "cogs", ""),
         os.path.join("RepoManager", "repos", ""),
+        os.path.join("RepoManager", "repos.v2", ""),
         os.path.join("Audio", "logs", ""),
         # these files are created during backup so we exclude them from data path backup
         os.path.join("RepoManager", "repos.json"),
