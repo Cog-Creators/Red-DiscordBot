@@ -1,9 +1,10 @@
 import pytest
 from redbot.core._rpc import RPC, RPCMixin
+from redbot.core.core_commands import CoreLogic
 
 from unittest.mock import MagicMock
 
-__all__ = ["rpc", "rpcmixin", "cog", "existing_func", "existing_multi_func"]
+__all__ = ["rpc", "rpcmixin", "cog", "existing_func", "existing_multi_func", "core_logic"]
 
 
 @pytest.fixture()
@@ -51,3 +52,11 @@ def existing_multi_func(rpc, cog):
     rpc.add_multi_method(*funcs)
 
     return funcs
+
+
+@pytest.fixture(scope="function")
+async def core_logic(red):
+    """Create a CoreLogic instance for testing RPC handlers."""
+    # Ensure RPC system is initialized before creating CoreLogic
+    await red.rpc._pre_login()
+    return CoreLogic(red)
