@@ -652,8 +652,12 @@ class Permissions(commands.Cog):
         except yaml.MarkedYAMLError as e:
             await ctx.send(_("Invalid syntax: ") + str(e))
         except SchemaError as e:
+            # The empty-dict alternatives repeat outer errors after nested
+            # failures. SchemaError.code deduplicates those messages in order,
+            # leaving the most specific error last.
             await ctx.send(
-                _("Your YAML file did not match the schema: ") + translate(e.errors[-1])
+                _("Your YAML file did not match the schema: ")
+                + translate(e.code.rsplit("\n", 1)[-1])
             )
         else:
             await ctx.send(_("Rules set."))

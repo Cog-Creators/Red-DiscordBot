@@ -1,4 +1,70 @@
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
+
+import pytest
+import yaml
+
 from redbot.cogs.permissions.permissions import Permissions, GLOBAL
+
+
+def _yaml_attachment(rules):
+    async def save(fp):
+        fp.write(yaml.safe_dump(rules).encode())
+        fp.seek(0)
+
+    return SimpleNamespace(save=save)
+
+
+@pytest.mark.parametrize("category", ["COG", "COMMAND"])
+@pytest.mark.parametrize(
+    "rules,error_level",
+    [
+        ([], "names"),
+        ({False: {}}, "names"),
+        ({"target": []}, "ids"),
+        ({"target": {"defalt": False}}, "ids"),
+        ({"target": {123: 100}}, "values"),
+        ({"target": {123: None}}, "values"),
+        ({"target": {"default": "true"}}, "values"),
+    ],
+)
+async def test_acl_upload_reports_nested_schema_error(red, category, rules, error_level):
+    cog = Permissions(red)
+    cog._clear_rules = AsyncMock()
+    attachment = _yaml_attachment({category: rules})
+    ctx = SimpleNamespace(message=SimpleNamespace(attachments=[attachment]), send=AsyncMock())
+
+    await cog._permissions_acl_set(ctx, guild_id=GLOBAL, update=False)
+
+    if error_level == "names":
+        error = (
+            "Keys under `COG` must be cog names (strings)."
+            if category == "COG"
+            else "Keys under `COMMAND` must be command names (strings)."
+        )
+    elif error_level == "ids":
+        error = (
+            "Keys under cog names must be IDs or `default`."
+            if category == "COG"
+            else "Keys under command names must be IDs (numbers) or `default`."
+        )
+    else:
+        error = "Rules must be either `true` or `false`."
+    ctx.send.assert_awaited_once_with("Your YAML file did not match the schema: " + error)
+    cog._clear_rules.assert_not_awaited()
+
+
+async def test_acl_upload_reports_invalid_top_level_key(red):
+    cog = Permissions(red)
+    attachment = _yaml_attachment({"INVALID": {}})
+    ctx = SimpleNamespace(message=SimpleNamespace(attachments=[attachment]), send=AsyncMock())
+
+    await cog._permissions_acl_set(ctx, guild_id=GLOBAL, update=False)
+
+    ctx.send.assert_awaited_once_with(
+        "Your YAML file did not match the schema: "
+        "Top-level keys must be either `COG` or `COMMAND`."
+    )
 
 
 def test_schema_update():
