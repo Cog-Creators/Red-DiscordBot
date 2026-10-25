@@ -1172,6 +1172,14 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
                 time = _(" for {length} until {duration}").format(
                     length=length, duration=discord.utils.format_dt(until)
                 )
+            else:
+                await ctx.send(
+                    _(
+                        "You must provide a duration for the timeout. "
+                        "To remove a timeout, use `{prefix}untimeout`."
+                    ).format(prefix=ctx.clean_prefix)
+                )
+                return
 
         success_list = []
         issues_list = []
@@ -1200,6 +1208,60 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             )
         else:
             await ctx.send(_("None of the users provided could be muted properly."))
+        if issues_list:
+            await self.handle_issues(ctx, issues_list)
+
+    @commands.command(usage="<users...> [reason]")
+    @commands.guild_only()
+    @commands.mod_or_permissions(moderate_members=True)
+    @commands.bot_has_permissions(moderate_members=True)
+    async def untimeout(
+        self,
+        ctx: commands.Context,
+        users: commands.Greedy[discord.Member],
+        *,
+        reason: Optional[str] = None,
+    ):
+        """Remove a timeout from users.
+
+        `<users...>` is a space separated list of usernames, ID's, or mentions.
+        `[reason]` is the reason for removing the timeout.
+
+        Examples:
+        `[p]untimeout @member1 @member2 appealed`
+        `[p]untimeout @member1`
+        """
+        if not users:
+            return await ctx.send_help()
+        audit_reason = get_audit_reason(ctx.author, reason, shorten=True)
+        success_list = []
+        issues_list = []
+        for member in users:
+            ret = MuteResponse(success=False, reason=None, user=member)
+            if member.guild_permissions >= ctx.author.guild_permissions:
+                ret.reason = _(MUTE_UNMUTE_ISSUES["hierarchy_problem"])
+                issues_list.append(ret)
+                continue
+            if not member.is_timed_out():
+                ret.reason = _("That user is not currently timed out.")
+                issues_list.append(ret)
+                continue
+            try:
+                await member.edit(timed_out_until=None, reason=audit_reason)
+                success_list.append(member)
+            except discord.Forbidden:
+                ret.reason = _("I do not have permission to remove this user's timeout.")
+                issues_list.append(ret)
+            except discord.HTTPException as e:
+                ret.reason = _("Unexpected error: {error}").format(error=str(e))
+                issues_list.append(ret)
+        if success_list:
+            msg = _("{users} has had their timeout removed.")
+            if len(success_list) > 1:
+                msg = _("{users} have had their timeouts removed.")
+            await ctx.send(msg.format(users=humanize_list([f"`{u}`" for u in success_list])))
+        else:
+            await ctx.send(_("None of the users provided could have their timeout removed."))
         if issues_list:
             await self.handle_issues(ctx, issues_list)
 
