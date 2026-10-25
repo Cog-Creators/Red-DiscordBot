@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
           - windows-latest
           - macos-latest
     steps:
@@ -56,7 +56,7 @@ jobs:
   merge_requirements:
     name: Merge requirements files.
     needs: generate_requirements
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout the repository.
         uses: actions/checkout@v4
