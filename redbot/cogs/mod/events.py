@@ -19,21 +19,23 @@ class Events(MixinMeta):
     """
 
     async def check_duplicates(self, message):
-        guild = message.guild
-        author = message.author
-
-        guild_cache = self.cache.get(guild.id, None)
-        if guild_cache is None:
-            repeats = await self.config.guild(guild).delete_repeats()
-            if repeats == -1:
-                return False
-            guild_cache = self.cache[guild.id] = defaultdict(lambda: deque(maxlen=repeats))
-
         if not message.content:
             return False
 
-        guild_cache[author].append(message.content)
-        msgs = guild_cache[author]
+        channel = message.channel
+        author = message.author
+
+        channel_cache = self.cache.get(channel.id, None)
+        if channel_cache is None:
+            repeats = await self.config.channel(channel).delete_repeats()
+            if repeats is None:
+                repeats = await self.config.guild(message.guild).delete_repeats()
+            if repeats == -1:
+                return False
+            channel_cache = self.cache[channel.id] = defaultdict(lambda: deque(maxlen=repeats))
+
+        channel_cache[author].append(message.content)
+        msgs = channel_cache[author]
         if len(msgs) == msgs.maxlen and len(set(msgs)) == 1:
             try:
                 await message.delete()
