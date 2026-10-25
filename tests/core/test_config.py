@@ -422,6 +422,13 @@ async def test_all_works_as_ctxmgr(config):
     assert subgroup == {"foo": True, "bar": False}
 
 
+async def test_all_with_dict_value_over_scalar_default(config):
+    config.register_global(testvar=None)
+    await config.testvar.set({"a": 4})
+
+    assert await config.all() == {"testvar": {"a": 4}}
+
+
 async def test_get_raw_mixes_defaults(config):
     config.register_global(subgroup={"foo": True})
     await config.subgroup.set_raw("bar", value=False)
