@@ -290,12 +290,13 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     ]
 
     # Avoiding circular imports
-    from redbot.core._downloader.repo_manager import RepoManager
+    from redbot.core import _downloader
+    from redbot.core._cog_manager import CogManager
 
-    repo_mgr = RepoManager()
-    await repo_mgr.initialize()
+    await _downloader._init_without_bot(CogManager())
+
     repo_output = []
-    for repo in repo_mgr.repos:
+    for repo in _downloader._repo_manager.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
 
     with rich.progress.Progress(
