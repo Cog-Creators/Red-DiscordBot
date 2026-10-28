@@ -436,25 +436,25 @@ class Command(CogCommandMixin, DPYCommand):
         original_state = ctx.permission_state
         ctx.command = self
 
-        if check_all_parents is True:
-            # Since we're starting from the beginning, we should reset the state to normal
-            ctx.permission_state = PermState.NORMAL
-            for parent in reversed(self.parents):
-                try:
-                    result = await parent.can_run(ctx, change_permission_state=True)
-                except CommandError:
-                    result = False
+        try:
+            if check_all_parents is True:
+                # Since we're starting from the beginning, we should reset the state to normal
+                ctx.permission_state = PermState.NORMAL
+                for parent in reversed(self.parents):
+                    try:
+                        result = await parent.can_run(ctx, change_permission_state=True)
+                    except CommandError:
+                        result = False
 
-                if result is False:
+                    if result is False:
+                        return False
+
+            if self.parent is None and self.cog is not None:
+                # For top-level commands, we need to check the cog's requires too
+                ret = await self.cog.requires.verify(ctx)
+                if ret is False:
                     return False
 
-        if self.parent is None and self.cog is not None:
-            # For top-level commands, we need to check the cog's requires too
-            ret = await self.cog.requires.verify(ctx)
-            if ret is False:
-                return False
-
-        try:
             return await self.requires.verify(ctx)
         finally:
             ctx.command = original_command
