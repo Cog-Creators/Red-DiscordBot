@@ -196,6 +196,10 @@ def test_normalize_smartquotes():
             8,
         ),
         ("Is anyone @here?", ["Is anyone", " @\u200bhere?"], 10),
+        # Regression test for GH-6817 - last page should not exceed page length
+        # after mass mentions are escaped
+        ("@here@here", ["@\u200bhere@he", "re"], 10),
+        ("other-text@here@here", ["other-text", "@\u200bhere@he", "re"], 10),
         # whitespace-only page skipping (`\n` skipped)
         ("Split:\n Long-word", ["Split:", " Long-", "word"], 6),
     ),
