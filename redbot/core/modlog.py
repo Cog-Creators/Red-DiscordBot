@@ -1037,7 +1037,9 @@ async def create_case(
     except discord.Forbidden:
         log.info(
             "Modlog failed to edit the Discord message for"
-            " the case #%s from guild with ID due to missing permissions."
+            " the case #%s from guild with ID %s due to missing permissions.",
+            case.case_number,
+            case.guild.id,
         )
     except Exception:
         log.exception(
