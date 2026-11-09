@@ -382,10 +382,12 @@ class pagify(Iterator[str]):
         start = self._start
         end = self._end
 
-        while (end - start) > page_length:
+        while True:
             stop = start + page_length
             if escape_mass_mentions:
                 stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
+            if stop >= end:
+                break
             closest_delim_it = (text.rfind(d, start + 1, stop) for d in self._delims)
             if self._priority:
                 closest_delim = next((x for x in closest_delim_it if x > 0), -1)
