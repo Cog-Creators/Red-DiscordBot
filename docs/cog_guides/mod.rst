@@ -19,7 +19,7 @@ find detailed docs about usage and commands.
 Usage
 -----
 
-A range of highly customizable moderation tools used to protect your 
+A range of highly customizable moderation tools used to protect your
 guild from users who cannot follow the rules.
 
 
@@ -142,7 +142,7 @@ modset
 
 .. code-block:: none
 
-    [p]modset 
+    [p]modset
 
 **Description**
 
@@ -348,6 +348,138 @@ Cannot be over 1024 characters long.
 
 * ``[contents]``: The contents of the embed field. Can by any string of text under 1024 charcters long.
 
+.. _mod-command-modset-kickshowextrafield:
+
+""""""""""""""""""""""""""""
+modset dm kickshowextrafield
+""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm kickshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field when kicking.
+
+This can be used to add additional information for the kicked user, such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear when kicking. |bool-input|
+
+.. _mod-command-modset-kickextrafieldtitle:
+
+"""""""""""""""""""""""""""""
+modset dm kickextrafieldtitle
+"""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm kickextrafieldtitle <title>
+
+**Description**
+
+Set the title for the optional extra embed on kick.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``<title>``: The title of the embed field. Can be any string of text under 252 characters long.
+
+.. _mod-command-modset-kickextrafieldcontents:
+
+""""""""""""""""""""""""""""""""
+modset dm kickextrafieldcontents
+""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm kickextrafieldcontents <contents>
+
+**Description**
+
+Set the contents for the optional extra embed on kick.
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``<contents>``: The contents of the embed field. Can be any string of text under 1024 characters long.
+
+.. _mod-command-modset-softbanshowextrafield:
+
+"""""""""""""""""""""""""""""""
+modset dm softbanshowextrafield
+"""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm softbanshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field when softbanning.
+
+This can be used to add additional information for the softbanned user, such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear when softbanning. |bool-input|
+
+.. _mod-command-modset-softbanextrafieldtitle:
+
+""""""""""""""""""""""""""""""""
+modset dm softbanextrafieldtitle
+""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm softbanextrafieldtitle <title>
+
+**Description**
+
+Set the title for the optional extra embed on softban.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``<title>``: The title of the embed field. Can be any string of text under 252 characters long.
+
+.. _mod-command-modset-softbanextrafieldcontents:
+
+"""""""""""""""""""""""""""""""""""
+modset dm softbanextrafieldcontents
+"""""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]modset dm softbanextrafieldcontents <contents>
+
+**Description**
+
+Set the contents for the optional extra embed on softban.
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``<contents>``: The contents of the embed field. Can be any string of text under 1024 characters long.
+
 .. _mod-command-modset-requirereason:
 
 """"""""""""""""""""
@@ -363,7 +495,7 @@ modset requirereason
 **Description**
 
 Toggle whether a reason is required for mod actions.
-        
+
 If this is enabled, the bot will require a reason to be provided for all mod actions.
 
 **Arguments**
@@ -380,7 +512,7 @@ modset hierarchy
 
 .. code-block:: none
 
-    [p]modset hierarchy 
+    [p]modset hierarchy
 
 **Description**
 
@@ -400,7 +532,7 @@ modset mentionspam
 
 .. code-block:: none
 
-    [p]modset mentionspam 
+    [p]modset mentionspam
 
 **Description**
 
@@ -510,7 +642,7 @@ modset reinvite
 
 .. code-block:: none
 
-    [p]modset reinvite 
+    [p]modset reinvite
 
 **Description**
 
@@ -529,7 +661,7 @@ modset showsettings
 
 .. code-block:: none
 
-    [p]modset showsettings 
+    [p]modset showsettings
 
 **Description**
 
@@ -593,7 +725,7 @@ movedeletedelay
 
 .. code-block:: none
 
-    [p]movedeletedelay 
+    [p]movedeletedelay
 
 **Description**
 
@@ -611,7 +743,7 @@ moveignoredchannels
 
 .. code-block:: none
 
-    [p]moveignoredchannels 
+    [p]moveignoredchannels
 
 **Description**
 
