@@ -200,6 +200,8 @@ def test_normalize_smartquotes():
         # after mass mentions are escaped
         ("@here@here", ["@\u200bhere@he", "re"], 10),
         ("other-text@here@here", ["other-text", "@\u200bhere@he", "re"], 10),
+        # Non-last page should not exceed page length either so let's test that too
+        ("@here@hereother-text", ["@\u200bhere@he", "reother-te", "xt"], 10),
         # whitespace-only page skipping (`\n` skipped)
         ("Split:\n Long-word", ["Split:", " Long-", "word"], 6),
     ),
