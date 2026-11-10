@@ -255,6 +255,31 @@ DM notifications for unmutes. Both can be toggled separately.
 
 * ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
 
+.. _mutes-command-muteset-sendunmutedm:
+
+""""""""""""""""""""
+muteset sendunmutedm
+""""""""""""""""""""
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset sendunmutedm <true_or_false>
+
+**Description**
+
+Set whether unmute notifications should be sent to users in DMs.
+
+This setting is independent of ``[p]muteset sendmutedm``, which controls
+DM notifications for mutes. Both can be toggled separately.
+
+**Arguments**
+
+* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
+
 .. _mutes-command-muteset-settings:
 
 """"""""""""""""
@@ -292,31 +317,6 @@ muteset showmoderator
 **Description**
 
 Decide whether the name of the moderator muting a user should be included in the DM to that user.
-
-**Arguments**
-
-* ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
-
-.. _mutes-command-muteset-sendunmutedm:
-
-""""""""""""""""""""
-muteset sendunmutedm
-""""""""""""""""""""
-
-.. note:: |mod-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]muteset sendunmutedm <true_or_false>
-
-**Description**
-
-Set whether unmute notifications should be sent to users in DMs.
-
-This setting is independent of ``[p]muteset sendmutedm``, which controls
-DM notifications for mutes. Both can be toggled separately.
 
 **Arguments**
 
