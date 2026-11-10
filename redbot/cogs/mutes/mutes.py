@@ -824,10 +824,7 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command()
     @commands.guild_only()
     @commands.mod_or_permissions(manage_channels=True)
-@muteset.command()
-@commands.guild_only()
-@commands.mod_or_permissions(manage_channels=True)
-async def sendmutedm(self, ctx: commands.Context, true_or_false: bool):
+    async def sendmutedm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether mute notifications should be sent to users in DMs.
 
         This is independent of `[p]muteset sendunmutedm` which controls unmute DMs."""
