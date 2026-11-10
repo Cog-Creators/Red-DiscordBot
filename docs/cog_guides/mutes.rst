@@ -228,10 +228,8 @@ by utilizing server timeouts.
 
 * ``[role]``: The role for muted users to receive. |role-input|
 
-.. _mutes-command-muteset-senddm:
+.. _mutes-command-muteset-sendmutedm:
 
-""""""""""""""
-muteset senddm
 """"""""""""""""""
 muteset sendmutedm
 """"""""""""""""""
