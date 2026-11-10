@@ -297,7 +297,7 @@ Decide whether the name of the moderator muting a user should be included in the
 
 * ``<true_or_false>``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
 
-.. _mutes-command-muteset-unmutesenddm:
+.. _mutes-command-muteset-sendunmutedm:
 
 """"""""""""""""""""
 muteset sendunmutedm
