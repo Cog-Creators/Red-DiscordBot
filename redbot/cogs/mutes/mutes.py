@@ -824,21 +824,26 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
     @muteset.command()
     @commands.guild_only()
     @commands.mod_or_permissions(manage_channels=True)
-    async def senddm(self, ctx: commands.Context, true_or_false: bool):
-        """Set whether mute notifications should be sent to users in DMs."""
+@muteset.command()
+@commands.guild_only()
+@commands.mod_or_permissions(manage_channels=True)
+async def sendmutedm(self, ctx: commands.Context, true_or_false: bool):
+        """Set whether mute notifications should be sent to users in DMs.
+
+        This is independent of `[p]muteset sendunmutedm` which controls unmute DMs."""
         await self.config.guild(ctx.guild).dm.set(true_or_false)
         if true_or_false:
             await ctx.send(_("I will now try to send mute notifications to users DMs."))
         else:
             await ctx.send(_("Mute notifications will no longer be sent to users DMs."))
 
-    @muteset.command(name="unmutesenddm")
+    @muteset.command()
     @commands.guild_only()
     @commands.mod_or_permissions(manage_channels=True)
-    async def unmutesenddm(self, ctx: commands.Context, true_or_false: bool):
+    async def sendunmutedm(self, ctx: commands.Context, true_or_false: bool):
         """Set whether unmute notifications should be sent to users in DMs.
 
-        This is independent of `[p]muteset senddm` which controls mute DMs."""
+        This is independent of `[p]muteset sendmutedm` which controls mute DMs."""
         await self.config.guild(ctx.guild).dm_on_unmute.set(true_or_false)
         if true_or_false:
             await ctx.send(_("I will now try to send unmute notifications to users DMs."))
@@ -879,8 +884,8 @@ class Mutes(VoiceMutes, commands.Cog, metaclass=CompositeMetaClass):
             "Mute Role: {role}\n"
             "Notification Channel: {channel}\n"
             "Default Time: {time}\n"
-            "Send DM: {dm}\n"
-            "Send Unmute DM: {dm_on_unmute}\n"
+            "Send DM on mute: {dm}\n"
+            "Send DM on unmute: {dm_on_unmute}\n"
             "Show moderator: {show_mod}"
         ).format(
             role=mute_role.mention if mute_role else _("None"),

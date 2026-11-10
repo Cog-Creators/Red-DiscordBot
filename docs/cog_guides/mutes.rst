@@ -232,7 +232,9 @@ by utilizing server timeouts.
 
 """"""""""""""
 muteset senddm
-""""""""""""""
+""""""""""""""""""
+muteset sendmutedm
+""""""""""""""""""
 
 .. note:: |mod-lock|
 
@@ -240,11 +242,14 @@ muteset senddm
 
 .. code-block:: none
 
-    [p]muteset senddm <true_or_false>
+    [p]muteset sendmutedm <true_or_false>
 
 **Description**
 
 Set whether mute notifications should be sent to users in DMs.
+
+This setting is independent of ``[p]muteset sendunmutedm``, which controls
+DM notifications for unmutes. Both can be toggled separately.
 
 **Arguments**
 
@@ -295,7 +300,7 @@ Decide whether the name of the moderator muting a user should be included in the
 .. _mutes-command-muteset-unmutesenddm:
 
 """"""""""""""""""""
-muteset unmutesenddm
+muteset sendunmutedm
 """"""""""""""""""""
 
 .. note:: |mod-lock|
@@ -304,13 +309,13 @@ muteset unmutesenddm
 
 .. code-block:: none
 
-    [p]muteset unmutesenddm <true_or_false>
+    [p]muteset sendunmutedm <true_or_false>
 
 **Description**
 
 Set whether unmute notifications should be sent to users in DMs.
 
-This setting is independent of ``[p]muteset senddm``, which controls
+This setting is independent of ``[p]muteset sendmutedm``, which controls
 DM notifications for mutes. Both can be toggled separately.
 
 **Arguments**
