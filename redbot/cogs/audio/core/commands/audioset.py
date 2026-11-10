@@ -874,7 +874,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         input will turn the max length setting off.
         """
         if not isinstance(seconds, int):
-            seconds = self.time_convert(seconds)
+            try:
+                seconds = self.time_convert(seconds)
+            except ValueError:
+                seconds = 0
         if seconds < 0:
             return await self.send_embed_msg(
                 ctx, title=_("Invalid length"), description=_("Length can't be less than zero.")
