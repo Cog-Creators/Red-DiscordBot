@@ -25,6 +25,23 @@ log = getLogger("red.cogs.Audio.cog.Commands.player_controller")
 _ = Translator("Audio", Path(__file__))
 
 
+def bot_can_react_without_buttons():
+    """Check reaction perms only when [p]now falls back to reactions"""
+
+    async def predicate(ctx: commands.Context) -> bool:
+        if await ctx.bot.use_buttons():
+            return True
+        if isinstance(ctx.channel, discord.Thread) and ctx.channel.archived:
+            return False
+        required = discord.Permissions(add_reactions=True, read_message_history=True)
+        missing = discord.Permissions(required.value & ~ctx.bot_permissions.value)
+        if missing.value:
+            raise commands.BotMissingPermissions(missing)
+        return True
+
+    return commands.check(predicate)
+
+
 class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="disconnect")
     @commands.guild_only()
@@ -83,6 +100,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="now")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
+    @bot_can_react_without_buttons()
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
@@ -162,8 +180,6 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 view.message = message
             player.store("np_message", message)
             return
-        if not ctx.channel.permissions_for(ctx.me).add_reactions:
-            raise commands.BotMissingPermissions(["add_reactions"])
         message = await self.send_embed_msg(ctx, embed=embed, footer=text)
         player.store("np_message", message)
 
