@@ -19,9 +19,27 @@ from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ..utilities.menus.now_playing import NowPlayingView
 
 log = getLogger("red.cogs.Audio.cog.Commands.player_controller")
 _ = Translator("Audio", Path(__file__))
+
+
+def bot_can_react_without_buttons():
+    """Check reaction perms only when [p]now falls back to reactions"""
+
+    async def predicate(ctx: commands.Context) -> bool:
+        if await ctx.bot.use_buttons():
+            return True
+        if isinstance(ctx.channel, discord.Thread) and ctx.channel.archived:
+            return False
+        required = discord.Permissions(add_reactions=True, read_message_history=True)
+        missing = discord.Permissions(required.value & ~ctx.bot_permissions.value)
+        if missing:
+            raise commands.BotMissingPermissions(missing)
+        return True
+
+    return commands.check(predicate)
 
 
 class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -82,7 +100,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.command(name="now")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.bot_can_react()
+    @bot_can_react_without_buttons()
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
@@ -143,22 +161,31 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
 
-        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
-
-        player.store("np_message", message)
-
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        if (
-            (dj_enabled or vote_enabled)
-            and not await self._can_instaskip(ctx, ctx.author)
-            and not await self.is_requester_alone(ctx)
-        ):
+        can_control = (
+            not (dj_enabled or vote_enabled)
+            or await self._can_instaskip(ctx, ctx.author)
+            or await self.is_requester_alone(ctx)
+        )
+        has_queue = bool(player.queue) or autoplay
+        if await ctx.bot.use_buttons():
+            if (dj_enabled or vote_enabled) and not can_control:
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+            else:
+                view = NowPlayingView(ctx=ctx, cog=self, has_queue=has_queue)
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text, view=view)
+                view.message = message
+            player.store("np_message", message)
             return
+        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+        player.store("np_message", message)
 
-        if not player.queue and not autoplay:
+        if (dj_enabled or vote_enabled) and not can_control:
+            return
+        if not has_queue:
             expected = (emoji["stop"], emoji["pause"], emoji["close"])
         task: Optional[asyncio.Task]
         if player.current:
