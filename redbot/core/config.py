@@ -551,7 +551,7 @@ class Group(Value):
         for key, value in current.items():
             if isinstance(value, collections.abc.Mapping):
                 nested_defaults = defaults.get(key, {})
-                if not isinstance(nested_defaults, collections.abc.Mapping):
+                if not isinstance(nested_defaults, dict):
                     nested_defaults = {}
                 result = self.nested_update(value, nested_defaults)
                 defaults[key] = result
