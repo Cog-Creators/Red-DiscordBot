@@ -19,6 +19,16 @@ ws_audio_log = getLogger("red.Audio.WS.Audio")
 
 _ = Translator("Audio", Path(__file__))
 
+_EMBED_DESCRIPTION_LIMIT = 4096
+
+
+def _truncate_track_error(error: str) -> str:
+    if len(error) <= _EMBED_DESCRIPTION_LIMIT:
+        return error
+
+    notice = _("\n\n[Error truncated due to length.]")[:_EMBED_DESCRIPTION_LIMIT]
+    return error[: _EMBED_DESCRIPTION_LIMIT - len(notice)] + notice
+
 
 class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
     async def lavalink_update_handler(
@@ -322,8 +332,8 @@ class LavalinkEvents(MixinMeta, metaclass=CompositeMetaClass):
                         embed = discord.Embed(
                             title=_("Track Error"),
                             colour=await self.bot.get_embed_color(message_channel),
-                            description="{}\n{}".format(
-                                extra["message"].replace("\n", ""), description
+                            description=_truncate_track_error(
+                                "{}\n{}".format(extra["message"].replace("\n", ""), description)
                             ),
                         )
                         if current_id:
