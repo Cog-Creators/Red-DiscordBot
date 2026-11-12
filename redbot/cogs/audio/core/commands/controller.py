@@ -35,7 +35,7 @@ def bot_can_react_without_buttons():
             return False
         required = discord.Permissions(add_reactions=True, read_message_history=True)
         missing = discord.Permissions(required.value & ~ctx.bot_permissions.value)
-        if missing.value:
+        if missing:
             raise commands.BotMissingPermissions(missing)
         return True
 
