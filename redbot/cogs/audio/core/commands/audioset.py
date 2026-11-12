@@ -873,11 +873,10 @@ class AudioSetCommands(MixinMeta, metaclass=CompositeMetaClass):
         Accepts seconds or a value formatted like 00:00:00 (`hh:mm:ss`) or 00:00 (`mm:ss`). Invalid
         input will turn the max length setting off.
         """
-        if not isinstance(seconds, int):
-            try:
-                seconds = self.time_convert(seconds)
-            except ValueError:
-                seconds = 0
+        try:
+            seconds = self.time_convert(seconds)
+        except ValueError:
+            seconds = 0
         if seconds < 0:
             return await self.send_embed_msg(
                 ctx, title=_("Invalid length"), description=_("Length can't be less than zero.")
