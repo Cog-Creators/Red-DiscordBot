@@ -377,8 +377,16 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     abs_position = False
                 except ValueError:
                     abs_position = True
-                    seconds = self.time_convert(seconds)
-                if seconds == 0:
+                    assert isinstance(seconds, str)
+                    try:
+                        seconds = self.time_convert(seconds)
+                    except ValueError:
+                        return await self.send_embed_msg(
+                            ctx,
+                            title=_("Unable To Seek Tracks"),
+                            description=_("Invalid input for the time to seek."),
+                        )
+                if seconds == 0 and not abs_position:
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Seek Tracks"),
