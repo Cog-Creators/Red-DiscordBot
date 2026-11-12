@@ -1,0 +1,66 @@
+name: Sign redbot-update wrapper
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      # since tags on redbot-update-wrapper are not immutable, commit should be specified instead
+      wrapper_commit:
+        required: true
+        default: '1e9c39708d21badd3d0b3af5cceb072f93754a73'  # 1.2.0
+
+jobs:
+  sign_redbot_update_wrapper:
+    name: Sign redbot-update wrapper
+    environment: SignPath
+    runs-on: ubuntu-latest
+    env:
+      INPUTS_WRAPPER_COMMIT: ${{ inputs.wrapper_commit || '1e9c39708d21badd3d0b3af5cceb072f93754a73' }}
+      CGO_ENABLED: '0'
+    steps:
+      - name: Prepare directories
+        run: mkdir -p archives source unsigned/amd64 unsigned/arm64
+
+      - name: Download redbot-update-wrapper repository tarball
+        working-directory: archives
+        run: |
+          wget "https://github.com/Cog-Creators/redbot-update-wrapper/archive/${INPUTS_WRAPPER_COMMIT}.tar.gz"
+
+      - name: Unpack redbot-update-wrapper repository tarball
+        working-directory: source
+        run: |
+          tar --strip-components=1 -xvf "../archives/${INPUTS_WRAPPER_COMMIT}.tar.gz"
+
+      - name: Build unsigned artifacts
+        working-directory: source
+        run: |
+          go generate ./go/cmd/redbot-update
+          for arch in amd64 arm64; do
+            GOOS=windows GOARCH="$arch" go build '-ldflags=-s -w' -o "../unsigned/$arch/redbot-update.exe" ./go/cmd/redbot-update
+          done
+
+      - name: Upload unsigned artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsigned
+          path: unsigned/*/*.exe
+
+      - name: Submit signing request
+        uses: signpath/github-action-submit-signing-request@v2
+        if: github.event_name != 'pull_request'
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: test-signing
+          github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Upload signed artifact
+        uses: actions/upload-artifact@v7
+        if: github.event_name != 'pull_request'
+        with:
+          name: signed
+          path: signed/*/*.exe
