@@ -210,6 +210,34 @@ def test_pagify(text: str, pages: List[str], page_length: int):
     assert pages == result
 
 
+@pytest.mark.parametrize("mention,count", [("@everyone", 221), ("@here", 390)])
+@pytest.mark.parametrize("delims", [("\n",), ("\n", " ")])
+@pytest.mark.parametrize("priority", [False, True])
+def test_pagify_escaped_final_page_respects_default_limit(mention, count, delims, priority):
+    text = mention * count
+    pages = list(pagify(text, delims, priority=priority))
+
+    assert len(pages) > 1
+    assert all(0 < len(page) <= 1992 for page in pages)
+    assert all("@everyone" not in page and "@here" not in page for page in pages)
+    assert "".join(pages).replace("\u200b", "") == text
+
+
+@pytest.mark.parametrize("mention", ["@everyone", "@here"])
+def test_pagify_escaped_tail_after_a_full_page(mention):
+    text = "A" * 10 + "\n" + mention * 2
+    pages = list(pagify(text, shorten_by=0, page_length=20))
+
+    assert all(0 < len(page) <= 20 for page in pages)
+    assert all(mention not in page for page in pages)
+    assert "".join(pages).replace("\u200b", "") == text
+
+
+def test_pagify_mass_mentions_without_escaping():
+    text = "@everyone" * 221
+    assert list(pagify(text, escape_mass_mentions=False)) == [text]
+
+
 @pytest.mark.parametrize(
     "text,pages,page_length",
     (

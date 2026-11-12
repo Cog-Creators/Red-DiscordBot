@@ -382,7 +382,16 @@ class pagify(Iterator[str]):
         start = self._start
         end = self._end
 
-        while (end - start) > page_length:
+        # The final slice can fit before escaping but exceed the budget
+        # once mass mentions gain their zero-width spaces. Only count this
+        # short tail here; larger slices still use the bounded count below.
+        while (end - start) > page_length or (
+            escape_mass_mentions
+            and (end - start)
+            + text.count("@here", start, end)
+            + text.count("@everyone", start, end)
+            > page_length
+        ):
             stop = start + page_length
             if escape_mass_mentions:
                 stop -= text.count("@here", start, stop) + text.count("@everyone", start, stop)
