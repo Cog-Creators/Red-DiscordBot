@@ -66,7 +66,7 @@ class Mod(
         "ban_extra_embed_contents": "Please set me",
     }
 
-    default_channel_settings = {"ignored": False}
+    default_channel_settings = {"ignored": False, "delete_repeats": None}
 
     default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
 
