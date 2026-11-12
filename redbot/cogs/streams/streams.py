@@ -63,6 +63,8 @@ class Streams(commands.Cog):
         "mention_here": False,
         "live_message_mention": False,
         "live_message_nomention": False,
+        "offline_message": False,
+        "offline_message_template": False,
         "ignore_reruns": False,
         "ignore_schedule": False,
         "use_buttons": False,
@@ -755,6 +757,22 @@ class Streams(commands.Cog):
         await self.config.guild(guild).live_message_nomention.set(False)
         await ctx.send(_("Stream alerts in this server will now use the default alert message."))
 
+    @message.command(name="offline")
+    @commands.guild_only()
+    async def offline_message(self, ctx: commands.Context, *, message: str):
+        """Set a custom message to send when a stream goes offline.
+
+        **Arguments:**
+        - `{stream}` This will show the channel name or username of the stream that went offline.
+        - `{stream.display_name}` This will show the display name of the stream that went offline (on Twitch, this may be different from `{stream}`).
+        - `{duration}` This will show how long the stream ran for.
+
+        **Example**:
+        - [p]streamset message offline {stream.display_name} has gone offline after streaming for {duration}!
+        """
+        await self.config.guild(ctx.guild).offline_message_template.set(message)
+        await ctx.send(_("Offline alert message set!"))
+
     @streamset.group()
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
@@ -838,6 +856,20 @@ class Streams(commands.Cog):
             await ctx.send(_("The notifications will be deleted once streams go offline."))
         else:
             await ctx.send(_("Notifications will no longer be deleted."))
+
+    @streamset.command()
+    @commands.guild_only()
+    async def offlinemessage(self, ctx: commands.Context, on_off: bool):
+        """Toggle sending a message when a stream goes offline.
+
+        **Arguments:**
+        - ``<on_off>`` Whether to turn on or off.
+        """
+        await self.config.guild(ctx.guild).offline_message.set(on_off)
+        if on_off:
+            await ctx.send(_("I will send a message when a stream goes offline."))
+        else:
+            await ctx.send(_("I will no longer send a message when a stream goes offline."))
 
     @streamset.command(name="ignorereruns")
     @commands.guild_only()
@@ -962,7 +994,12 @@ class Streams(commands.Cog):
             allowed_mentions=discord.AllowedMentions(roles=True, everyone=True),
             view=view,
         )
-        message_data = {"guild": m.guild.id, "channel": m.channel.id, "message": m.id}
+        message_data = {
+            "guild": m.guild.id,
+            "channel": m.channel.id,
+            "message": m.id,
+            "start_time": datetime.now().timestamp(),
+        }
         if is_schedule:
             message_data["is_schedule"] = True
         stream.messages.append(message_data)
@@ -1010,11 +1047,49 @@ class Streams(commands.Cog):
                             continue
                         if await self.bot.cog_disabled_in_guild(self, partial_msg.guild):
                             continue
-                        if not await self.config.guild(partial_msg.guild).autodelete():
-                            continue
 
-                        with contextlib.suppress(discord.NotFound):
-                            await partial_msg.delete()
+                        guild_data = await self.config.guild(partial_msg.guild).all()
+                        if guild_data["autodelete"]:
+                            with contextlib.suppress(discord.NotFound):
+                                await partial_msg.delete()
+
+                        if guild_data["offline_message"]:
+                            channel = partial_msg.channel
+                            if not self._has_stream_alert_perms(channel):
+                                continue
+                            await set_contextual_locales_from_guild(self.bot, channel.guild)
+
+                            start_time = msg_data.get("start_time")
+                            if start_time is not None:
+                                elapsed = datetime.now().timestamp() - start_time
+                                hours, remainder = divmod(int(elapsed), 3600)
+                                minutes = remainder // 60
+                                if hours:
+                                    duration = _("{hours}h {minutes}m").format(
+                                        hours=hours, minutes=minutes
+                                    )
+                                else:
+                                    duration = _("{minutes}m").format(minutes=minutes)
+                            else:
+                                duration = _("unknown")
+
+                            display_name = escape(
+                                str(stream.display_name), mass_mentions=True, formatting=True
+                            )
+
+                            if guild_data["offline_message_template"]:
+                                content = guild_data["offline_message_template"]
+                                content = content.replace(
+                                    "{stream.display_name}", str(stream.display_name)
+                                )
+                                content = content.replace("{stream}", str(stream.name))
+                                content = content.replace("{duration}", duration)
+                            else:
+                                content = _("{stream.display_name} has gone offline.").format(
+                                    display_name=display_name,
+                                )
+                            with contextlib.suppress(discord.Forbidden, discord.HTTPException):
+                                await channel.send(content)
 
                     stream.messages.clear()
                     await self.save_streams()
