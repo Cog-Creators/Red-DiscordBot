@@ -423,6 +423,7 @@ async def test_all_works_as_ctxmgr(config):
 
 
 async def test_all_with_dict_value_over_scalar_default(config):
+    # regression test for GH-6648/GH-6812
     config.register_global(testvar=None)
     await config.testvar.set({"a": 4})
 
