@@ -247,6 +247,10 @@ class Downloader(commands.Cog):
                     ),
                 )
 
+        failed_to_load = _downloader._repo_manager.repos_failed_to_load
+        if failed_to_load:
+            joined += "\n" + self.format_repos_failed_to_load(failed_to_load)
+
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(page)
 
@@ -821,6 +825,10 @@ class Downloader(commands.Cog):
         if update_result.failed_repos:
             message += "\n" + self.format_failed_repos(update_result.failed_repos)
 
+        failed_to_load = _downloader._repo_manager.repos_failed_to_load
+        if failed_to_load:
+            message += "\n" + self.format_repos_failed_to_load(failed_to_load)
+
         repos_with_libs = {
             inline(module.repo.name)
             for module in update_result.updated_modules
@@ -1250,6 +1258,39 @@ class Downloader(commands.Cog):
         message += _(
             "The repository's branch might have been removed or"
             " the repository is no longer accessible at set url."
+            " See logs for more information."
+        )
+        return message
+
+    @staticmethod
+    def format_repos_failed_to_load(failed: Collection[str]) -> str:
+        """Format collection of repo folder names that could not be loaded as repos.
+
+        Parameters
+        ----------
+        failed : Collection
+            Collection of repo folder names.
+
+        Returns
+        -------
+        str
+            formatted message
+        """
+
+        message = (
+            _(
+                "The following folders in your repos folder could not be loaded"
+                " as installed repos:"
+            )
+            if len(failed) > 1
+            else _(
+                "The following folder in your repos folder could not be loaded"
+                " as an installed repo:"
+            )
+        )
+        message += " " + humanize_list(tuple(map(inline, failed))) + "\n"
+        message += _(
+            "This can happen if, for example, the folder's permissions were changed."
             " See logs for more information."
         )
         return message
