@@ -30,6 +30,7 @@ from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
+from redbot.core.utils._internal_utils import PRIVILEGED_INTENTS
 
 
 log = logging.getLogger("red.main")
@@ -300,6 +301,14 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
         rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
+
+    for intent in PRIVILEGED_INTENTS:
+        if intent in cli_flags.disable_intent:
+            log.warning(
+                "Using --disable-intent with a privileged intent is deprecated since Red 3.5.25"
+                " and will be removed in Red 3.6.0, use `--disable-privileged-intent %s` instead.",
+                intent,
+            )
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())

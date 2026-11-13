@@ -368,12 +368,15 @@ def parse_cli_flags(args):
         action="append",
         choices=list(discord.Intents.VALID_FLAGS),  # DEP-WARN
         default=[],
-        help="Unsupported flag that allows disabling the given intent."
+        help="Unsupported flag that allows disabling the given non-privileged intent."
         " Currently NOT SUPPORTED (and not covered by our version guarantees)"
         " as Red is not prepared to work without all intents.\n"
         f"Go to https://discordpy.readthedocs.io/en/v{discord_version}/api.html#discord.Intents"
         " to see what each intent does.\n"
-        "This flag can be used multiple times to specify multiple intents.",
+        "This flag can be used multiple times to specify multiple intents.\n"
+        "Passing privileged intents to this flag is deprecated since version 3.5.25"
+        "and will be removed in Red 3.6.0, use --disable-privileged-intent"
+        " for privileged intents instead.",
     )
     parser.add_argument(
         "--force-rich-logging",
