@@ -24,7 +24,7 @@ import rich
 
 import redbot.logging
 from redbot import __version__
-from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
+from redbot.core.bot import Red, ExitCodes, _NoOwnerSet, _create_bot
 from redbot.core._cli import interactive_config, confirm, parse_cli_flags, new_event_loop
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, _drivers, _downloader
@@ -259,7 +259,7 @@ def early_exit_runner(
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
-        red = Red(cli_flags=cli_flags)
+        red = loop.run_until_complete(_create_bot(cli_flags))
         driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
@@ -475,7 +475,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags)
+        red = loop.run_until_complete(_create_bot(cli_flags))
 
         if os.name != "nt":
             # None of this works on windows.

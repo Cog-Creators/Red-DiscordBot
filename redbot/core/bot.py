@@ -106,6 +106,114 @@ class _NoOwnerSet(RuntimeError):
     """Raised when there is no owner set for the instance that is trying to start."""
 
 
+# DEP-WARN: use @functools.cache when we drop support for Python 3.8
+@functools.lru_cache(maxsize=None)
+def _get_core_config() -> Config:
+    config = Config.get_core_conf(force_registration=False)
+    config.register_global(
+        token=None,
+        prefix=[],
+        packages=[],
+        owner=None,
+        whitelist=[],
+        blacklist=[],
+        locale=_i18n.FRESH_INSTALL_LOCALE,
+        regional_format=None,
+        embeds=True,
+        color=15158332,
+        fuzzy=False,
+        custom_info=None,
+        help__page_char_limit=1000,
+        help__max_pages_in_guild=2,
+        help__delete_delay=0,
+        help__use_menus=0,
+        help__show_hidden=False,
+        help__show_aliases=True,
+        help__verify_checks=True,
+        help__verify_exists=False,
+        help__tagline="",
+        help__use_tick=False,
+        help__react_timeout=30,
+        description=_DEFAULT_DESCRIPTION,
+        invite_public=False,
+        invite_perm=0,
+        invite_commands_scope=False,
+        disabled_commands=[],
+        disabled_command_msg="That command is disabled.",
+        invoke_error_msg=None,
+        extra_owner_destinations=[],
+        owner_opt_out_list=[],
+        last_system_info__python_prefix=None,
+        last_system_info__python_version=[3, 7],
+        last_system_info__machine=None,
+        last_system_info__system=None,
+        schema_version=0,
+        datarequests__allow_user_requests=True,
+        datarequests__user_requests_are_strict=True,
+        use_buttons=False,
+        enabled_slash_commands={},
+        enabled_user_commands={},
+        enabled_message_commands={},
+        # default for presences when no value is present in storage is `True`
+        # but when a new instance is created, this will be set to `False`
+        intents__presences=True,
+        intents__members=True,
+        intents__message_content=True,
+    )
+
+    config.register_guild(
+        prefix=[],
+        whitelist=[],
+        blacklist=[],
+        admin_role=[],
+        mod_role=[],
+        embeds=None,
+        ignored=False,
+        use_bot_color=False,
+        fuzzy=False,
+        disabled_commands=[],
+        autoimmune_ids=[],
+        delete_delay=-1,
+        locale=None,
+        regional_format=None,
+    )
+
+    config.register_channel(embeds=None, ignored=False)
+    config.register_user(embeds=None)
+
+    config.init_custom("COG_DISABLE_SETTINGS", 2)
+    config.register_custom("COG_DISABLE_SETTINGS", disabled=None)
+
+    config.init_custom(CUSTOM_GROUPS, 2)
+    config.register_custom(CUSTOM_GROUPS)
+
+    # {COMMAND_NAME: {GUILD_ID: {...}}}
+    # GUILD_ID=0 for global setting
+    config.init_custom(COMMAND_SCOPE, 2)
+    config.register_custom(COMMAND_SCOPE, embeds=None)
+
+    config.init_custom(SHARED_API_TOKENS, 2)
+    config.register_custom(SHARED_API_TOKENS)
+
+    return config
+
+
+async def _create_bot(cli_flags: argparse.Namespace, **kwargs: Any) -> Red:
+    if "intents" in kwargs:
+        return Red(cli_flags=cli_flags, **kwargs)
+
+    intents = discord.Intents.all()
+    config = _get_core_config()
+
+    intents_config = await config.intents.all()
+    for intent_name, value in intents_config.items():
+        setattr(intents, intent_name, value)
+    for intent_name in cli_flags.disable_intent:
+        setattr(intents, intent_name, False)
+
+    return Red(cli_flags=cli_flags, intents=intents, **kwargs)
+
+
 # Order of inheritance here matters.
 # d.py autoshardedbot should be at the end
 # all of our mixins should happen before,
@@ -116,94 +224,21 @@ class Red(
     """Our subclass of discord.ext.commands.AutoShardedBot"""
 
     def __init__(
-        self, *args: Any, cli_flags: argparse.Namespace, bot_dir: Path = Path.cwd(), **kwargs: Any
+        self,
+        *,
+        cli_flags: argparse.Namespace,
+        bot_dir: Path = Path.cwd(),
+        intents: discord.Intents,
+        **kwargs: Any,
     ) -> None:
         self._shutdown_mode = ExitCodes.CRITICAL
         self._cli_flags = cli_flags
-        self._config = Config.get_core_conf(force_registration=False)
+        self._config = _get_core_config()
         self.rpc_enabled = cli_flags.rpc
         self.rpc_port = cli_flags.rpc_port
         self._last_exception = None
-        self._config.register_global(
-            token=None,
-            prefix=[],
-            packages=[],
-            owner=None,
-            whitelist=[],
-            blacklist=[],
-            locale=_i18n.FRESH_INSTALL_LOCALE,
-            regional_format=None,
-            embeds=True,
-            color=15158332,
-            fuzzy=False,
-            custom_info=None,
-            help__page_char_limit=1000,
-            help__max_pages_in_guild=2,
-            help__delete_delay=0,
-            help__use_menus=0,
-            help__show_hidden=False,
-            help__show_aliases=True,
-            help__verify_checks=True,
-            help__verify_exists=False,
-            help__tagline="",
-            help__use_tick=False,
-            help__react_timeout=30,
-            description=_DEFAULT_DESCRIPTION,
-            invite_public=False,
-            invite_perm=0,
-            invite_commands_scope=False,
-            disabled_commands=[],
-            disabled_command_msg="That command is disabled.",
-            invoke_error_msg=None,
-            extra_owner_destinations=[],
-            owner_opt_out_list=[],
-            last_system_info__python_prefix=None,
-            last_system_info__python_version=[3, 7],
-            last_system_info__machine=None,
-            last_system_info__system=None,
-            schema_version=0,
-            datarequests__allow_user_requests=True,
-            datarequests__user_requests_are_strict=True,
-            use_buttons=False,
-            enabled_slash_commands={},
-            enabled_user_commands={},
-            enabled_message_commands={},
-        )
 
-        self._config.register_guild(
-            prefix=[],
-            whitelist=[],
-            blacklist=[],
-            admin_role=[],
-            mod_role=[],
-            embeds=None,
-            ignored=False,
-            use_bot_color=False,
-            fuzzy=False,
-            disabled_commands=[],
-            autoimmune_ids=[],
-            delete_delay=-1,
-            locale=None,
-            regional_format=None,
-        )
-
-        self._config.register_channel(embeds=None, ignored=False)
-        self._config.register_user(embeds=None)
-
-        self._config.init_custom("COG_DISABLE_SETTINGS", 2)
-        self._config.register_custom("COG_DISABLE_SETTINGS", disabled=None)
-
-        self._config.init_custom(CUSTOM_GROUPS, 2)
-        self._config.register_custom(CUSTOM_GROUPS)
-
-        # {COMMAND_NAME: {GUILD_ID: {...}}}
-        # GUILD_ID=0 for global setting
-        self._config.init_custom(COMMAND_SCOPE, 2)
-        self._config.register_custom(COMMAND_SCOPE, embeds=None)
         # TODO: add cache for embed settings
-
-        self._config.init_custom(SHARED_API_TOKENS, 2)
-        self._config.register_custom(SHARED_API_TOKENS)
         self._prefix_cache = PrefixManager(self._config, cli_flags)
         self._disabled_cog_cache = DisabledCogCache(self._config)
         self._ignored_cache = IgnoreManager(self._config)
@@ -223,11 +258,7 @@ class Red(
         if "owner_id" in kwargs:
             raise RuntimeError("Red doesn't accept owner_id kwarg, use owner_ids instead.")
 
-        if "intents" not in kwargs:
-            intents = discord.Intents.all()
-            for intent_name in cli_flags.disable_intent:
-                setattr(intents, intent_name, False)
-            kwargs["intents"] = intents
+        kwargs["intents"] = intents
 
         self._owner_id_overwrite = cli_flags.owner
 
@@ -259,7 +290,6 @@ class Red(
         self._cog_mgr = CogManager()
         self._use_team_features = cli_flags.use_team_features
         super().__init__(
-            *args,
             description=kwargs.pop("description", _DEFAULT_DESCRIPTION),
             help_command=None,
             tree_cls=RedTree,
