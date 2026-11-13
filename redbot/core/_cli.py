@@ -3,12 +3,12 @@ import asyncio
 import logging
 import sys
 from enum import IntEnum
-from typing import Any, Coroutine, Optional, TypeVar
+from typing import Any, Coroutine, Iterable, Optional, Sequence, TypeVar, Union
 
 import discord
 from discord import __version__ as discord_version
 
-from redbot.core.utils._internal_utils import cli_level_to_log_level
+from redbot.core.utils._internal_utils import PRIVILEGED_INTENTS, cli_level_to_log_level
 
 _T = TypeVar("_T")
 
@@ -129,6 +129,44 @@ def message_cache_size_int(arg: str) -> int:
             "Message cache size has to be greater than or equal to 1000."
         )
     return x
+
+
+class FlagDictAction(argparse.Action):
+    def __init__(
+        self,
+        *,
+        option_strings: Sequence[str],
+        dest: str,
+        default: Union[bool, None] = None,
+        choices: Union[Iterable[_T], None] = None,
+        required: bool = False,
+        help: Union[str, None] = None,
+    ) -> None:
+        for option_string in option_strings:
+            if not option_string.startswith(("--enable-", "--disable-")):
+                raise ValueError(f"invalid option name {option_string!r} for FlagDictAction")
+        super().__init__(
+            option_strings=option_strings,
+            dest=dest,
+            default=default,
+            choices=choices,
+            required=required,
+            help=help,
+        )
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Union[str, Sequence[Any], None],
+        option_string: Union[str, None] = None,
+    ) -> None:
+        assert isinstance(values, str)
+        assert option_string is not None
+        items = getattr(namespace, self.dest, None)
+        items = {} if items is None else items.copy()
+        items[values] = option_string.startswith("--enable-")
+        setattr(namespace, self.dest, items)
 
 
 def parse_cli_flags(args):
@@ -312,6 +350,18 @@ def parse_cli_flags(args):
     )
     parser.add_argument(
         "--no-message-cache", action="store_true", help="Disable the internal message cache."
+    )
+    parser.add_argument(
+        "--enable-privileged-intent",
+        "--disable-privileged-intent",
+        action=FlagDictAction,
+        dest="privileged_intents",
+        choices=tuple(PRIVILEGED_INTENTS),
+        default={},
+        help="Run Red with the specified privileged intent enabled/disabled."
+        " Go to https://docs.discord.red/en/stable/intents.html#intents-intents for more details"
+        " about each privileged intent and what disabling it does."
+        "This flag can be used multiple times to specify multiple intents to enable/disable.",
     )
     parser.add_argument(
         "--disable-intent",

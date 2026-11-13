@@ -208,6 +208,8 @@ async def _create_bot(cli_flags: argparse.Namespace, **kwargs: Any) -> Red:
     intents_config = await config.intents.all()
     for intent_name, value in intents_config.items():
         setattr(intents, intent_name, value)
+    for intent_name, value in cli_flags.privileged_intents.items():
+        setattr(intents, intent_name, value)
     for intent_name in cli_flags.disable_intent:
         setattr(intents, intent_name, False)
 
