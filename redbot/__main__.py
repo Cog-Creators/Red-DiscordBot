@@ -73,6 +73,7 @@ async def edit_instance(red, cli_flags):
     token = cli_flags.token
     owner = cli_flags.owner
     prefix = cli_flags.prefix
+    privileged_intents = cli_flags.privileged_intents
     old_name = cli_flags.instance_name
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
@@ -89,17 +90,20 @@ async def edit_instance(red, cli_flags):
         no_prompt
         and all(to_change is None for to_change in (token, owner, new_name, data_path))
         and not prefix
+        and not privileged_intents
     ):
         print(
             "No arguments to edit were provided."
             " Available arguments (check help for more information):"
-            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix"
+            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix,"
+            " --enable-privileged-intent, --disable-privileged-intent"
         )
         sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     await _edit_token(red, token, no_prompt)
     await _edit_prefix(red, prefix, no_prompt)
     await _edit_owner(red, owner, no_prompt)
+    await _edit_privileged_intents(red, privileged_intents, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
     name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
@@ -178,6 +182,35 @@ async def _edit_owner(red, owner, no_prompt):
                 break
         else:
             print("Instance's owner will remain unchanged.")
+        print()
+
+
+async def _edit_privileged_intents(red, new_privileged_intents, no_prompt):
+    if new_privileged_intents:
+        current_intents = await red._config.intents.all()
+        current_intents.update(new_privileged_intents)
+        await red._config.intents.set(current_intents)
+    elif not no_prompt and confirm(
+        "Would you like to change instance's enabled privileged intents?", default=False
+    ):
+        current_intents = await red._config.intents.all()
+        for intent, friendly_name in PRIVILEGED_INTENTS.items():
+            if current_intents[intent] and confirm(
+                f"{friendly_name} privileged intent is currently enabled."
+                " Do you want to disable it?",
+                default=False,
+            ):
+                current_intents[intent] = False
+                await red._config.intents.set(current_intents)
+                print(friendly_name, "privileged intent has been disabled.")
+            elif not current_intents[intent] and confirm(
+                f"{friendly_name} privileged intent is currently disabled."
+                " Do you want to enable it?",
+                default=False,
+            ):
+                current_intents[intent] = True
+                await red._config.intents.set(current_intents)
+                print(friendly_name, "privileged intent has been enabled.")
         print()
 
 

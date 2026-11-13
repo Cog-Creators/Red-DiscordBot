@@ -189,9 +189,10 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--edit",
         action="store_true",
-        help="Edit the instance. This can be done without console interaction "
-        "by passing --no-prompt and arguments that you want to change (available arguments: "
-        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix).",
+        help="Edit the instance. This can be done without console interaction"
+        " by passing --no-prompt and arguments that you want to change (available arguments:"
+        " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix,"
+        " --enable-privileged-intent, --disable-privileged-intent).",
     )
     parser.add_argument(
         "--edit-instance-name",
