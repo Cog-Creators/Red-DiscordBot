@@ -78,6 +78,27 @@ Keys specific to the cog info.json (case sensitive)
   passed to pip on cog install. ``SHARED_LIBRARIES`` do NOT go in this
   list.
 
+- ``optional_privileged_intents`` (dict mapping a privileged intent name to reason it's needed) - A dict of privileged intents
+  that this cog needs for some of its functionality. When the bot doesn't have any of the optional privileged intents,
+  the cog should still function to some degree, handling the lacking intents gracefully.
+
+  | **Downloader will let the user install a cog**, when an optional privileged intent is missing.
+  | The key is one of the following privileged intent names: ``message_content``, ``members``, ``presences``.
+  | The value should be a statement explaining the reason the intent specified in the key is needed.
+  | Privileged intents present in this dict cannot be present in the ``required_privileged_intents`` dict.
+
+- ``required_privileged_intents`` (dict mapping a privileged intent name to reason it's needed) - A dict of privileged intents
+  that this cog requires to function. When the bot doesn't have any of the required privileged intents, it may not work correctly
+  (or outright refuse to load) and **Downloader will not allow the user to install it**.
+
+  | The key is one of the following privileged intent names: ``message_content``, ``members``, ``presences``.
+  | The value should be a statement explaining the reason the intent specified in the key is needed.
+  | Privileged intents present in this dict cannot be present in the ``optional_privileged_intents`` dict.
+  | When this is ``{}``, the cog can function without any privileged intents.
+  | When this is not present (or ``None``), cog is assumed to require ``message_content`` and ``members``
+    intents with an unknown reason. Downloader will, however, allow the cog to be installed despite that
+    since a dict has not been explicitly specified.
+
 - ``tags`` (list of strings) - A list of strings that are related to the
   functionality of the cog. Used to aid in searching.
 
