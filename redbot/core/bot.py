@@ -213,7 +213,7 @@ class Red(
 
         async def prefix_manager(bot, message) -> List[str]:
             prefixes = await self._prefix_cache.get_prefixes(message.guild)
-            if cli_flags.mentionable:
+            if self._mentionable:
                 return when_mentioned_or(*prefixes)(bot, message)
             return prefixes
 
@@ -264,6 +264,11 @@ class Red(
             help_command=None,
             tree_cls=RedTree,
             **kwargs,
+        )
+        self._mentionable = (
+            not self.intents.message_content
+            if cli_flags.mentionable is None
+            else cli_flags.mentionable
         )
         # Do not manually use the help formatter attribute here, see `send_help_for`,
         # for a documented API. The internals of this object are still subject to change.
