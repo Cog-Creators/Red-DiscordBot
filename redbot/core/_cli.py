@@ -261,10 +261,21 @@ def parse_cli_flags(args):
         help="Set the verbosity level to 0.",
     )
     parser.add_argument("--dev", action="store_true", help="Enables developer mode")
+    # DEP-WARN: use argparse.BooleanOptionalAction when we drop support for Python 3.8
     parser.add_argument(
         "--mentionable",
         action="store_true",
-        help="Allows mentioning the bot as an alternative to using the bot prefix",
+        default=None,
+        help="Allows mentioning the bot as an alternative to using the bot prefix."
+        " This is the default behavior, when Message Content privileged intent is disabled.",
+    )
+    parser.add_argument(
+        "--no-mentionable",
+        action="store_false",
+        default=None,
+        help="Disables mentioning the bot as an alternative to using the bot prefix"
+        " This is the default behavior, when Message Content privileged intent is enabled.",
+        dest="mentionable",
     )
     parser.add_argument(
         "--rpc",
