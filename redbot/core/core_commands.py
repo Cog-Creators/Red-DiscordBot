@@ -4090,9 +4090,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             )
         )
 
-    @_set.command(name="colour", aliases=["color"])
+    @_set.group(name="colour", aliases=["color"], invoke_without_command=True)
     @commands.is_owner()
-    async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour = None):
+    async def _set_colour(self, ctx: commands.Context, *, colour: discord.Colour):
         """
         Sets a default colour to be used for the bot's embeds.
 
@@ -4108,15 +4108,40 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         - `[p]set color #7F8C8D`
 
         **Arguments:**
-        - `[colour]` - The colour to use for embeds. Leave blank to set to the default value (red).
+        - `<colour>` - The colour to use for embeds.
         """
-        if colour is None:
-            ctx.bot._color = discord.Color.red()
-            await ctx.bot._config.color.set(discord.Color.red().value)
-            return await ctx.send(_("The color has been reset."))
         ctx.bot._color = colour
         await ctx.bot._config.color.set(colour.value)
         await ctx.send(_("The color has been set."))
+
+    @_set_colour.command(name="theme")
+    @commands.is_owner()
+    async def _set_colour_theme(self, ctx: commands.Context):
+        """
+        Sets the bot's embed colour to Discord's default (no colour).
+
+        This makes embeds use Discord's built-in theme colour instead of a custom one.
+
+        **Example:**
+        - `[p]set colour theme`
+        """
+        ctx.bot._color = None
+        await ctx.bot._config.color.set(None)
+        await ctx.send(_("The embed colour has been set to Discord's default theme colour."))
+
+    @_set_colour.command(name="reset")
+    @commands.is_owner()
+    async def _set_colour_reset(self, ctx: commands.Context):
+        """
+        Resets the bot's embed colour to Red's default.
+
+        **Example:**
+        - `[p]set colour reset`
+        """
+        await ctx.bot._config.color.clear()
+        default_color = await ctx.bot._config.color()
+        ctx.bot._color = discord.Colour(default_color) if default_color is not None else None
+        await ctx.send(_("The embed colour has been reset to the default."))
 
     @_set.command(
         name="prefix",
