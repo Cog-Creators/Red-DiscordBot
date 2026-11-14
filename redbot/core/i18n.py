@@ -279,7 +279,7 @@ class Translator(Callable[[str], str]):
 
         self.load_translations()
 
-    def __call__(self, untranslated: str) -> str:
+    def __call__(self, untranslated: str, /) -> str:
         """Translate the given string.
 
         This will look for the string in the translator's :code:`.pot` file,
