@@ -9,6 +9,7 @@ on:
 
 jobs:
   crowdin_download_translations:
+    name: Download translations from Crowdin
     environment: Prepare Release
     needs: pr_stable_bump
     runs-on: ubuntu-24.04
@@ -77,6 +78,7 @@ jobs:
             --milestone "$MILESTONE"
 
   pr_stable_bump:
+    name: Create a PR with stable version bump
     environment: Prepare Release
     runs-on: ubuntu-24.04
     outputs:

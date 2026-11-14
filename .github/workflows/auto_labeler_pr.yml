@@ -13,9 +13,10 @@ permissions:
 
 jobs:
   label_pull_requests:
+    name: Apply automatic labels
     runs-on: ubuntu-24.04
     steps:
-      - name: Apply Type Label
+      - name: Apply Category label
         uses: actions/labeler@v4  # TODO: bump
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"

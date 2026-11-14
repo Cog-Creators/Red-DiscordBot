@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   apply_triage_label_to_issues:
+    name: Apply Needs Triage label to the issue
     runs-on: ubuntu-24.04
     steps:
       - name: Apply Triage Label
