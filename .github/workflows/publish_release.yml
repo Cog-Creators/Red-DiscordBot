@@ -12,6 +12,8 @@ jobs:
     steps:
       # Checkout repository and install Python
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
@@ -58,6 +60,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -85,6 +89,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -168,6 +174,8 @@ jobs:
         with:
           ref: ${{ env.BASE_BRANCH }}
           token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: true
+
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
