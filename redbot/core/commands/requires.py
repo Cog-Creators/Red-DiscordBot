@@ -139,6 +139,29 @@ class PrivilegeLevel(enum.IntEnum):
 
         return cls.NONE
 
+    @classmethod
+    async def from_interaction(cls, interaction: discord.Interaction) -> "PrivilegeLevel":
+        """Get a command author's PrivilegeLevel based on an interaction."""
+        if await interaction.client.is_owner(interaction.user):
+            return cls.BOT_OWNER
+        elif interaction.guild is None:
+            return cls.NONE
+        elif interaction.user == interaction.guild.owner:
+            return cls.GUILD_OWNER
+
+        # The following is simply an optimised way to check if the user has the
+        # admin or mod role.
+        guild_settings = interaction.client._config.guild(interaction.guild)
+
+        for snowflake in await guild_settings.admin_role():
+            if interaction.user.get_role(snowflake):
+                return cls.ADMIN
+        for snowflake in await guild_settings.mod_role():
+            if interaction.user.get_role(snowflake):
+                return cls.MOD
+
+        return cls.NONE
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}.{self.name}>"
 
