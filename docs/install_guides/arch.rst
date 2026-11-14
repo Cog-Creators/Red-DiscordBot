@@ -2,9 +2,48 @@
 .. os-image-location::
 
     [arch-linux]
-    download_type = 'checksum-file'
-    url = 'https://fastly.mirror.pkgbuild.com/images/latest/Arch-Linux-x86_64-cloudimg.qcow2.SHA256'
-    filename_pattern = '.*\.qcow2'
+    download_type = 'html'
+    url = 'https://fastly.mirror.pkgbuild.com/images/latest/'
+    url_xpath = '''
+    concat(
+        "../v",
+        substring-before(
+            substring-after(
+                .//*[
+                    starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+                    and ends-with(@href, ".qcow2")
+                ]/@href,
+                "Arch-Linux-x86_64-cloudimg-"
+            ),
+            ".qcow2"
+        ),
+        "/",
+        .//*[
+            starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+            and ends-with(@href, ".qcow2")
+        ]/@href
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../v",
+        substring-before(
+            substring-after(
+                .//*[
+                    starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+                    and ends-with(@href, ".qcow2.SHA256")
+                ]/@href,
+                "Arch-Linux-x86_64-cloudimg-"
+            ),
+            ".qcow2.SHA256"
+        ),
+        "/",
+        .//*[
+            starts-with(@href, "Arch-Linux-x86_64-cloudimg-")
+            and ends-with(@href, ".qcow2.SHA256")
+        ]/@href
+    )
+    '''
 
 ============================
 Installing Red on Arch Linux
@@ -30,11 +69,11 @@ The manual build process is the Arch-supported install method for AUR packages. 
 
 .. prompt:: bash
 
-    git clone https://aur.archlinux.org/python311.git /tmp/python311
-    cd /tmp/python311
+    git clone https://aur.archlinux.org/python311.git /var/tmp/python311
+    cd /var/tmp/python311
     makepkg -sicL
     cd -
-    rm -rf /tmp/python311
+    rm -rf /var/tmp/python311
 
 .. Include common instructions:
 

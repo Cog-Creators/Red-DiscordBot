@@ -988,12 +988,14 @@ async def _restore_from_backup() -> None:
                     cog = last_cog_occurrence
                     log.warning(
                         "The commit that %r cog was installed from is unknown"
-                        " - will try to reinstall from latest commit where it's still available."
+                        " - will try to reinstall from latest commit where it's still available.",
+                        cog.name,
                     )
                 else:
                     log.error(
                         "The commit that %r cog was installed from is unknown"
-                        " and it could not be found in the repo."
+                        " and it could not be found in the repo.",
+                        cog.name,
                     )
                     continue
 
@@ -1065,6 +1067,7 @@ async def _restore_from_backup() -> None:
             if install_result.failed_libs:
                 log.error(
                     "Failed to reinstall shared libraries for %r cog from %r repo: %s",
+                    cog.name,
                     cog.repo.name,
                     ", ".join([lib.name for lib in install_result.failed_libs]),
                 )

@@ -2,18 +2,40 @@
 .. os-image-location::
 
     [debian-12]
-    download_type = 'checksum-file'
-    url = 'https://cloud.debian.org/images/cloud/bookworm/latest/SHA512SUMS'
+    download_type = 'json-file'
+    url = 'https://cloud.debian.org/images/cloud/bookworm/daily/latest/debian-12-generic-amd64-daily.json'
     checksum_type = 'sha512'
-    filename_pattern = 'debian-12-generic-amd64\.qcow2'
+    url_json_query = '''
+    .items
+        | filter(.metadata.labels."upload.cloud.debian.org/image-format" == "qcow2")
+        | .0
+        | "../../../" + .data.ref
+    '''
+    checksum_json_query = '''
+    .items
+        | filter(.metadata.labels."upload.cloud.debian.org/image-format" == "qcow2")
+        | .0
+        | .metadata.annotations."cloud.debian.org/digest"
+    '''
     expected_java_version = 17
 
     [debian-12-arm]
-    download_type = 'checksum-file'
+    download_type = 'json-file'
     arch = 'aarch64'
-    url = 'https://cloud.debian.org/images/cloud/bookworm/latest/SHA512SUMS'
+    url = 'https://cloud.debian.org/images/cloud/bookworm/daily/latest/debian-12-generic-arm64-daily.json'
     checksum_type = 'sha512'
-    filename_pattern = 'debian-12-genericcloud-arm64\.qcow2'
+    url_json_query = '''
+    .items
+        | filter(.metadata.labels."upload.cloud.debian.org/image-format" == "qcow2")
+        | .0
+        | "../../../" + .data.ref
+    '''
+    checksum_json_query = '''
+    .items
+        | filter(.metadata.labels."upload.cloud.debian.org/image-format" == "qcow2")
+        | .0
+        | .metadata.annotations."cloud.debian.org/digest"
+    '''
     expected_java_version = 17
 
 ====================================
