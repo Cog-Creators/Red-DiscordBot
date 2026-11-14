@@ -127,6 +127,7 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
     async def _skip_action(self, ctx: commands.Context, skip_to_track: int = None) -> None:
         player = lavalink.get_player(ctx.guild.id)
+        player.repeat_current = False
         autoplay = await self.config.guild(player.guild).auto_play()
         if not player.current or (not player.queue and not autoplay):
             try:
