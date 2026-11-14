@@ -45,32 +45,42 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_IDENTIFIER }}
 
-      - name: Create Pull Request
-        id: cpr_crowdin
-        # TODO: Switch to `gh`
-        uses: peter-evans/create-pull-request@38e0b6e68b4c852a5500a94740f0e535e0d7ba54  # v4.2.4
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          commit-message: Automated Crowdin downstream
-          title: "Automated Crowdin downstream"
-          body: |
+      - name: Configure Git user
+        env:
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          git config user.name "$APP_SLUG[bot]"
+          git config user.email "263745220+$APP_SLUG[bot]@users.noreply.github.com"
+
+      - name: Commit changes
+        env:
+          BRANCH_NAME: automated/i18n
+        run: |
+          git checkout -b "$BRANCH_NAME"
+          git add .
+          git commit -m 'Automated Crowdin downstream'
+          git push -u origin "$BRANCH_NAME"
+
+      - name: Create the pull request
+        env:
+          PR_BODY: |
             This is an automated PR that is part of Prepare Release automated workflow (2 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
-          labels: "Automated PR, Changelog Entry: Skipped"
-          branch: "automated/i18n"
-          committer: >-
-            ${{ steps.app-token.outputs.app-slug }}[bot]
-            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
-          author: >-
-            ${{ steps.app-token.outputs.app-slug }}[bot]
-            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
-          milestone: ${{ needs.pr_stable_bump.outputs.milestone_number }}
+          MILESTONE: ${{ needs.pr_stable_bump.outputs.new_version }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh pr create \
+            --fill \
+            --base "$GITHUB_REF" \
+            --body "$PR_BODY" \
+            --label 'Automated PR,Changelog Entry: Skipped' \
+            --milestone "$MILESTONE"
 
   pr_stable_bump:
     environment: Prepare Release
     runs-on: ubuntu-24.04
     outputs:
-      milestone_number: ${{ steps.get_milestone_number.outputs.result }}
+      new_version: ${{ steps.bump_version_stable.outputs.new_version }}
     steps:
       - uses: actions/create-github-app-token@v3
         id: app-token
@@ -96,36 +106,34 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}:${{ env.PYTHONPATH }}
           NEW_STABLE_VERSION: ${{ github.event.inputs.new_stable_version }}
 
-      # Get milestone number of the milestone for the new stable version
-      - name: Get milestone number
-        id: get_milestone_number
-        uses: actions/github-script@v9
+      - name: Configure Git user
         env:
-          MILESTONE_TITLE: ${{ steps.bump_version_stable.outputs.new_version }}
-        with:
-          script: |
-            const script = require(
-              `${process.env.GITHUB_WORKSPACE}/.github/workflows/scripts/get_milestone_number_by_exact_title.js`
-            );
-            return await script({github, context});
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          git config user.name "$APP_SLUG[bot]"
+          git config user.email "263745220+$APP_SLUG[bot]@users.noreply.github.com"
 
-      - name: Create Pull Request
-        id: cpr_bump_stable
-        # TODO: Switch to `gh`
-        uses: peter-evans/create-pull-request@38e0b6e68b4c852a5500a94740f0e535e0d7ba54  # v4.2.4
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          commit-message: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
-          title: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
-          body: |
+      - name: Commit changes
+        env:
+          BRANCH_NAME: automated/pr_bumps/${{ steps.bump_version_stable.outputs.new_version }}
+          COMMIT_MESSAGE: Version bump to ${{ steps.bump_version_stable.outputs.new_version }}
+        run: |
+          git checkout -b "$BRANCH_NAME"
+          git add redbot/__init__.py
+          git commit -m "$COMMIT_MESSAGE"
+          git push -u origin "$BRANCH_NAME"
+
+      - name: Create the pull request
+        env:
+          PR_BODY: |
             This is an automated PR that is part of Prepare Release automated workflow (1 out of 2).
             Please ensure that there are no errors or invalid files are in the PR.
-          labels: "Automated PR, Changelog Entry: Skipped"
-          branch: "automated/pr_bumps/${{ steps.bump_version_stable.outputs.new_version }}"
-          committer: >-
-            ${{ steps.app-token.outputs.app-slug }}[bot]
-            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
-          author: >-
-            ${{ steps.app-token.outputs.app-slug }}[bot]
-            <263745220+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com>
-          milestone: ${{ steps.get_milestone_number.outputs.result }}
+          MILESTONE: ${{ steps.bump_version_stable.outputs.new_version }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh pr create \
+            --fill \
+            --base "$GITHUB_REF" \
+            --body "$PR_BODY" \
+            --label 'Automated PR,Changelog Entry: Skipped' \
+            --milestone "$MILESTONE"
