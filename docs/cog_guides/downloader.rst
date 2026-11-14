@@ -510,6 +510,30 @@ repo list
 
 List all installed repos.
 
+.. _downloader-command-repo-rename:
+
+"""""""""""
+repo rename
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]repo rename <current_name> <new_name>
+
+**Description**
+
+Rename a repo.
+
+Example:
+    - ``[p]repo rename JackCogs jack``
+
+**Arguments**
+
+- ``<current_name>`` The repo to rename.
+- ``<new_name>`` The new name for the repo.
+
 .. _downloader-command-repo-update:
 
 """""""""""

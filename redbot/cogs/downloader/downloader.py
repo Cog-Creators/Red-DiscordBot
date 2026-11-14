@@ -129,11 +129,12 @@ class Downloader(commands.Cog):
         agreed = await do_install_agreement(ctx)
         if not agreed:
             return
+        name = name.lower()
         # TODO: verify this in the Downloader APIs
         if name.startswith(".") or name.endswith("."):
             await ctx.send(_("Repo names cannot start or end with a dot."))
             return
-        if re.match(r"^[a-zA-Z0-9_\-\.]+$", name) is None:
+        if re.match(r"^[a-z0-9_\-\.]+$", name) is None:
             await ctx.send(
                 _(
                     "Repo names can only contain characters A-z, numbers, underscores, hyphens,"
@@ -223,6 +224,30 @@ class Downloader(commands.Cog):
             )
             + humanize_list([inline(i.name) for i in set(repos)])
         )
+
+    @repo.command(name="rename", usage="<current_name> <new_name>")
+    async def _repo_rename(self, ctx: commands.Context, repo: Repo, new_name: str) -> None:
+        """
+        Rename a repo.
+
+        Example:
+        - `[p]repo rename JackCogs jack`
+
+        **Arguments**
+
+        - `<current_name>` The repo to rename.
+        - `<new_name>` The new name for the repo.
+        """
+        if repo.name == new_name.lower():
+            await ctx.send("The current name of the repo is the same as the new name.")
+            return
+
+        try:
+            await _downloader.rename_repo(repo.name, new_name)
+        except errors.ExistingGitRepo:
+            await ctx.send(_("The provided new name is already in use by another repo."))
+
+        await ctx.send(_("The repo has been renamed."))
 
     @repo.command(name="list")
     async def _repo_list(self, ctx: commands.Context) -> None:
