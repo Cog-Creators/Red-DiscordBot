@@ -104,7 +104,7 @@ def get_audit_reason(author: discord.Member, reason: str = None, *, shorten: boo
 
     """
     audit_reason = (
-        "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
+        "{} (Action requested by {} [ID: {}])".format(reason, author, author.id)
         if reason
         else "Action requested by {} (ID {}).".format(author, author.id)
     )
