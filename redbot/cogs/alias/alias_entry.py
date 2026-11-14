@@ -1,9 +1,10 @@
-from typing import Tuple, Dict, Optional, List, Union
-from re import findall
+from re import findall, sub
+from typing import Dict, List, Optional, Tuple, Union
 
 import discord
 from discord.ext.commands.view import StringView  # DEP-WARN
-from redbot.core import commands, Config
+
+from redbot.core import Config, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils import AsyncIter
 
@@ -207,7 +208,9 @@ class AliasCache:
                     _("Arguments must be sequential. Missing arguments: ")
                     + ", ".join(str(i + low) for i in gaps)
                 )
-            command = command.format(*(f"{{{i}}}" for i in range(-low, high + low + 1)))
+            safe = command.replace("{", "{{").replace("}", "}}")
+            safe = sub(r"\{\{(\d+)\}\}", r"{\1}", safe)
+            command = safe.format(*(f"{{{i}}}" for i in range(-low, high + low + 1)))
         return command
 
     async def add_alias(
