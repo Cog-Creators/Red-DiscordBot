@@ -1,20 +1,49 @@
+"""
+Cog path manager for Red.
+
+This module provides both the internal API and the external UI for
+adding, removing or modifying extra paths for Red to be able to
+discover cogs.
+
+By default, cogs can be imported from the install path, where
+Downloader will place installed cogs; and the core cogs path. Other
+arbitrary paths can be added by the user - these user-defined paths are
+particularly useful for cog development.
+
+Internally, this modifies use of the `__path__` attribute of the
+``redbot.ext_cogs`` package. When extra paths are added to a package's
+`__path__` attribute, they are used to locate sub-packages.
+
+The precedence of paths goes:
+1. Install path
+2. Non-persistent (temporary) paths defined by the user (i.e. through the `--cog-path` flag)
+3. Persistent paths defined by the user (i.e. through the `[p]addpath` command)
+4. Core path (redbot.cogs)
+
+This is so users who wish to modify core cogs can do so by copying or
+installing cogs into a user-defined/core path, and this modified one
+will be loaded instead.
+"""
+
 import contextlib
 import keyword
 import pkgutil
 import sys
 import textwrap
-from importlib import import_module, invalidate_caches
-from importlib.machinery import ModuleSpec
+import importlib
+import itertools
 from pathlib import Path
-from typing import Union, List, Optional
+from types import ModuleType
+from typing import Union, List, Optional, Set
 
 import redbot.cogs
+import redbot.ext_cogs
 from redbot.core.commands import positive_int
 from redbot.core.utils import deduplicate_iterables
 from redbot.core.utils.views import ConfirmView
 import discord
 
-from . import commands
+from . import commands, errors
 from .config import Config
 from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path, data_path
@@ -23,32 +52,29 @@ from .utils.chat_formatting import box, pagify, humanize_list, inline
 
 __all__ = ("CogManager", "CogManagerUI")
 
-_TEMP_PATHS: List[Path] = []
-
-
-class NoSuchCog(ImportError):
-    """Thrown when a cog is missing.
-
-    Different from ImportError because some ImportErrors can happen inside cogs.
-    """
-
 
 class CogManager:
     """Directory manager for Red's cogs.
 
     This module allows you to load cogs from multiple directories and even from
-    outside the bot directory. You may also set a directory for downloader to
-    install new cogs to, the default being the :code:`cogs/` folder in the root
-    bot directory.
+    outside the bot directory. You may also set a directory for Downloader to
+    install new cogs to, the default being the ``cogs/`` folder in
+    `CogManager`'s data path.
     """
 
-    CORE_PATH = Path(redbot.cogs.__path__[0]).resolve()
+    CORE_PATH = Path(redbot.cogs.__file__).parent
 
     def __init__(self):
         self.config = Config.get_conf(self, 2938473984732, True)
-        tmp_cog_install_path = cog_data_path(self) / "cogs"
-        tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
-        self.config.register_global(paths=[], install_path=str(tmp_cog_install_path))
+        default_cog_install_path = cog_data_path(self) / "cogs"
+        default_cog_install_path.mkdir(parents=True, exist_ok=True)
+        self.config.register_global(paths=[], install_path=str(default_cog_install_path))
+
+        self._temp_paths: List[Path] = []
+
+    async def initialize(self):
+        # we want to include all paths except for the core path here, hence last entry is excluded
+        redbot.ext_cogs.__path__ = [str(p) for p in (await self.paths())[:-1]]
 
     async def paths(self) -> List[Path]:
         """Get all currently valid path directories, in order of priority
@@ -64,7 +90,7 @@ class CogManager:
         """
         return deduplicate_iterables(
             [await self.install_path()],
-            _TEMP_PATHS,
+            self._temp_paths,
             await self.user_defined_paths(),
             [self.CORE_PATH],
         )
@@ -79,6 +105,19 @@ class CogManager:
 
         """
         return Path(await self.config.install_path()).resolve()
+
+    def temp_paths(self) -> List[Path]:
+        """Get a list of non-persistent (temporary) paths defined by the user.
+
+        All paths will be absolute and unique, in order of priority.
+
+        Returns
+        -------
+        List[pathlib.Path]
+            A list of non-persistent (temporary) paths defined by the user.
+
+        """
+        return list(self._temp_paths)
 
     async def user_defined_paths(self) -> List[Path]:
         """Get a list of user-defined cog paths.
@@ -120,7 +159,10 @@ class CogManager:
         if not path.is_dir():
             raise ValueError("The install path must be an existing directory.")
         resolved = path.resolve()
-        await self.config.install_path.set(str(resolved))
+        to_add = str(resolved)
+        await self.config.install_path.set(to_add)
+        # install path is always first
+        redbot.ext_cogs.__path__[0] = to_add
         return resolved
 
     @staticmethod
@@ -174,10 +216,11 @@ class CogManager:
             current_paths = await self.user_defined_paths()
             if path not in current_paths:
                 current_paths.append(path)
-                await self.set_paths(current_paths)
+                await self._set_user_defined_paths(current_paths)
+                redbot.ext_cogs.__path__.append(str(path))
         else:
-            if path not in _TEMP_PATHS:
-                _TEMP_PATHS.append(path)
+            if path not in self._temp_paths:
+                self._temp_paths.append(path)
 
     async def remove_path(self, path: Union[Path, str]) -> None:
         """Remove a path from the current paths list.
@@ -192,10 +235,37 @@ class CogManager:
         paths = await self.user_defined_paths()
 
         paths.remove(path)
-        await self.set_paths(paths)
+        await self._set_user_defined_paths(paths)
+        redbot.ext_cogs.__path__.remove(str(path))
 
-    async def set_paths(self, paths_: List[Path]):
-        """Set the current paths list.
+    async def reorder_path(self, path: Union[Path, str], new_index: int) -> None:
+        """Reorder a path in the user-defined paths list.
+
+        The ``path`` will be removed from the paths list and
+        re-inserted at ``new_index``.
+
+        Parameters
+        ----------
+        path : `pathlib.Path` or `str`
+            Path to move.
+        new_index : `int`
+            The index to re-insert the path at.
+
+        """
+        path = self._ensure_path_obj(path).resolve()
+        paths = await self.user_defined_paths()
+
+        paths.remove(path)
+        paths.insert(new_index, path)
+        await self._set_user_defined_paths(paths)
+
+        redbot.ext_cogs.__path__[1:] = list(map(str, paths))
+
+    async def _set_user_defined_paths(self, paths_: List[Path]):
+        """
+        Store the new list of user-defined paths.
+
+        This doesn't update `redbot.ext_cogs.__path__`.
 
         Parameters
         ----------
@@ -206,129 +276,79 @@ class CogManager:
         str_paths = list(map(str, paths_))
         await self.config.paths.set(str_paths)
 
-    async def _find_ext_cog(self, name: str) -> ModuleSpec:
+    @staticmethod
+    def is_valid_module_name(name: str) -> bool:
+        # reject package names that:
+        return (
+            # - can't be valid python identifiers
+            (name.isidentifier() and not keyword.iskeyword(name))
+            # - would return a clearly invalid namespace package
+            and name != "__pycache__"
+        )
+
+    @classmethod
+    def load_cog_module(cls, name: str) -> ModuleType:
         """
-        Attempts to find a spec for a third party installed cog.
+        Load a cog module or package.
 
         Parameters
         ----------
         name : str
             Name of the cog package to look for.
-
-        Returns
-        -------
-        importlib.machinery.ModuleSpec
-            Module spec to be used for cog loading.
-
-        Raises
-        ------
-        NoSuchCog
-            When no cog with the requested name was found.
-
         """
-        if not name.isidentifier() or keyword.iskeyword(name):
-            # reject package names that can't be valid python identifiers
-            raise NoSuchCog(
-                f"No 3rd party module by the name of '{name}' was found in any available path.",
+
+        module = cls._load_cog_module(name)
+        if module is None:
+            raise errors.NoSuchCog(
+                f"No core or 3rd-party cog module by the name of '{name}' could be found.",
                 name=name,
             )
 
-        real_paths = list(
-            map(str, [await self.install_path()] + _TEMP_PATHS + await self.user_defined_paths())
-        )
+        return module
 
-        for finder, module_name, _ in pkgutil.iter_modules(real_paths):
-            if name == module_name:
-                spec = finder.find_spec(name)
-                if spec:
-                    return spec
-
-        raise NoSuchCog(
-            f"No 3rd party module by the name of '{name}' was found in any available path.",
-            name=name,
-        )
-
-    @staticmethod
-    async def _find_core_cog(name: str) -> ModuleSpec:
+    @classmethod
+    def _load_cog_module(cls, name: str) -> Optional[ModuleType]:
         """
-        Attempts to find a spec for a core cog.
+        Load a cog module or package.
 
         Parameters
         ----------
         name : str
-
-        Returns
-        -------
-        importlib.machinery.ModuleSpec
-
-        Raises
-        ------
-        RuntimeError
-            When no matching spec can be found.
+            Name of the cog package to look for.
         """
-        real_name = ".{}".format(name)
-        package = "redbot.cogs"
 
-        try:
-            mod = import_module(real_name, package=package)
-            if mod.__spec__.name == "redbot.cogs.locales":
-                raise NoSuchCog(
-                    "No core cog by the name of '{}' could be found.".format(name),
-                    path=mod.__spec__.origin,
-                    name=name,
-                )
-        except ImportError as e:
-            if e.name == package + real_name:
-                raise NoSuchCog(
-                    "No core cog by the name of '{}' could be found.".format(name),
-                    path=e.path,
-                    name=e.name,
-                ) from e
-
-            raise
-
-        return mod.__spec__
-
-    # noinspection PyUnreachableCode
-    async def find_cog(self, name: str) -> Optional[ModuleSpec]:
-        """Find a cog in the list of available paths.
-
-        Parameters
-        ----------
-        name : str
-            Name of the cog to find.
-
-        Returns
-        -------
-        Optional[importlib.machinery.ModuleSpec]
-            A module spec to be used for specialized cog loading, if found.
-
-        """
-        with contextlib.suppress(NoSuchCog):
-            return await self._find_ext_cog(name)
-
-        with contextlib.suppress(NoSuchCog):
-            return await self._find_core_cog(name)
-
-    async def available_modules(self) -> List[str]:
-        """Finds the names of all available modules to load."""
-        paths = list(map(str, await self.paths()))
-
-        ret = []
-        for finder, module_name, _ in pkgutil.iter_modules(paths):
+        if not cls.is_valid_module_name(name):
             # reject package names that can't be valid python identifiers
-            if module_name.isidentifier() and not keyword.iskeyword(module_name):
-                ret.append(module_name)
+            return None
+
+        for parent_package in ("redbot.ext_cogs", "redbot.cogs"):
+            module_name = ".".join((parent_package, name))
+            if module_name == "redbot.cogs.locales":
+                # we don't want a clearly invalid namespace package
+                return None
+
+            try:
+                module = importlib.import_module(f".{name}", package=parent_package)
+            except ModuleNotFoundError as e:
+                if e.name == module_name:
+                    pass
+                else:
+                    raise
+            else:
+                return module
+
+        # If we get here, we failed to find the module
+        return None
+
+    @classmethod
+    def find_available_modules(cls) -> Set[str]:
+        """Find the names of all available modules to load."""
+        ret = set()
+        for package in (redbot.ext_cogs, redbot.cogs):
+            for finder, module_name, _ in pkgutil.iter_modules(package.__path__):
+                if cls.is_valid_module_name(module_name):
+                    ret.add(module_name)
         return ret
-
-    @staticmethod
-    def invalidate_caches():
-        """Re-evaluate modules in the py cache.
-
-        This is an alias for an importlib internal and should be called
-        any time that a new module has been installed to a cog directory.
-        """
-        invalidate_caches()
 
 
 _ = Translator("CogManagerUI", __file__)
@@ -351,24 +371,26 @@ class CogManagerUI(commands.Cog):
         cog_mgr = ctx.bot._cog_mgr
         install_path = await cog_mgr.install_path()
         core_path = cog_mgr.CORE_PATH
+        temp_paths = cog_mgr.temp_paths()
         cog_paths = await cog_mgr.user_defined_paths()
 
-        temporary_paths = [str(path) for path in _TEMP_PATHS]
-
-        paths = []
-        for index, path in enumerate(cog_paths, start=1):
-            paths.append(f"{index}. {path}")
+        formatted_temp_paths = [
+            f"{index}. {path}" for index, path in enumerate(temp_paths, start=1)
+        ]
+        formatted_cog_paths = [f"{index}. {path}" for index, path in enumerate(cog_paths, start=1)]
 
         msg = _(
-            (
-                "Install Path: {install_path}\nCore Path: {core_path}\n\n"
-                "Temporary Paths:{temporary_paths}\n\nCog Paths:{cog_paths}"
-            )
+            "Install Path: {install_path}\nCore Path: {core_path}\n\n"
+            "Temporary Paths:{temp_paths}\n\nCog Paths:{cog_paths}"
         ).format(
             install_path=install_path,
             core_path=core_path,
-            temporary_paths=("\n" + "\n".join(temporary_paths)) if temporary_paths else _(" None"),
-            cog_paths=("\n" + "\n".join(paths)) if paths else _(" None"),
+            temp_paths=(
+                ("\n" + "\n".join(formatted_temp_paths)) if formatted_temp_paths else _(" None")
+            ),
+            cog_paths=(
+                ("\n" + "\n".join(formatted_cog_paths)) if formatted_cog_paths else _(" None")
+            ),
         )
 
         await ctx.send(box(msg))
@@ -520,13 +542,7 @@ class CogManagerUI(commands.Cog):
             await ctx.send(_("Invalid 'from' index."))
             return
 
-        try:
-            all_paths.insert(to, to_move)
-        except IndexError:
-            await ctx.send(_("Invalid 'to' index."))
-            return
-
-        await ctx.bot._cog_mgr.set_paths(all_paths)
+        await ctx.bot._cog_mgr.reorder_path(to_move, to)
         await ctx.send(_("Paths reordered."))
 
     @commands.command()
@@ -562,7 +578,7 @@ class CogManagerUI(commands.Cog):
         """
         loaded = set(ctx.bot.extensions.keys())
 
-        all_cogs = set(await ctx.bot._cog_mgr.available_modules())
+        all_cogs = ctx.bot._cog_mgr.find_available_modules()
 
         unloaded = all_cogs - loaded
 
