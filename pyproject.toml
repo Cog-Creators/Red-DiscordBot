@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = ["setuptools>=80", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,7 +12,6 @@ classifiers = [
     "Framework :: AsyncIO",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Natural Language :: English",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
@@ -24,6 +23,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Topic :: Communications :: Chat",
 ]
+license = "GPL-3.0-only"
+license-files = ["LICENSE", "redbot/**/*.LICENSE"]
 dynamic = ["version", "requires-python", "dependencies", "optional-dependencies"]
 
 [project.urls]
@@ -41,6 +42,9 @@ redbot-setup = "redbot.setup:run_cli"
 
 [project.entry-points.pytest11]
 red-discordbot = "redbot.pytest"
+
+[tool.setuptools.packages.find]
+include = ["redbot", "redbot.*"]
 
 [tool.black]
 line-length = 99
