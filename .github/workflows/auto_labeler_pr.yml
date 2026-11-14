@@ -8,13 +8,14 @@ on:
       - labeled
       - unlabeled
 
-permissions:
-  pull-requests: write
+permissions: {}
 
 jobs:
   label_pull_requests:
     name: Apply automatic labels
     runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write  # Needed to apply labels
     steps:
       - name: Apply Category label
         uses: actions/labeler@v4  # TODO: bump

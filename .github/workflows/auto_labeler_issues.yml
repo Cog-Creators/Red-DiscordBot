@@ -3,13 +3,14 @@ on:
   issues:
     types: [opened]
 
-permissions:
-  issues: write
+permissions: {}
 
 jobs:
-  apply_triage_label_to_issues:
+  apply_triage_label_to_issue:
     name: Apply Needs Triage label to the issue
     runs-on: ubuntu-24.04
+    permissions:
+      issues: write  # Needed to apply labels
     steps:
       - name: Apply Triage Label
         uses: actions/github-script@v9

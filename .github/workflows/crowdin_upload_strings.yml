@@ -4,6 +4,9 @@ on:
     branches:
       - V3/develop
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Upload translation sources to Crowdin

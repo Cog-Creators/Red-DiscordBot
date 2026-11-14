@@ -4,11 +4,15 @@ on:
     tags:
       - "3.[0-9]+.[0-9]+"
 
+permissions: {}
+
 jobs:
   release_information:
     if: github.repository == 'Cog-Creators/Red-DiscordBot'
     name: GO HERE BEFORE APPROVING
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       # Checkout repository and install Python
       - uses: actions/checkout@v7
@@ -58,6 +62,8 @@ jobs:
   build:
     name: Build package
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -87,6 +93,8 @@ jobs:
   generate_default_ll_server_config:
     name: Generate default application.yml
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -122,8 +130,8 @@ jobs:
     name: Release to PyPI
     runs-on: ubuntu-24.04
     permissions:
-      contents: write
-      id-token: write
+      contents: write  # Needed to upload artifacts to release
+      id-token: write  # Needed to publish to PyPI
     steps:
       - name: Download packaged distributions
         uses: actions/download-artifact@v8
@@ -169,6 +177,8 @@ jobs:
         with:
           app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
           private-key: ${{ secrets.RED_RELEASER_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       - uses: actions/checkout@v7
         with:

@@ -7,13 +7,14 @@ on:
     - cron: '0 14 * * 4'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-24.04
     permissions:
-      security-events: write
-      actions: read
+      security-events: write  # Needed for GitHub's code scanning (CodeQL)
 
     steps:
     - name: Checkout repository

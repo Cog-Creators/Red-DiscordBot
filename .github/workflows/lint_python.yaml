@@ -9,6 +9,9 @@ on:
 env:
   ref: ${{ github.event.client_payload.ref || '' }}
 
+permissions:
+  contents: read
+
 jobs:
   lint_python:
     name: Lint Python

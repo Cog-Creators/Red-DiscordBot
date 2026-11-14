@@ -7,6 +7,8 @@ on:
         required: false
         default: 'auto'
 
+permissions: {}
+
 jobs:
   crowdin_download_translations:
     name: Download translations from Crowdin
@@ -19,6 +21,8 @@ jobs:
         with:
           app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
           private-key: ${{ secrets.RED_RELEASER_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       # Checkout repository and install Python
       - uses: actions/checkout@v7
@@ -90,6 +94,8 @@ jobs:
         with:
           app-id: ${{ secrets.RED_RELEASER_CLIENT_ID }}
           private-key: ${{ secrets.RED_RELEASER_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
 
       # Checkout repository and install Python
       - uses: actions/checkout@v7

@@ -3,6 +3,9 @@ name: Generate requirements files with pip-compile.
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   generate_requirements:
     name: Generate requirements files for ${{ matrix.os }} platform.
