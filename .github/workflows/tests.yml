@@ -72,7 +72,7 @@ jobs:
       name: Tox - Postgres
       services:
         postgresql:
-          image: postgres:10
+          image: postgres:10@sha256:bbfa49841dd850850a663baf887a960aa778ad14faf4d206d9293b7f1876f143
           ports:
             - 5432:5432
           env:

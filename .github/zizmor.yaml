@@ -1,0 +1,3 @@
+rules:
+  concurrency-limits:
+    disable: true
