@@ -516,10 +516,14 @@ class CogCompatibilityChecker:
 
         not_updatable.difference_update(update_check_result.incompatible_python_version)
         not_updatable.difference_update(update_check_result.incompatible_bot_version)
+        not_updatable.difference_update(update_check_result.missing_required_privileged_intents)
         not_updatable.difference_update(update_check_result.updatable_cogs)
 
         self._fill_compatibility_results(results, update_check_result.incompatible_python_version)
         self._fill_compatibility_results(results, update_check_result.incompatible_bot_version)
+        self._fill_compatibility_results(
+            results, update_check_result.missing_required_privileged_intents
+        )
         self._fill_compatibility_results(results, update_check_result.updatable_cogs)
 
         # not_updatable should now only have cogs that were not updateable. Those cogs
