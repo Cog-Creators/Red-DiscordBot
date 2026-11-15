@@ -63,6 +63,7 @@ if TYPE_CHECKING:
 main_log = logging.getLogger("red")
 
 __all__ = (
+    "PRIVILEGED_INTENTS",
     "safe_delete",
     "fuzzy_command_search",
     "format_fuzzy_results",
@@ -89,6 +90,12 @@ _SIMPLE_API_URL = os.getenv("RED_SIMPLE_API_URL") or "https://pypi.org/simple/"
 # starting a server with `python -m http.server` and starting Red with the following env vars:
 # RED_SIMPLE_API_URL=http://localhost:8000 _RED_SIMPLE_API_ENDPOINT_PATH=Red-DiscordBot.json
 _SIMPLE_API_ENDPOINT_PATH = os.getenv("_RED_SIMPLE_API_ENDPOINT_PATH") or "Red-DiscordBot"
+
+PRIVILEGED_INTENTS = {
+    "presences": "Guild Presences",
+    "members": "Guild Members",
+    "message_content": "Message Content",
+}
 
 
 def safe_delete(pth: Path):

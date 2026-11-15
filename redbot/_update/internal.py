@@ -16,7 +16,7 @@ from rich.text import Text
 from redbot import __version__
 from redbot.core import _downloader, _drivers, data_manager
 from redbot.core._cli import asyncio_run, parse_cli_flags
-from redbot.core.bot import Red
+from redbot.core.bot import Red, _create_bot
 
 from . import changelog, cmd, common, runner
 from .updater import UpdaterMetadata, get_updater_metadata
@@ -45,7 +45,7 @@ def update_cogs(instance_name: str, update_repos: bool) -> None:
 
 async def _update_cogs(instance: str, update_repos: bool) -> None:
     data_manager.load_basic_configuration(instance)
-    red = Red(cli_flags=parse_cli_flags([instance]))
+    red = await _create_bot(parse_cli_flags([instance]))
     driver_cls = _drivers.get_driver_class()
     await driver_cls.initialize(**data_manager.storage_details())
     try:

@@ -3,12 +3,12 @@ import asyncio
 import logging
 import sys
 from enum import IntEnum
-from typing import Any, Coroutine, Optional, TypeVar
+from typing import Any, Coroutine, Iterable, Optional, Sequence, TypeVar, Union
 
 import discord
 from discord import __version__ as discord_version
 
-from redbot.core.utils._internal_utils import cli_level_to_log_level
+from redbot.core.utils._internal_utils import PRIVILEGED_INTENTS, cli_level_to_log_level
 
 _T = TypeVar("_T")
 
@@ -131,6 +131,44 @@ def message_cache_size_int(arg: str) -> int:
     return x
 
 
+class FlagDictAction(argparse.Action):
+    def __init__(
+        self,
+        *,
+        option_strings: Sequence[str],
+        dest: str,
+        default: Union[bool, None] = None,
+        choices: Union[Iterable[_T], None] = None,
+        required: bool = False,
+        help: Union[str, None] = None,
+    ) -> None:
+        for option_string in option_strings:
+            if not option_string.startswith(("--enable-", "--disable-")):
+                raise ValueError(f"invalid option name {option_string!r} for FlagDictAction")
+        super().__init__(
+            option_strings=option_strings,
+            dest=dest,
+            default=default,
+            choices=choices,
+            required=required,
+            help=help,
+        )
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Union[str, Sequence[Any], None],
+        option_string: Union[str, None] = None,
+    ) -> None:
+        assert isinstance(values, str)
+        assert option_string is not None
+        items = getattr(namespace, self.dest, None)
+        items = {} if items is None else items.copy()
+        items[values] = option_string.startswith("--enable-")
+        setattr(namespace, self.dest, items)
+
+
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
@@ -151,9 +189,10 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--edit",
         action="store_true",
-        help="Edit the instance. This can be done without console interaction "
-        "by passing --no-prompt and arguments that you want to change (available arguments: "
-        "--edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix).",
+        help="Edit the instance. This can be done without console interaction"
+        " by passing --no-prompt and arguments that you want to change (available arguments:"
+        " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix,"
+        " --enable-privileged-intent, --disable-privileged-intent).",
     )
     parser.add_argument(
         "--edit-instance-name",
@@ -314,16 +353,31 @@ def parse_cli_flags(args):
         "--no-message-cache", action="store_true", help="Disable the internal message cache."
     )
     parser.add_argument(
+        "--enable-privileged-intent",
+        "--disable-privileged-intent",
+        action=FlagDictAction,
+        dest="privileged_intents",
+        choices=tuple(PRIVILEGED_INTENTS),
+        default={},
+        help="Run Red with the specified privileged intent enabled/disabled."
+        " Go to https://docs.discord.red/en/stable/intents.html#intents-intents for more details"
+        " about each privileged intent and what disabling it does."
+        "This flag can be used multiple times to specify multiple intents to enable/disable.",
+    )
+    parser.add_argument(
         "--disable-intent",
         action="append",
         choices=list(discord.Intents.VALID_FLAGS),  # DEP-WARN
         default=[],
-        help="Unsupported flag that allows disabling the given intent."
+        help="Unsupported flag that allows disabling the given non-privileged intent."
         " Currently NOT SUPPORTED (and not covered by our version guarantees)"
         " as Red is not prepared to work without all intents.\n"
         f"Go to https://discordpy.readthedocs.io/en/v{discord_version}/api.html#discord.Intents"
         " to see what each intent does.\n"
-        "This flag can be used multiple times to specify multiple intents.",
+        "This flag can be used multiple times to specify multiple intents.\n"
+        "Passing privileged intents to this flag is deprecated since version 3.5.25"
+        "and will be removed in Red 3.6.0, use --disable-privileged-intent"
+        " for privileged intents instead.",
     )
     parser.add_argument(
         "--force-rich-logging",

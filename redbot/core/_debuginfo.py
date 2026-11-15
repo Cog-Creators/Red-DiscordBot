@@ -13,6 +13,7 @@ import psutil
 from redbot import __version__
 from redbot.core import data_manager
 from redbot.core.bot import Red
+from redbot.core.utils._internal_utils import PRIVILEGED_INTENTS
 from redbot.core.utils.chat_formatting import box
 
 
@@ -165,6 +166,24 @@ class DebugInfo:
             # and calling repr() on prefix strings ensures that the list isn't ambiguous.
             prefixes = ", ".join(map(repr, await self.bot._config.prefix()))
             parts.append(f"Global prefix(es): {prefixes}")
+            privileged_intents = (
+                ", ".join(
+                    friendly_name
+                    for intent, friendly_name in PRIVILEGED_INTENTS.items()
+                    if getattr(self.bot.intents, intent)
+                )
+                or "None"
+            )
+            parts.append(f"Enabled privileged intents: {privileged_intents}")
+            disabled_intents = (
+                ", ".join(
+                    intent.replace("_", " ").title()
+                    for intent, enabled in self.bot.intents
+                    if not enabled and intent not in PRIVILEGED_INTENTS
+                )
+                or "None"
+            )
+            parts.append(f"Disabled non-privileged intents: {disabled_intents}")
 
         if self.is_logged_in:
             owners = []
@@ -176,17 +195,6 @@ class DebugInfo:
                     owners.append(f"{uid} (Unresolvable)")
             owners_string = ", ".join(owners) or "None"
             parts.append(f"Owner(s): {', '.join(owners) or 'None'}")
-
-        if self.is_connected:
-            disabled_intents = (
-                ", ".join(
-                    intent_name.replace("_", " ").title()
-                    for intent_name, enabled in self.bot.intents
-                    if not enabled
-                )
-                or "None"
-            )
-            parts.append(f"Disabled intents: {disabled_intents}")
 
         parts.append(f"Storage type: {data_manager.storage_type()}")
         parts.append(f"Data path: {data_manager.basic_config['DATA_PATH']}")
