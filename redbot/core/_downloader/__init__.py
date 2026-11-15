@@ -47,7 +47,7 @@ from redbot.core.utils._internal_utils import detailed_progress
 
 from . import errors
 from .log import log
-from .installable import InstallableType, Installable, InstalledModule
+from .installable import InstallableType, Installable, InstalledModule, PrivilegedIntents
 from .repo_manager import RepoManager, Repo
 
 if TYPE_CHECKING:
@@ -572,6 +572,18 @@ class Environment:
 
     red_version: Version
     python_version: Version
+    intents_override: dataclasses.InitVar[Optional[discord.Intents]] = None
+
+    def __post_init__(self, intents_override: Optional[discord.Intents]) -> None:
+        self._intents: Optional[discord.Intents]
+        object.__setattr__(self, "_intents", intents_override)
+
+    def get_intents(self) -> discord.Intents:
+        if self._intents is not None:
+            return self._intents
+        if _bot_ref is not None:
+            return _bot_ref.intents
+        raise RuntimeError("Downloader was initialized without a bot instance.")
 
     @classmethod
     @functools.lru_cache(maxsize=None)
@@ -582,6 +594,17 @@ class Environment:
         )
 
 
+def get_missing_intents(
+    requested_intents: Optional[PrivilegedIntents], *, env: Environment = Environment.current()
+) -> PrivilegedIntents:
+    intents = env.get_intents()
+    missing_intents: PrivilegedIntents = {}
+    for intent_name, reason in (requested_intents or {}).items():
+        if not getattr(intents, intent_name):
+            missing_intents[intent_name] = reason
+    return missing_intents
+
+
 async def install_cogs(
     repo: Repo,
     rev: Optional[str],
@@ -589,6 +612,8 @@ async def install_cogs(
     *,
     env: Environment = Environment.current(),
 ) -> CogInstallResult:
+    # ensure that intents are available by trying to get them
+    env.get_intents()
     commit = None
 
     if rev is not None:
@@ -604,6 +629,7 @@ async def install_cogs(
     name_already_used: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
+    missing_required_privileged_intents: List[Installable] = []
 
     result_installed_cogs: Tuple[InstalledModule, ...] = ()
     result_failed_cogs: Tuple[Installable, ...] = ()
@@ -628,6 +654,8 @@ async def install_cogs(
                 and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
+            elif get_missing_intents(cog.required_privileged_intents, env=env):
+                missing_required_privileged_intents.append(cog)
             else:
                 cogs.append(cog)
 
@@ -656,6 +684,7 @@ async def install_cogs(
         name_already_used=tuple(name_already_used),
         incompatible_python_version=tuple(incompatible_python_version),
         incompatible_bot_version=tuple(incompatible_bot_version),
+        missing_required_privileged_intents=tuple(missing_required_privileged_intents),
     )
 
 
@@ -687,6 +716,8 @@ async def check_cog_updates(
     update_repos: bool = True,
     env: Environment = Environment.current(),
 ) -> CogUpdateCheckResult:
+    # ensure that intents are available by trying to get them
+    env.get_intents()
     cogs_to_check, failed_repos = await _get_cogs_to_check(
         repos=repos, cogs=cogs, update_repos=update_repos
     )
@@ -695,6 +726,7 @@ async def check_cog_updates(
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
+    missing_required_privileged_intents: List[Installable] = []
     for cog in outdated_cogs:
         if cog.min_python_version > env.python_version:
             incompatible_python_version.append(cog)
@@ -704,6 +736,8 @@ async def check_cog_updates(
             and cog.max_bot_version < env.red_version
         ):
             incompatible_bot_version.append(cog)
+        elif get_missing_intents(cog.required_privileged_intents, env=env):
+            missing_required_privileged_intents.append(cog)
         else:
             updatable_cogs.append(cog)
 
@@ -714,6 +748,7 @@ async def check_cog_updates(
         failed_repos=tuple(failed_repos),
         incompatible_python_version=tuple(incompatible_python_version),
         incompatible_bot_version=tuple(incompatible_bot_version),
+        missing_required_privileged_intents=tuple(missing_required_privileged_intents),
     )
 
 
@@ -766,6 +801,8 @@ async def _update_cogs(
     failed_repos: Sequence[str],
     env: Environment = Environment.current(),
 ) -> CogUpdateResult:
+    # ensure that intents are available by trying to get them
+    env.get_intents()
     pinned_cogs = {cog for cog in cogs_to_check if cog.pinned}
     cogs_to_check -= pinned_cogs
 
@@ -774,6 +811,7 @@ async def _update_cogs(
     updatable_cogs: List[Installable] = []
     incompatible_python_version: List[Installable] = []
     incompatible_bot_version: List[Installable] = []
+    missing_required_privileged_intents: List[Installable] = []
 
     updated_cogs: Tuple[InstalledModule, ...] = ()
     failed_cogs: Tuple[Installable, ...] = ()
@@ -793,6 +831,8 @@ async def _update_cogs(
                 and cog.max_bot_version < env.red_version
             ):
                 incompatible_bot_version.append(cog)
+            elif get_missing_intents(cog.required_privileged_intents, env=env):
+                missing_required_privileged_intents.append(cog)
             else:
                 updatable_cogs.append(cog)
 
@@ -817,6 +857,7 @@ async def _update_cogs(
         failed_repos=tuple(failed_repos),
         incompatible_python_version=tuple(incompatible_python_version),
         incompatible_bot_version=tuple(incompatible_bot_version),
+        missing_required_privileged_intents=tuple(missing_required_privileged_intents),
     )
 
 
@@ -867,6 +908,7 @@ class CogInstallResult:
     name_already_used: Tuple[Installable, ...]
     incompatible_python_version: Tuple[Installable, ...]
     incompatible_bot_version: Tuple[Installable, ...]
+    missing_required_privileged_intents: Tuple[Installable, ...]
 
 
 # TODO: make kw_only
@@ -878,6 +920,7 @@ class CogUpdateCheckResult:
     failed_repos: Tuple[str, ...]
     incompatible_python_version: Tuple[Installable, ...]
     incompatible_bot_version: Tuple[Installable, ...]
+    missing_required_privileged_intents: Tuple[Installable, ...]
 
     @property
     def updates_available(self) -> bool:
@@ -889,7 +932,11 @@ class CogUpdateCheckResult:
 
     @property
     def incompatible_cogs(self) -> Tuple[Installable, ...]:
-        return self.incompatible_python_version + self.incompatible_bot_version
+        return (
+            self.incompatible_python_version
+            + self.incompatible_bot_version
+            + self.missing_required_privileged_intents
+        )
 
 
 # TODO: make kw_only
@@ -1051,6 +1098,20 @@ async def _restore_from_backup() -> None:
                         ""
                         if cog.min_bot_version > cog.max_bot_version
                         else f"and maximum allowed is: {cog.max_bot_version}"
+                    ),
+                )
+            # this one should technically never happen as `redbot-setup restore`
+            # creates the bot object with all intents enabled
+            if install_result.missing_required_privileged_intents:
+                missing_intents = get_missing_intents(cog.required_privileged_intents)
+                log.error(
+                    "Failed to reinstall %r cog from %r repo because the instance is"
+                    " missing the following required intents: %s",
+                    cog.name,
+                    cog.repo.name,
+                    ", ".join(
+                        f"{intent_name} (reason: {reason})"
+                        for intent_name, reason in missing_intents.items()
                     ),
                 )
 
