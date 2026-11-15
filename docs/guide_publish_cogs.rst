@@ -100,6 +100,13 @@ Keys specific to the cog info.json (case sensitive)
     intents with an unknown reason. Downloader will, however, allow the cog to be installed despite that
     since a dict has not been explicitly specified.
 
+  .. note::
+
+    Since the user may change intents configuration after cog is installed,
+    the cog may be loaded even when some of the required privileged intents are not available.
+    If the intent is truly required for the cog to function, it's recommended to check intents
+    at load and raise ``CogLoadError``, if any intents you need are missing.
+
 - ``tags`` (list of strings) - A list of strings that are related to the
   functionality of the cog. Used to aid in searching.
 
