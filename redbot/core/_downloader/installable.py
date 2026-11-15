@@ -23,6 +23,7 @@ PRIVILEGED_INTENTS: Final[Dict[PrivilegedIntentName, str]] = {
     "members": "Guild Members",
     "message_content": "Message Content",
 }
+DEFAULT_REQUIRED_PRIVILEGED_INTENTS: Final = ("members", "message_content")
 
 
 class InstallableType(Enum):
