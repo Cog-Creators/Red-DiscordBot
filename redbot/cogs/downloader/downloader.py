@@ -982,13 +982,24 @@ class Downloader(commands.Cog):
             )
             return
 
+        required_privileged_intents = cog.required_privileged_intents or {
+            intent_name: _(
+                "The cog does not specify the privileged intents it requires."
+                " The intent is listed as required because most such cogs require this intent."
+            )
+            for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS
+        }
         msg = _(
             "Information on {cog_name}:\n"
             "{description}\n\n"
             "End user data statement:\n"
             "{end_user_data_statement}\n\n"
             "Made by: {author}\n"
-            "Requirements: {requirements}"
+            "Requirements: {requirements}\n"
+            "Optional privileged intents:\n"
+            "{optional_privileged_intents}\n\n"
+            "Required privileged intents:\n"
+            "{required_privileged_intents}"
         ).format(
             cog_name=cog.name,
             description=cog.description or "",
@@ -998,6 +1009,14 @@ class Downloader(commands.Cog):
             ),
             author=", ".join(cog.author) or _("Missing from info.json"),
             requirements=", ".join(cog.requirements) or "None",
+            optional_privileged_intents="\n".join(
+                f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
+                for intent_name, reason in cog.optional_privileged_intents
+            ),
+            required_privileged_intents="\n".join(
+                f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
+                for intent_name, reason in required_privileged_intents
+            ),
         )
         for page in pagify(msg):
             await ctx.send(box(page))
