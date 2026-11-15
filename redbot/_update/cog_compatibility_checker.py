@@ -6,6 +6,7 @@ import os
 import sys
 from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Set, Tuple
 
+import discord
 import rich
 from packaging.version import Version
 from rich.text import Text
@@ -354,7 +355,7 @@ class CogCompatibilityChecker:
             " instance...",
         )
         with self._console.status(status):
-            await _downloader._init_without_bot(self.bot._cog_mgr)
+            await _downloader._init(self.bot)
 
             await self._update_repos()
 
@@ -536,7 +537,7 @@ async def check_instance(
     ignore_prefix: bool = False,
 ) -> CompatibilitySummary:
     data_manager.load_basic_configuration(instance)
-    red = await _create_bot(parse_cli_flags([instance]))
+    red = await _create_bot(parse_cli_flags([instance]), intents=discord.Intents.all())
     driver_cls = _drivers.get_driver_class()
     await driver_cls.initialize(**data_manager.storage_details())
     try:

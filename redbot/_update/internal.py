@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Tuple
 
 import click
+import discord
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Confirm
@@ -45,7 +46,7 @@ def update_cogs(instance_name: str, update_repos: bool) -> None:
 
 async def _update_cogs(instance: str, update_repos: bool) -> None:
     data_manager.load_basic_configuration(instance)
-    red = await _create_bot(parse_cli_flags([instance]))
+    red = await _create_bot(parse_cli_flags([instance]), intents=discord.Intents.all())
     driver_cls = _drivers.get_driver_class()
     await driver_cls.initialize(**data_manager.storage_details())
     try:
