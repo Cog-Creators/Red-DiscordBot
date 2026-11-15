@@ -47,7 +47,13 @@ from redbot.core.utils._internal_utils import detailed_progress
 
 from . import errors
 from .log import log
-from .installable import InstallableType, Installable, InstalledModule, PrivilegedIntents
+from .installable import (
+    PRIVILEGED_INTENTS,
+    InstallableType,
+    Installable,
+    InstalledModule,
+    PrivilegedIntents,
+)
 from .repo_manager import RepoManager, Repo
 
 if TYPE_CHECKING:
@@ -1110,7 +1116,7 @@ async def _restore_from_backup() -> None:
                     cog.name,
                     cog.repo.name,
                     ", ".join(
-                        f"{intent_name} (reason: {reason})"
+                        f"{PRIVILEGED_INTENTS[intent_name]} (reason: {reason})"
                         for intent_name, reason in missing_intents.items()
                     ),
                 )

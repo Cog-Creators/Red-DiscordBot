@@ -4,18 +4,7 @@ import functools
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    Literal,
-    Optional,
-    Tuple,
-    Union,
-    cast,
-    get_args as typing_get_args,
-)
+from typing import TYPE_CHECKING, Any, Callable, Dict, Final, Literal, Optional, Tuple, Union, cast
 
 from packaging.version import Version
 
@@ -29,7 +18,11 @@ if TYPE_CHECKING:
 
 PrivilegedIntentName = Literal["presences", "members", "message_content"]
 PrivilegedIntents = Dict[PrivilegedIntentName, str]
-PRIVILEGED_INTENTS: Tuple[PrivilegedIntentName, ...] = typing_get_args(PrivilegedIntentName)
+PRIVILEGED_INTENTS: Final[Dict[PrivilegedIntentName, str]] = {
+    "presences": "Guild Presences",
+    "members": "Guild Members",
+    "message_content": "Message Content",
+}
 
 
 class InstallableType(Enum):
