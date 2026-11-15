@@ -468,6 +468,8 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             embed.set_footer(
                 text=_("Bringing joy since 02 Jan 2016 (over {} days ago!)").format(days_since)
             )
+            image = await self.bot._config.info_image()
+            embed.set_image(url=image)
             await ctx.send(embed=embed)
         else:
             python_version = "{}.{}.{}".format(*sys.version_info[:3])
@@ -3092,10 +3094,14 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         else:
             await ctx.send(_("Done."))
 
-    @_set_bot.command(name="custominfo")
+    @_set_bot.group(name="custominfo")
     @commands.is_owner()
-    async def _set_bot_custominfo(self, ctx: commands.Context, *, text: str = None):
-        """Customizes a section of `[p]info`.
+    async def _set_bot_custominfo(self, ctx: commands.Context):
+        """Customizes sections of `[p]info`."""
+
+    @_set_bot_custominfo.command(name="text")
+    async def _set_bot_custominfo_text(self, ctx: commands.Context, *, text: str = None):
+        """Customizes a section of optional text in `[p]info`.
 
         The maximum amount of allowed characters is 1024.
         Supports markdown, links and "mentions".
@@ -3103,9 +3109,9 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         Link example: `[My link](https://example.com)`
 
         **Examples:**
-        - `[p]set bot custominfo >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
-        - `[p]set bot custominfo Join my [support server](discord.gg/discord)!`
-        - `[p]set bot custominfo` - Removes custom info text.
+        - `[p]set bot custominfo text >>> I can use **markdown** such as quotes, ||spoilers|| and multiple lines.`
+        - `[p]set bot custominfo text Join my [support server](discord.gg/discord)!`
+        - `[p]set bot custominfo text` - Removes custom info text.
 
         **Arguments:**
         - `[text]` - The custom info text.
@@ -3120,6 +3126,36 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
             await ctx.invoke(self.info)
         else:
             await ctx.send(_("Text must be fewer than 1024 characters long."))
+
+    @_set_bot_custominfo.command(name="image")
+    async def _set_bot_custominfo_image(self, ctx: commands.Context, *, url: str = None):
+        """Customizes an optional image sent inside the `[p]info` embed.
+
+        You may provide an image URL or send an attachment.
+        Sending neither will remove the image from the embed.
+
+        Images are not sent if embeds are disabled.
+
+        **Examples:**
+        - `[p]set bot custominfo image https://imgur.com/pY1WUFX.png`
+        - `[p]set bot custominfo image <image attachment>`
+        - `[p]set bot custominfo image` - Removes custom image.
+
+        **Arguments:**
+        - `[url]` - The URL of the image.
+        """
+        if attachments := ctx.message.attachments:
+            if not attachments[0].content_type.startswith("image"):
+                await ctx.send(_("Attachment must be an image or GIF file."))
+                return
+            url = attachments[0].url
+        elif not url:
+            await ctx.bot._config.info_image.clear()
+            await ctx.send(_("The custom image has been cleared."))
+            return
+        await ctx.bot._config.info_image.set(url)
+        await ctx.send(_("The custom image has been set."))
+        await ctx.invoke(self.info)
 
     # -- End Bot Metadata Commands -- ###
     # -- Bot Status Commands -- ###
