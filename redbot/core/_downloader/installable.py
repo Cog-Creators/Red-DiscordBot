@@ -4,7 +4,7 @@ import functools
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, TypedDict, Union, cast
 
 from packaging.version import Version
 
@@ -14,6 +14,12 @@ from .json_mixins import RepoJSONMixin
 
 if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
+
+
+class PrivilegedIntents(TypedDict, total=False):
+    presences: str
+    members: str
+    message_content: str
 
 
 class InstallableType(Enum):
@@ -59,6 +65,19 @@ class Installable(RepoJSONMixin):
         required for this installation.
     requirements : `tuple` of `str`
         Required libraries for this installation.
+    optional_privileged_intents : `dict`
+        In the form :code:`{privileged_intent_name : reason}`, these are intents
+        that this cog needs for some of its functionality.
+    required_privileged_intents : `dict`, optional
+        In the form :code:`{privileged_intent_name : reason}`, these are intents
+        that this cog requires to function. Installation will error,
+        if these intents are disabled.
+        ``{}`` means that the cog author specified that the cog does not have
+        any optional privileged intents, while ``None`` is used when cog author
+        did not specify anything at all.
+        This distinction matters because cogs that don't specify required privileged intents
+        are presented as requiring ``members`` and ``message_content`` privileged intents
+        but can still be installed without an error.
     tags : `tuple` of `str`
         List of tags to assist in searching.
     type : `int`
@@ -101,6 +120,8 @@ class Installable(RepoJSONMixin):
         self.disabled: bool
         self.required_cogs: Dict[str, str]  # Cog name -> repo URL
         self.requirements: Tuple[str, ...]
+        self.optional_privileged_intents: PrivilegedIntents
+        self.required_privileged_intents: Optional[PrivilegedIntents]
         self.tags: Tuple[str, ...]
         self.type: InstallableType
 
@@ -148,6 +169,26 @@ class Installable(RepoJSONMixin):
         update_mixin(self, INSTALLABLE_SCHEMA)
         if self.type is InstallableType.SHARED_LIBRARY:
             self.hidden = True
+        if self.optional_privileged_intents is None:
+            self.optional_privileged_intents = {}
+        elif self.required_privileged_intents is None:
+            log.warning(
+                "Specifying 'optional_privileged_intents' key requires for"
+                " the 'required_privileged_intents' key to also be specified."
+                " The value of 'optional_privileged_intents' key will be ignored"
+                " in JSON information file at path: %s",
+                self._info_file,
+            )
+            self.optional_privileged_intents = {}
+        for intent_name in self.required_privileged_intents or {}:
+            if self.optional_privileged_intents.pop(intent_name, None) is not None:
+                log.warning(
+                    "Invalid value in 'optional_privileged_intents' dict"
+                    " ('%s' privileged intent is already specified as required)"
+                    " in JSON information file at path: %s",
+                    intent_name,
+                    self._info_file,
+                )
 
 
 class InstalledModule(Installable):
