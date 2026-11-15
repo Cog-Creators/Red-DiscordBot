@@ -2103,13 +2103,18 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         to_add_user = []
 
         successful_cogs = set()
+        force_cogs = set()
         # Fetch a list of command names to enable
         for name, com in self.bot.tree._disabled_global_commands.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     to_add_slash.append(name)
                     successful_cogs.add(cog_name)
         for key, com in self.bot.tree._disabled_context_menus.items():
+            if com.extras.get("red_force_enable", False):
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     name, guild_id, com_type = key
@@ -2120,18 +2125,42 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                     elif com_type is discord.AppCommandType.user:
                         to_add_user.append(name)
                         successful_cogs.add(cog_name)
-        failed_cogs = set(cog_names) - successful_cogs
+        # Detect commands skipped because they are force-enabled
+        force_commands = []
+        for name, com in self.bot.tree._global_commands.items():
+            if com.extras.get("red_force_enable", False):
+                for cog_name in cog_names:
+                    if self._is_submodule(cog_name, com.module):
+                        force_cogs.add(cog_name)
+                        force_commands.append(name)
+        for key, com in self.bot.tree._context_menus.items():
+            if com.extras.get("red_force_enable", False):
+                for cog_name in cog_names:
+                    if self._is_submodule(cog_name, com.module):
+                        name, guild_id, com_type = key
+                        force_cogs.add(cog_name)
+                        force_commands.append(name)
+        failed_cogs = set(cog_names) - successful_cogs - force_cogs
 
         # Check that we are going to enable at least one command, for user feedback
         if not (to_add_slash or to_add_message or to_add_user):
-            await ctx.send(
-                _(
-                    "Couldn't find any disabled commands from {cog_names}. Use `{prefix}slash list` to see all cogs with application commands"
-                ).format(
-                    cog_names=humanize_list([inline(name) for name in failed_cogs]),
-                    prefix=ctx.clean_prefix,
+            if force_commands:
+                await ctx.send(
+                    _(
+                        "The following commands have been set as required for the cog "
+                        "to function by the author, and cannot be enabled or disabled: "
+                        "{commands}. The cog must be unloaded to remove them."
+                    ).format(commands=humanize_list([inline(n) for n in force_commands]))
                 )
-            )
+            else:
+                await ctx.send(
+                    _(
+                        "Couldn't find any disabled commands from {cog_names}. Use `{prefix}slash list` to see all cogs with application commands"
+                    ).format(
+                        cog_names=humanize_list([inline(name) for name in failed_cogs]),
+                        prefix=ctx.clean_prefix,
+                    )
+                )
             return
 
         SLASH_CAP = 100
@@ -2199,6 +2228,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 cog_names=humanize_list([inline(name) for name in failed_cogs]),
                 prefix=ctx.clean_prefix,
             )
+        if force_commands:
+            output += "\n\n"
+            output += _(
+                "The following commands have been set as required for the cog "
+                "to function by the author, and cannot be enabled or disabled: "
+                "{commands}. The cog must be unloaded to remove them."
+            ).format(commands=humanize_list([inline(n) for n in force_commands]))
         for page in pagify(output):
             await ctx.send(page)
 
@@ -2215,30 +2251,54 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
         """
         removed = []
         removed_cogs = set()
+        force_cogs = set()
+        force_commands = []
         for name, com in self.bot.tree._global_commands.items():
+            if com.extras.get("red_force_enable", False):
+                for cog_name in cog_names:
+                    if self._is_submodule(cog_name, com.module):
+                        force_cogs.add(cog_name)
+                        force_commands.append(name)
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     await self.bot.disable_app_command(name, discord.AppCommandType.chat_input)
                     removed.append(name)
                     removed_cogs.add(cog_name)
         for key, com in self.bot.tree._context_menus.items():
+            if com.extras.get("red_force_enable", False):
+                for cog_name in cog_names:
+                    if self._is_submodule(cog_name, com.module):
+                        name, guild_id, com_type = key
+                        force_cogs.add(cog_name)
+                        force_commands.append(name)
+                continue
             for cog_name in cog_names:
                 if self._is_submodule(cog_name, com.module):
                     name, guild_id, com_type = key
                     await self.bot.disable_app_command(name, discord.AppCommandType(com_type))
                     removed.append(name)
                     removed_cogs.add(cog_name)
-        failed_cogs = set(cog_names) - removed_cogs
+        failed_cogs = set(cog_names) - removed_cogs - force_cogs
 
         if not removed:
-            await ctx.send(
-                _(
-                    "Couldn't find any enabled commands from {cog_names}. Use `{prefix}slash list` to see all cogs with application commands."
-                ).format(
-                    cog_names=humanize_list([inline(name) for name in failed_cogs]),
-                    prefix=ctx.clean_prefix,
+            if force_commands:
+                await ctx.send(
+                    _(
+                        "The following commands have been set as required for the cog "
+                        "to function by the author, and cannot be disabled: "
+                        "{commands}. The cog must be unloaded to remove them."
+                    ).format(commands=humanize_list([inline(n) for n in force_commands]))
                 )
-            )
+            else:
+                await ctx.send(
+                    _(
+                        "Couldn't find any enabled commands from {cog_names}. Use `{prefix}slash list` to see all cogs with application commands."
+                    ).format(
+                        cog_names=humanize_list([inline(name) for name in failed_cogs]),
+                        prefix=ctx.clean_prefix,
+                    )
+                )
             return
 
         await self.bot.tree.red_check_enabled()
@@ -2258,6 +2318,13 @@ class Core(commands.commands._RuleDropper, commands.Cog, CoreLogic):
                 cog_names=humanize_list([inline(name) for name in failed_cogs]),
                 prefix=ctx.clean_prefix,
             )
+        if force_commands:
+            output += "\n\n"
+            output += _(
+                "The following commands have been set as required for the cog "
+                "to function by the author, and cannot be disabled: "
+                "{commands}. The cog must be unloaded to remove them."
+            ).format(commands=humanize_list([inline(n) for n in force_commands]))
         for page in pagify(output):
             await ctx.send(page)
 
