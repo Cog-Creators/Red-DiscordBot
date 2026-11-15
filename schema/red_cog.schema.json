@@ -66,6 +66,16 @@
         "type": "string"
       }
     },
+    "optional_privileged_intents": {
+      "type": "object",
+      "description": "A dict of privileged intents that this cog needs for some of its functionality. When the bot doesn't have any of the optional privileged intents, the cog should still function to some degree, handling the lacking intents gracefully.",
+      "$ref": "#/definitions/privileged_intents"
+    },
+    "required_privileged_intents": {
+      "type": "object",
+      "description": "A dict of privileged intents that this cog requires to function. When the bot doesn't have any of the required privileged intents, it may not work correctly (or outright refuse to load) and **Downloader will not allow the user to install it**.",
+      "$ref": "#/definitions/privileged_intents"
+    },
     "tags": {
       "type": "array",
       "description": "A list of strings that are related to the functionality of the cog. Used to aid in searching.",
@@ -84,6 +94,9 @@
       ]
     }
   },
+  "dependencies": {
+    "optional_privileged_intents": ["required_privileged_intents"]
+  },
   "definitions": {
     "required_cog": {
       "type": "object",
@@ -91,6 +104,27 @@
         ".+": {
           "type": "string",
           "format": "uri"
+        }
+      },
+      "additionalProperties": false
+    },
+    "privileged_intents": {
+      "type": "object",
+      "properties": {
+        "presences": {
+          "type": "string",
+          "description": "A statement explaining the reason that the Guild Presences privileged intent is needed.",
+          "minLength": 1
+        },
+        "members": {
+          "type": "string",
+          "description": "A statement explaining the reason that the Guild Members privileged intent is needed.",
+          "minLength": 1
+        },
+        "message_content": {
+          "type": "string",
+          "description": "A statement explaining the reason that the Message Content privileged intent is needed.",
+          "minLength": 1
         }
       },
       "additionalProperties": false
