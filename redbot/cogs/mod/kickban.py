@@ -179,8 +179,6 @@ class KickBanMixin(MixinMeta):
                 pass
             else:
                 if user.id in tempbans:
-                    async with self.config.guild(guild).current_tempbans() as tempbans:
-                        tempbans.remove(user.id)
                     removed_temp = True
                 else:
                     return (
@@ -227,6 +225,13 @@ class KickBanMixin(MixinMeta):
                     user.id,
                 )
                 return False, _("An unexpected error occurred.")
+
+        current_tempbans = self.config.guild(guild).current_tempbans
+        async with current_tempbans.get_lock():
+            stored_tempbans = await current_tempbans()
+            if user.id in stored_tempbans:
+                stored_tempbans.remove(user.id)
+                await current_tempbans.set(stored_tempbans)
 
         if create_modlog_case:
             await modlog.create_case(
@@ -493,18 +498,20 @@ class KickBanMixin(MixinMeta):
 
         tempbans = await self.config.guild(guild).current_tempbans()
 
+        upgradable = set()
+
         for user_id in user_ids:
-            if user_id in tempbans:
-                # We need to check if a user is tempbanned here because otherwise they won't be processed later on.
-                continue
             try:
                 await guild.fetch_ban(discord.Object(user_id))
             except discord.NotFound:
                 pass
             else:
-                errors[user_id] = _("User with ID {user_id} is already banned.").format(
-                    user_id=user_id
-                )
+                if user_id in tempbans:
+                    upgradable.add(user_id)
+                else:
+                    errors[user_id] = _("User with ID {user_id} is already banned.").format(
+                        user_id=user_id
+                    )
 
         user_ids = remove_processed(user_ids)
 
@@ -561,6 +568,7 @@ class KickBanMixin(MixinMeta):
             async with self.config.guild(guild).current_tempbans() as tempbans:
                 if user_id in tempbans:
                     tempbans.remove(user_id)
+                if user_id in upgradable:
                     upgrades.append(str(user_id))
                     log.info(
                         "%s (%s) upgraded the tempban for %s to a permaban.",
