@@ -4,7 +4,18 @@ import functools
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, TypedDict, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Literal,
+    Optional,
+    Tuple,
+    Union,
+    cast,
+    get_args as typing_get_args,
+)
 
 from packaging.version import Version
 
@@ -16,10 +27,9 @@ if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
 
 
-class PrivilegedIntents(TypedDict, total=False):
-    presences: str
-    members: str
-    message_content: str
+PrivilegedIntentName = Literal["presences", "members", "message_content"]
+PrivilegedIntents = Dict[PrivilegedIntentName, str]
+PRIVILEGED_INTENTS: Tuple[PrivilegedIntentName, ...] = typing_get_args(PrivilegedIntentName)
 
 
 class InstallableType(Enum):

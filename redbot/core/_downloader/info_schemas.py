@@ -220,23 +220,17 @@ def ensure_privileged_intents(
             info_file,
         )
         return default
-    unknown_privileged_intents = (
-        value.keys() - installable.PrivilegedIntents.__annotations__.keys()
-    )
-    for intent_name in unknown_privileged_intents:
-        log.warning(
-            "Invalid item in '%s' dict (expected a privileged intent name, got %s)"
-            " in JSON information file at path: %s",
-            key_name,
-            intent_name,
-            info_file,
-        )
-        return default
     valid_privileged_intents: installable.PrivilegedIntents = {}
-    for intent_name in installable.PrivilegedIntents.__annotations__.keys():
-        if intent_name not in value:
-            continue
-        reason = value[intent_name]
+    for intent_name, reason in value.items():
+        if intent_name not in installable.PRIVILEGED_INTENTS:
+            log.warning(
+                "Invalid item in '%s' dict (expected a privileged intent name, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                intent_name,
+                info_file,
+            )
+            return default
         if not isinstance(reason, str):
             log.warning(
                 "Invalid item in '%s' dict (expected str, got %s)"
