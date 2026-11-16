@@ -1,4 +1,16 @@
 .. _install-opensuse-tumbleweed:
+.. os-image-location::
+
+    [opensuse-tumbleweed]
+    download_type = 'checksum-file'
+    url = 'https://download.opensuse.org/tumbleweed/appliances/openSUSE-Tumbleweed-Minimal-VM.x86_64-Cloud.qcow2.sha256'
+    filename_pattern = '.*\.qcow2'
+
+    [opensuse-tumbleweed-arm]
+    download_type = 'checksum-file'
+    arch = 'aarch64'
+    url = 'https://download.opensuse.org/ports/aarch64/tumbleweed/appliances/openSUSE-Tumbleweed-Minimal-VM.aarch64-Cloud.qcow2.sha256'
+    filename_pattern = '.*\.qcow2'
 
 =====================================
 Installing Red on openSUSE Tumbleweed

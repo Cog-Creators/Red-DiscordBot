@@ -3,15 +3,20 @@ on:
   pull_request:
   push:
 
+permissions:
+  contents: read
+
 jobs:
   check_label_pattern_exhaustiveness:
     name: Check label pattern exhaustiveness
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: "3.8"
       - name: Install script's pre-requirements

@@ -1,4 +1,22 @@
 .. _windows-install-guide:
+.. os-image-location::
+
+    # The below links are to **Evaluation** ISOs, which can be used for evaluation, **test**, or demonstration purposes.
+    # DO NOT change this to non-evaluation ISOs as those can only be used legally with a valid license.
+    [windows-10]
+    os = 'windows'
+    download_type = 'direct-url'
+    image_format = 'raw'
+    # https://web.archive.org/web/20250701150148/https://www.microsoft.com/en-us/evalcenter/download-windows-10-enterprise
+    url = 'https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66750/19045.2006.220908-0225.22h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+    checksum = 'sha256:ef7312733a9f5d7d51cfa04ac497671995674ca5e1058d5164d6028f0938d668'
+
+    [windows-11]
+    os = 'windows'
+    download_type = 'direct-url'
+    image_format = 'raw'
+    url = 'https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26200.6584.250915-1905.25h2_ge_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+    checksum = 'sha256:a61adeab895ef5a4db436e0a7011c92a2ff17bb0357f58b13bbc4062e535e7b9'
 
 =========================
 Installing Red on Windows
@@ -27,6 +45,7 @@ right-click on it and then click "Run as administrator".
 Then run each of the following commands:
 
 .. prompt:: powershell
+    :modifiers: red-install-guide-elevated
 
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
@@ -38,6 +57,7 @@ Then run each of the following commands:
 For Audio support, you should also run the following command before exiting:
 
 .. prompt:: powershell
+    :modifiers: red-install-guide-elevated
 
     choco upgrade temurin25 -y
 

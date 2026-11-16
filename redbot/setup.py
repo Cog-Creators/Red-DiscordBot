@@ -29,6 +29,7 @@ from redbot.core.utils._internal_utils import (
     detailed_progress,
 )
 from redbot.core import config, data_manager, _downloader
+from redbot.core.bot import _get_core_config
 from redbot.core._cog_manager import CogManager
 from redbot.core._config import migrate
 from redbot.core._cli import ExitCodes, asyncio_run
@@ -258,6 +259,8 @@ def basic_setup(
 
     save_config(name, default_dirs)
 
+    asyncio_run(_setup_core_config(name))
+
     if interactive:
         print()
         print(
@@ -268,6 +271,16 @@ def basic_setup(
         )
     else:
         print("Your basic configuration has been saved.")
+
+
+async def _setup_core_config(instance: str) -> None:
+    data_manager.load_basic_configuration(instance)
+    core_config = _get_core_config()
+    # New instances start with the presences intent disabled by default
+    # This needs to be set explicitly here as the default used to be
+    # for this intent to be enabled and we cannot reliably discern
+    # between new and existing instances at a later point.
+    await core_config.intents.presences.set(False)
 
 
 def get_current_backend(instance: str) -> BackendType:

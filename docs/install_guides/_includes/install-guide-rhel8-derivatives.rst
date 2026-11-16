@@ -13,7 +13,7 @@ Install them with dnf:
 
     sudo dnf -y update
     sudo dnf -y group install development
-    sudo dnf -y install python3.11 python3.11-devel java-25-openjdk-headless nano git
+    sudo dnf -y install python3.11 python3.11-devel java-21-openjdk-headless nano git
 
 Set ``java`` executable to point to Java 21:
 

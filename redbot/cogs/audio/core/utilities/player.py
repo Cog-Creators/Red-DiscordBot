@@ -105,8 +105,11 @@ class PlayerUtilities(MixinMeta, metaclass=CompositeMetaClass):
 
         return False
 
-    async def is_requester_alone(self, ctx: commands.Context) -> bool:
-        channel_members = self.rgetattr(ctx, "guild.me.voice.channel.members", [])
+    async def is_requester_alone(
+        self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None
+    ) -> bool:
+        channel = channel or self.rgetattr(ctx, "guild.me.voice.channel", None)
+        channel_members = self.rgetattr(channel, "members", [])
         nonbots = sum(m.id != ctx.author.id for m in channel_members if not m.bot)
         return not nonbots
 

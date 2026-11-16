@@ -1,8 +1,8 @@
 .. _install-opensuse-leap-15:
 
-=====================================
-Installing Red on openSUSE Leap 15.6+
-=====================================
+====================================
+Installing Red on openSUSE Leap 15.6
+====================================
 
 .. include:: _includes/supported-arch-x64+aarch64.rst
 
@@ -12,7 +12,13 @@ Installing Red on openSUSE Leap 15.6+
 Installing the pre-requirements
 -------------------------------
 
-openSUSE Leap 15.6+ has all required dependencies available in official repositories. Install them
+.. warning::
+
+    openSUSE Leap 15.6 has reached end of life and these instructions may not work.
+    We will start supporting openSUSE Leap 16.0 in Red 3.6.0 but until then,
+    you may need to use another OS, if you run into difficulties.
+
+openSUSE Leap 15.6 has all required dependencies available in official repositories. Install them
 with zypper:
 
 .. prompt:: bash

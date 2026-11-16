@@ -1,5 +1,6 @@
 name: Auto Labeler - PRs
 on:
+  # zizmor: ignore[dangerous-triggers] user input is correctly sanitized and minimal permissions are used
   pull_request_target:
     types:
       - opened
@@ -8,15 +9,17 @@ on:
       - labeled
       - unlabeled
 
-permissions:
-  pull-requests: write
+permissions: {}
 
 jobs:
   label_pull_requests:
-    runs-on: ubuntu-latest
+    name: Apply automatic labels
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write  # Needed to apply labels
     steps:
-      - name: Apply Type Label
-        uses: actions/labeler@v4
+      - name: Apply Category label
+        uses: actions/labeler@v4  # TODO: bump
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           sync-labels: true

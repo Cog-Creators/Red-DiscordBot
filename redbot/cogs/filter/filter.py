@@ -475,7 +475,7 @@ class Filter(commands.Cog):
 
             if word_list:
                 pattern = re.compile(
-                    "|".join(rf"\b{re.escape(w)}\b" for w in word_list), flags=re.I
+                    "|".join(rf"(?<!\w){re.escape(w)}(?!\w)" for w in word_list), flags=re.I
                 )
             else:
                 pattern = None

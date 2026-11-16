@@ -1,4 +1,20 @@
 .. _install-mac:
+.. os-image-location::
+
+    [macos-14]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-sonoma-vanilla:latest'
+
+    [macos-15]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-sequioa-vanilla:latest'
+
+    [macos-26]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-tahoe-vanilla:latest'
 
 =======================
 Installing Red on macOS

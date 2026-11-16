@@ -3199,11 +3199,14 @@ summon
 
 .. code-block:: none
 
-    [p]summon 
+    [p]summon [voice_channel]
 
 **Description**
 
 Summon the bot to a voice channel.
+
+If ``[voice_channel]`` is not specified, the bot will join the channel you are currently in.
+``[voice_channel]`` can be a channel link ("Copy Link" option in channel's context menu) or ID.
 
 .. _audio-command-volume:
 
