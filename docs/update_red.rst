@@ -171,7 +171,7 @@ If you have a Red version between 3.2.0 and 3.4.19, you can upgrade by following
 
         source ~/redenv/bin/activate
 
-#. Update Red with this command:
+#. Update Red with these commands:
 
     .. prompt:: bash
         :prompts: (redenv) $
