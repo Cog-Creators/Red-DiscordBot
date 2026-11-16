@@ -145,6 +145,96 @@ If no time interval is provided this will be cleared.
 
 * ``[time]``: The length of time for a default mute.
 
+.. _mutes-command-muteset-dm:
+
+""""""""""
+muteset dm
+""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset dm
+
+**Description**
+
+Settings for the optional extra field in mute DMs.
+
+.. _mutes-command-muteset-dm-muteextrafieldcontents:
+
+''''''''''''''''''''''''''''''''''''''''
+muteset dm muteextrafieldcontents
+''''''''''''''''''''''''''''''''''''''''
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset dm muteextrafieldcontents <contents>
+
+**Description**
+
+Set the contents for the optional extra embed field on mute.
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``<contents>``: The contents of the extra embed field.
+
+.. _mutes-command-muteset-dm-muteextrafieldtitle:
+
+''''''''''''''''''''''''''''''''''''''''
+muteset dm muteextrafieldtitle
+''''''''''''''''''''''''''''''''''''''''
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset dm muteextrafieldtitle <title>
+
+**Description**
+
+Set the title for the optional extra embed field on mute.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``<title>``: The title of the extra embed field.
+
+.. _mutes-command-muteset-dm-muteshowextrafield:
+
+''''''''''''''''''''''''''''''''''''''''
+muteset dm muteshowextrafield
+''''''''''''''''''''''''''''''''''''''''
+
+.. note:: |mod-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]muteset dm muteshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field when muting.
+
+This can be used to add additional information for the muted user, such as a mute appeal link.
+
+Use without arguments to check the current setting.
+
+**Arguments**
+
+* ``[enabled]``: Whether to enable or disable this setting, must provide ``true`` or ``false``.
+
 .. _mutes-command-muteset-makerole:
 
 """"""""""""""""

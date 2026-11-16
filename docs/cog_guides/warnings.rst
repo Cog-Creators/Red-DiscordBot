@@ -40,7 +40,7 @@ actionlist
 
 .. code-block:: none
 
-    [p]actionlist 
+    [p]actionlist
 
 **Description**
 
@@ -56,7 +56,7 @@ mywarnings
 
 .. code-block:: none
 
-    [p]mywarnings 
+    [p]mywarnings
 
 **Description**
 
@@ -74,7 +74,7 @@ reasonlist
 
 .. code-block:: none
 
-    [p]reasonlist 
+    [p]reasonlist
 
 **Description**
 
@@ -140,7 +140,7 @@ warnaction
 
 .. code-block:: none
 
-    [p]warnaction 
+    [p]warnaction
 
 **Description**
 
@@ -231,7 +231,7 @@ warningset
 
 .. code-block:: none
 
-    [p]warningset 
+    [p]warningset
 
 **Description**
 
@@ -357,6 +357,72 @@ Whether a member self requesting their warnings with ``[p]mywarnings`` should ge
 
 * ``<true_or_false>``: |bool-input|
 
+.. _warnings-command-warningset-warnshowextrafield:
+
+"""""""""""""""""""""""""""""""
+warningset warnshowextrafield
+"""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]warningset warnshowextrafield [enabled]
+
+**Description**
+
+Toggle whether to show an extra customizable field in the warning DM.
+
+This can be used to add additional information for the warned user, such as a ban appeal link.
+
+**Arguments**
+
+* ``[enabled]``: If an extra customizable embed field should appear in warning DMs. |bool-input|
+
+.. _warnings-command-warningset-warnextrafieldtitle:
+
+"""""""""""""""""""""""""""""""""
+warningset warnextrafieldtitle
+"""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]warningset warnextrafieldtitle <title>
+
+**Description**
+
+Set the title for the optional extra embed on warn.
+
+Cannot be over 252 characters long.
+
+**Arguments**
+
+* ``<title>``: The title of the embed field. Can be any string of text under 252 characters long.
+
+.. _warnings-command-warningset-warnextrafieldcontents:
+
+"""""""""""""""""""""""""""""""""""
+warningset warnextrafieldcontents
+"""""""""""""""""""""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]warningset warnextrafieldcontents <contents>
+
+**Description**
+
+Set the contents for the optional extra embed on warn.
+
+Cannot be over 1024 characters long.
+
+**Arguments**
+
+* ``<contents>``: The contents of the embed field. Can be any string of text under 1024 characters long.
+
 .. _warnings-command-warnreason:
 
 ^^^^^^^^^^
@@ -369,7 +435,7 @@ warnreason
 
 .. code-block:: none
 
-    [p]warnreason 
+    [p]warnreason
 
 **Description**
 
@@ -413,7 +479,7 @@ warnreason delete
 .. code-block:: none
 
     [p]warnreason delete <reason_name>
-    
+
 **Description**
 
 Delete a warning reason.
