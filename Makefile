@@ -43,6 +43,8 @@ gettext:
 upload_translations:
 	crowdin upload sources
 download_translations:
+	# get rid of any files that are no longer on Crowdin
+	find -name '*.po' -delete 
 	crowdin download
 
 # Dependencies

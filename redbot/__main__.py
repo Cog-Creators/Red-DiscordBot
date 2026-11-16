@@ -24,12 +24,13 @@ import rich
 
 import redbot.logging
 from redbot import __version__
-from redbot.core.bot import Red, ExitCodes, _NoOwnerSet
+from redbot.core.bot import Red, ExitCodes, _NoOwnerSet, _create_bot
 from redbot.core._cli import interactive_config, confirm, parse_cli_flags, new_event_loop
 from redbot.setup import get_data_dir, get_name, save_config
 from redbot.core import data_manager, _drivers, _downloader
 from redbot.core._debuginfo import DebugInfo
 from redbot.core._sharedlibdeprecation import SharedLibImportWarner
+from redbot.core.utils._internal_utils import PRIVILEGED_INTENTS
 
 
 log = logging.getLogger("red.main")
@@ -72,6 +73,7 @@ async def edit_instance(red, cli_flags):
     token = cli_flags.token
     owner = cli_flags.owner
     prefix = cli_flags.prefix
+    privileged_intents = cli_flags.privileged_intents
     old_name = cli_flags.instance_name
     new_name = cli_flags.edit_instance_name
     data_path = cli_flags.edit_data_path
@@ -88,17 +90,20 @@ async def edit_instance(red, cli_flags):
         no_prompt
         and all(to_change is None for to_change in (token, owner, new_name, data_path))
         and not prefix
+        and not privileged_intents
     ):
         print(
             "No arguments to edit were provided."
             " Available arguments (check help for more information):"
-            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix"
+            " --edit-instance-name, --edit-data-path, --copy-data, --owner, --token, --prefix,"
+            " --enable-privileged-intent, --disable-privileged-intent"
         )
         sys.exit(ExitCodes.INVALID_CLI_USAGE)
 
     await _edit_token(red, token, no_prompt)
     await _edit_prefix(red, prefix, no_prompt)
     await _edit_owner(red, owner, no_prompt)
+    await _edit_privileged_intents(red, privileged_intents, no_prompt)
 
     data = deepcopy(data_manager.basic_config)
     name = _edit_instance_name(old_name, new_name, confirm_overwrite, no_prompt)
@@ -177,6 +182,35 @@ async def _edit_owner(red, owner, no_prompt):
                 break
         else:
             print("Instance's owner will remain unchanged.")
+        print()
+
+
+async def _edit_privileged_intents(red, new_privileged_intents, no_prompt):
+    if new_privileged_intents:
+        current_intents = await red._config.intents.all()
+        current_intents.update(new_privileged_intents)
+        await red._config.intents.set(current_intents)
+    elif not no_prompt and confirm(
+        "Would you like to change instance's enabled privileged intents?", default=False
+    ):
+        current_intents = await red._config.intents.all()
+        for intent, friendly_name in PRIVILEGED_INTENTS.items():
+            if current_intents[intent] and confirm(
+                f"{friendly_name} privileged intent is currently enabled."
+                " Do you want to disable it?",
+                default=False,
+            ):
+                current_intents[intent] = False
+                await red._config.intents.set(current_intents)
+                print(friendly_name, "privileged intent has been disabled.")
+            elif not current_intents[intent] and confirm(
+                f"{friendly_name} privileged intent is currently disabled."
+                " Do you want to enable it?",
+                default=False,
+            ):
+                current_intents[intent] = True
+                await red._config.intents.set(current_intents)
+                print(friendly_name, "privileged intent has been enabled.")
         print()
 
 
@@ -259,7 +293,7 @@ def early_exit_runner(
             return
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
-        red = Red(cli_flags=cli_flags)
+        red = loop.run_until_complete(_create_bot(cli_flags))
         driver_cls = _drivers.get_driver_class()
         loop.run_until_complete(driver_cls.initialize(**data_manager.storage_details()))
         loop.run_until_complete(func(red, cli_flags))
@@ -300,6 +334,15 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
         rich_traceback_extra_lines=cli_flags.rich_traceback_extra_lines,
         rich_traceback_show_locals=cli_flags.rich_traceback_show_locals,
     )
+
+    for intent in PRIVILEGED_INTENTS:
+        if intent in cli_flags.disable_intent:
+            log.warning(
+                "Using --disable-intent with a privileged intent is deprecated since Red 3.5.25"
+                " and will be removed in Red 3.6.0, you can use `redbot --edit` to configure"
+                " instance's privileged intents permanently instead.",
+                intent,
+            )
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
@@ -475,7 +518,7 @@ def main():
 
         data_manager.load_basic_configuration(cli_flags.instance_name)
 
-        red = Red(cli_flags=cli_flags)
+        red = loop.run_until_complete(_create_bot(cli_flags))
 
         if os.name != "nt":
             # None of this works on windows.

@@ -154,9 +154,10 @@ async def installed_cogs() -> Tuple[InstalledModule, ...]:
 
     """
     installed = await _config.installed_cogs()
+    install_path = await _cog_mgr.install_path()
     # noinspection PyTypeChecker
     return tuple(
-        InstalledModule.from_json(cog_json, _repo_manager)
+        InstalledModule.from_json(cog_json, _repo_manager, base_target_dir=install_path)
         for repo_json in installed.values()
         for cog_json in repo_json.values()
     )
@@ -174,7 +175,7 @@ async def installed_libraries() -> Tuple[InstalledModule, ...]:
     installed = await _config.installed_libraries()
     # noinspection PyTypeChecker
     return tuple(
-        InstalledModule.from_json(lib_json, _repo_manager)
+        InstalledModule.from_json(lib_json, _repo_manager, base_target_dir=SHAREDLIB_PATH)
         for repo_json in installed.values()
         for lib_json in repo_json.values()
     )
@@ -388,8 +389,8 @@ async def _install_cogs(
         for commit, cogs_to_install in cogs_by_commit.items():
             await repo.checkout(commit)
             for cog in cogs_to_install:
-                if await cog.copy_to(await _cog_mgr.install_path()):
-                    installed.append(InstalledModule.from_installable(cog))
+                if install_location := await cog.copy_to(await _cog_mgr.install_path()):
+                    installed.append(InstalledModule.from_installable(cog, install_location))
                 else:
                     failed.append(cog)
         await repo.checkout(exit_to_commit)
@@ -987,12 +988,14 @@ async def _restore_from_backup() -> None:
                     cog = last_cog_occurrence
                     log.warning(
                         "The commit that %r cog was installed from is unknown"
-                        " - will try to reinstall from latest commit where it's still available."
+                        " - will try to reinstall from latest commit where it's still available.",
+                        cog.name,
                     )
                 else:
                     log.error(
                         "The commit that %r cog was installed from is unknown"
-                        " and it could not be found in the repo."
+                        " and it could not be found in the repo.",
+                        cog.name,
                     )
                     continue
 
@@ -1064,6 +1067,7 @@ async def _restore_from_backup() -> None:
             if install_result.failed_libs:
                 log.error(
                     "Failed to reinstall shared libraries for %r cog from %r repo: %s",
+                    cog.name,
                     cog.repo.name,
                     ", ".join([lib.name for lib in install_result.failed_libs]),
                 )

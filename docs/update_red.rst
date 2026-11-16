@@ -28,6 +28,11 @@ Updating differs depending on the version you currently have. Next sections will
 Red 3.5.25 or newer
 *******************
 
+.. note::
+
+    If you installed any package into Red's virtual environment other than Red,
+    please note that they will not be kept after the update.
+
 Windows
 -------
 

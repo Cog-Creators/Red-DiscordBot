@@ -9,9 +9,12 @@ on:
 env:
   ref: ${{ github.event.client_payload.ref || '' }}
 
+permissions:
+  contents: read
+
 jobs:
     tox:
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-24.04
       strategy:
         matrix:
           python_version:
@@ -39,11 +42,12 @@ jobs:
         fail-fast: false
       name: Tox - ${{ matrix.friendly_name }}
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v7
           with:
             ref: ${{ env.ref }}
+            persist-credentials: false
         - name: Set up Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v7
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
@@ -56,7 +60,7 @@ jobs:
           run: tox
 
     tox-postgres:
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-24.04
       strategy:
         matrix:
           python_version:
@@ -68,7 +72,7 @@ jobs:
       name: Tox - Postgres
       services:
         postgresql:
-          image: postgres:10
+          image: postgres:10@sha256:bbfa49841dd850850a663baf887a960aa778ad14faf4d206d9293b7f1876f143
           ports:
             - 5432:5432
           env:
@@ -76,11 +80,12 @@ jobs:
             POSTGRES_PASSWORD: postgres
             POSTGRES_USER: postgres
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v7
           with:
             ref: ${{ env.ref }}
+            persist-credentials: false
         - name: Set up Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v7
           with:
             python-version: ${{ matrix.python_version }}
         - name: Install tox
@@ -96,8 +101,10 @@ jobs:
             PGPORT: 5432
           run: tox
         - name: Verify no errors in PostgreSQL logs.
+          env:
+            POSTGRESQL_CONTAINER_ID: ${{ job.services.postgresql.id }}
           run: |
-            logs="$(docker logs "${{ job.services.postgresql.id }}" 2>&1)"
+            logs="$(docker logs "$POSTGRESQL_CONTAINER_ID" 2>&1)"
             echo "---- PostgreSQL logs ----"
             echo "$logs"
             echo "---- PostgreSQL logs ----"

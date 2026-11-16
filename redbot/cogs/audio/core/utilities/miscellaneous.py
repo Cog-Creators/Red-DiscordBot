@@ -71,6 +71,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
         timestamp = kwargs.get("timestamp")
         footer = kwargs.get("footer")
         thumbnail = kwargs.get("thumbnail")
+        view = kwargs.get("view")
         contents = dict(title=title, type=_type, url=url, description=description)
         if hasattr(kwargs.get("embed"), "to_dict"):
             embed = kwargs.get("embed")
@@ -97,7 +98,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
                 embed.set_author(name=name, icon_url=url)
             elif name:
                 embed.set_author(name=name)
-        return await ctx.send(embed=embed)
+        return await ctx.send(embed=embed, view=view)
 
     def _has_notify_perms(
         self,
@@ -207,10 +208,7 @@ class MiscellaneousUtilities(MixinMeta, metaclass=CompositeMetaClass):
             pos = sec + (mn * 60) + (hr * 3600)
             return pos
         else:
-            try:
-                return int(length)
-            except ValueError:
-                return 0
+            return int(length)
 
     async def queue_duration(self, ctx: commands.Context) -> int:
         player = lavalink.get_player(ctx.guild.id)

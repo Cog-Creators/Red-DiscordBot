@@ -4,17 +4,25 @@ import json
 import os
 from typing import Any, Dict, List, Set
 
+import tomli
 from docutils import nodes
 from docutils.io import StringOutput
 from docutils.nodes import Element
-
 from sphinx.application import Sphinx
 from sphinx.builders.text import TextBuilder
 from sphinx.writers.text import TextWriter
 from sphinx.util import logging
-from sphinx.util.docutils import SphinxTranslator
+from sphinx.util.docutils import SphinxDirective, SphinxTranslator
 
 logger = logging.getLogger(__name__)
+
+
+class OSImageLocation(SphinxDirective):
+    has_content = True
+
+    def run(self) -> List[nodes.Node]:
+        data = tomli.loads("\n".join(self.content))
+        return [nodes.raw(json.dumps(data), format="prompt-builder")]
 
 
 class PromptTranslator(SphinxTranslator):
@@ -23,6 +31,7 @@ class PromptTranslator(SphinxTranslator):
     def __init__(self, document: nodes.document, builder: PromptBuilder) -> None:
         super().__init__(document, builder)
         self.body = ""
+        self.os_image_locations: Dict[str, Any] = {}
         self.prompts: List[Dict[str, str]] = []
 
     def visit_document(self, node: Element) -> None:
@@ -33,7 +42,10 @@ class PromptTranslator(SphinxTranslator):
             self.body = ""
             return
         if self.builder.out_suffix.endswith(".json"):
-            self.body = json.dumps(self.prompts, indent=4)
+            data: Dict[str, Any] = {"prompts": self.prompts}
+            if self.os_image_locations:
+                data["os_image_locations"] = self.os_image_locations
+            self.body = json.dumps(data, indent=4)
         else:
             self.body = "\n".join(prompt["content"] for prompt in self.prompts)
 
@@ -42,6 +54,11 @@ class PromptTranslator(SphinxTranslator):
 
     def unknown_departure(self, node: Element) -> None:
         pass
+
+    def visit_raw(self, node: Element) -> None:
+        if "prompt-builder" not in node.get("format", "").split():
+            raise nodes.SkipNode
+        self.os_image_locations.update(json.loads(node.rawsource))
 
     def visit_prompt(self, node: Element) -> None:
         self.prompts.append(
@@ -81,6 +98,12 @@ class PromptBuilder(TextBuilder):
 
         def run(self) -> List[prompt]:
             self.assert_has_content()
+            arg_count = len(self.arguments)
+            for idx, option_name in enumerate(("language", "prompts", "modifiers")):
+                if arg_count > idx:
+                    if self.options.get(option_name):
+                        break
+                    self.options[option_name] = self.arguments[idx]
             rawsource = "\n".join(self.content)
             language = self.options.get("language") or "text"
             prompts = [
@@ -146,6 +169,7 @@ class TextPromptBuilder(PromptBuilder):
 def setup(app: Sphinx) -> Dict[str, Any]:
     app.add_builder(JsonPromptBuilder)
     app.add_builder(TextPromptBuilder)
+    app.add_directive("os-image-location", OSImageLocation)
 
     return {
         "version": "1.0",

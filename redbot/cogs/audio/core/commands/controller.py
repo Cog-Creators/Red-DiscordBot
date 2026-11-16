@@ -19,9 +19,27 @@ from redbot.core.utils.predicates import ReactionPredicate
 
 from ..abc import MixinMeta
 from ..cog_utils import CompositeMetaClass
+from ..utilities.menus.now_playing import NowPlayingView
 
 log = getLogger("red.cogs.Audio.cog.Commands.player_controller")
 _ = Translator("Audio", Path(__file__))
+
+
+def bot_can_react_without_buttons():
+    """Check reaction perms only when [p]now falls back to reactions"""
+
+    async def predicate(ctx: commands.Context) -> bool:
+        if await ctx.bot.use_buttons():
+            return True
+        if isinstance(ctx.channel, discord.Thread) and ctx.channel.archived:
+            return False
+        required = discord.Permissions(add_reactions=True, read_message_history=True)
+        missing = discord.Permissions(required.value & ~ctx.bot_permissions.value)
+        if missing:
+            raise commands.BotMissingPermissions(missing)
+        return True
+
+    return commands.check(predicate)
 
 
 class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
@@ -32,57 +50,75 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
         """Disconnect from the voice channel."""
         if not self._player_check(ctx):
             return await self.send_embed_msg(ctx, title=_("Nothing playing."))
-        else:
-            dj_enabled = self._dj_status_cache.setdefault(
-                ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
-            )
-            vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-            player = lavalink.get_player(ctx.guild.id)
-            can_skip = await self._can_instaskip(ctx, ctx.author)
-            if (
-                (vote_enabled or (vote_enabled and dj_enabled))
-                and not can_skip
-                and not await self.is_requester_alone(ctx)
-            ):
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Disconnect"),
-                    description=_("There are other people listening - vote to skip instead."),
-                )
-            if dj_enabled and not vote_enabled and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Disconnect"),
-                    description=_("You need the DJ role to disconnect."),
-                )
-            if dj_enabled and not can_skip:
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable to Disconnect"),
-                    description=_("You need the DJ role to disconnect."),
-                )
 
-            await self.send_embed_msg(ctx, title=_("Disconnecting..."))
-            self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
-            self.update_player_lock(ctx, False)
-            eq = player.fetch("eq")
-            player.queue = []
-            player.store("playing_song", None)
-            player.store("autoplay_notified", False)
-            if eq:
-                await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
-            await player.stop()
-            await player.disconnect()
-            await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set(
-                []
+        player = lavalink.get_player(ctx.guild.id)
+        channel = player.channel
+        if not channel:
+            return await self.send_embed_msg(
+                ctx, title=_("The bot is not connected to a voice channel.")
             )
-            self._ll_guild_updates.discard(ctx.guild.id)
-            await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
+
+        dj_enabled = self._dj_status_cache.setdefault(
+            ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
+        )
+        vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
+        can_skip = await self._can_instaskip(ctx, ctx.author)
+        is_alone = await self.is_requester_alone(ctx, channel)
+        if is_alone or can_skip:
+            # User can always disconnect the bot, if there is nobody else in the player's channel
+            # or when they can instaskip.
+            pass
+        # There is someone else in the player's channel and the author can't instaskip,
+        # we have to ensure that none of the following are true for them to be allowed to DC:
+        elif vote_enabled:
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_("There are other people listening - vote to skip instead."),
+            )
+        elif dj_enabled:
+            # DJ role would have granted the user the ability to instaskip,
+            # so we know they don't have it
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_("You need the DJ role to disconnect."),
+            )
+        elif not channel.permissions_for(ctx.author).connect and (
+            not ctx.author.voice or ctx.author.voice.channel != channel
+        ):
+            # The user cannot connect to player's current channel,
+            # so they shouldn't be able to affect what the bot is doing there.
+            # As a special case, if the user is already connected to the channel
+            # (perhaps they were moved by a mod), we should assume they can tell the bot to DC,
+            # since they can already perform any other player action by being in its channel.
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Disconnect"),
+                description=_(
+                    "There are other people listening in a voice channel you cannot access."
+                ),
+            )
+
+        await self.send_embed_msg(ctx, title=_("Disconnecting..."))
+        self.bot.dispatch("red_audio_audio_disconnect", ctx.guild)
+        self.update_player_lock(ctx, False)
+        eq = player.fetch("eq")
+        player.queue = []
+        player.store("playing_song", None)
+        player.store("autoplay_notified", False)
+        if eq:
+            await self.config.custom("EQUALIZER", ctx.guild.id).eq_bands.set(eq.bands)
+        await player.stop()
+        await player.disconnect()
+        await self.config.guild_from_id(guild_id=ctx.guild.id).currently_auto_playing_in.set([])
+        self._ll_guild_updates.discard(ctx.guild.id)
+        await self.api_interface.persistent_queue_api.drop(ctx.guild.id)
 
     @commands.command(name="now")
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    @commands.bot_can_react()
+    @bot_can_react_without_buttons()
     async def command_now(self, ctx: commands.Context):
         """Now playing."""
         if not self._player_check(ctx):
@@ -143,22 +179,31 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             + ("\N{WHITE HEAVY CHECK MARK}" if repeat else "\N{CROSS MARK}")
         )
 
-        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
-
-        player.store("np_message", message)
-
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
-        if (
-            (dj_enabled or vote_enabled)
-            and not await self._can_instaskip(ctx, ctx.author)
-            and not await self.is_requester_alone(ctx)
-        ):
+        can_control = (
+            not (dj_enabled or vote_enabled)
+            or await self._can_instaskip(ctx, ctx.author)
+            or await self.is_requester_alone(ctx)
+        )
+        has_queue = bool(player.queue) or autoplay
+        if await ctx.bot.use_buttons():
+            if (dj_enabled or vote_enabled) and not can_control:
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+            else:
+                view = NowPlayingView(ctx=ctx, cog=self, has_queue=has_queue)
+                message = await self.send_embed_msg(ctx, embed=embed, footer=text, view=view)
+                view.message = message
+            player.store("np_message", message)
             return
+        message = await self.send_embed_msg(ctx, embed=embed, footer=text)
+        player.store("np_message", message)
 
-        if not player.queue and not autoplay:
+        if (dj_enabled or vote_enabled) and not can_control:
+            return
+        if not has_queue:
             expected = (emoji["stop"], emoji["pause"], emoji["close"])
         task: Optional[asyncio.Task]
         if player.current:
@@ -350,8 +395,16 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     abs_position = False
                 except ValueError:
                     abs_position = True
-                    seconds = self.time_convert(seconds)
-                if seconds == 0:
+                    assert isinstance(seconds, str)
+                    try:
+                        seconds = self.time_convert(seconds)
+                    except ValueError:
+                        return await self.send_embed_msg(
+                            ctx,
+                            title=_("Unable To Seek Tracks"),
+                            description=_("Invalid input for the time to seek."),
+                        )
+                if seconds == 0 and not abs_position:
                     return await self.send_embed_msg(
                         ctx,
                         title=_("Unable To Seek Tracks"),
@@ -618,8 +671,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
     @commands.guild_only()
     @commands.cooldown(1, 15, commands.BucketType.guild)
     @commands.bot_has_permissions(embed_links=True)
-    async def command_summon(self, ctx: commands.Context):
-        """Summon the bot to a voice channel."""
+    async def command_summon(
+        self, ctx: commands.Context, *, voice_channel: discord.VoiceChannel = None
+    ):
+        """Summon the bot to a voice channel.
+
+        If `[voice_channel]` is not specified, the bot will join the channel you are currently in.
+        `[voice_channel]` can be a channel link ("Copy Link" option in channel's context menu) or ID.
+        """
         dj_enabled = self._dj_status_cache.setdefault(
             ctx.guild.id, await self.config.guild(ctx.guild).dj_enabled()
         )
@@ -643,10 +702,22 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
             )
 
         try:
+            if voice_channel is not None:
+                current_perms = voice_channel.permissions_for(ctx.author)
+                if not current_perms.connect:
+                    ctx.command.reset_cooldown(ctx)
+                    return await self.send_embed_msg(
+                        ctx,
+                        title=_("Unable To Join Voice Channel"),
+                        description=_(
+                            "You don't have permission to connect to the specified channel."
+                        ),
+                    )
+            channel = voice_channel or ctx.author.voice.channel
             if (
-                not self.can_join_and_speak(ctx.author.voice.channel)
-                or not ctx.author.voice.channel.permissions_for(ctx.me).move_members
-                and self.is_vc_full(ctx.author.voice.channel)
+                not self.can_join_and_speak(channel)
+                or not channel.permissions_for(ctx.me).move_members
+                and self.is_vc_full(channel)
             ):
                 ctx.command.reset_cooldown(ctx)
                 return await self.send_embed_msg(
@@ -656,17 +727,14 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 )
             if not self._player_check(ctx):
                 player = await lavalink.connect(
-                    ctx.author.voice.channel,
+                    channel,
                     self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
                 player.store("notify_channel", ctx.channel.id)
             else:
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("notify_channel", ctx.channel.id)
-                if (
-                    ctx.author.voice.channel == player.channel
-                    and ctx.guild.me in ctx.author.voice.channel.members
-                ):
+                if channel == player.channel and ctx.guild.me in channel.members:
                     ctx.command.reset_cooldown(ctx)
                     return await self.send_embed_msg(
                         ctx,
@@ -674,7 +742,7 @@ class PlayerControllerCommands(MixinMeta, metaclass=CompositeMetaClass):
                         description=_("I am already in your channel."),
                     )
                 await player.move_to(
-                    ctx.author.voice.channel,
+                    channel,
                     self_deaf=await self.config.guild_from_id(ctx.guild.id).auto_deafen(),
                 )
             await ctx.tick()

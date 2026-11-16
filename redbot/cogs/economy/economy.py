@@ -286,6 +286,68 @@ class Economy(commands.Cog):
         else:
             await ctx.send(msg)
 
+    @bank.is_owner_if_bank_global()
+    @commands.admin_or_permissions(manage_guild=True)
+    @_bank.command(name="add")
+    async def _add(self, ctx: commands.Context, to: discord.Member, creds: positive_int):
+        """Add currency to a user's bank account.
+
+        Example:
+        - `[p]bank add @Twentysix 100` - Increases balance by 100
+
+        **Arguments**
+
+        - `<to>` The user to give currency to.
+        - `<creds>` The amount of currency to add.
+        """
+        author = ctx.author
+        currency = await bank.get_currency_name(ctx.guild)
+
+        try:
+            await bank.deposit_credits(to, creds)
+        except (ValueError, errors.BalanceTooHigh) as e:
+            await ctx.send(str(e))
+        else:
+            await ctx.send(
+                _("{author} added {num} {currency} to {user}'s account.").format(
+                    author=author.display_name,
+                    num=humanize_number(creds),
+                    currency=currency,
+                    user=to.display_name,
+                )
+            )
+
+    @bank.is_owner_if_bank_global()
+    @commands.admin_or_permissions(manage_guild=True)
+    @_bank.command(name="sub", aliases=["subtract"])
+    async def _sub(self, ctx: commands.Context, to: discord.Member, creds: positive_int):
+        """Remove currency from a user's bank account.
+
+        Example:
+        - `[p]bank sub @Twentysix 50` - Decreases balance by 50
+
+        **Arguments**
+
+        - `<to>` The user to remove currency from.
+        - `<creds>` The amount of currency to remove.
+        """
+        author = ctx.author
+        currency = await bank.get_currency_name(ctx.guild)
+
+        try:
+            await bank.withdraw_credits(to, creds)
+        except ValueError as e:
+            await ctx.send(str(e))
+        else:
+            await ctx.send(
+                _("{author} removed {num} {currency} from {user}'s account.").format(
+                    author=author.display_name,
+                    num=humanize_number(creds),
+                    currency=currency,
+                    user=to.display_name,
+                )
+            )
+
     @guild_only_check()
     @commands.command()
     async def payday(self, ctx: commands.Context):

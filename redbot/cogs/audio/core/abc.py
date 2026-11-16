@@ -316,7 +316,9 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def is_requester_alone(self, ctx: commands.Context) -> bool:
+    async def is_requester_alone(
+        self, ctx: commands.Context, channel: Optional[discord.VoiceChannel] = None
+    ) -> bool:
         raise NotImplementedError()
 
     @abstractmethod

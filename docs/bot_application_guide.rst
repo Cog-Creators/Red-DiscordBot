@@ -26,7 +26,7 @@ Creating a Bot account is a pretty straightforward process.
     .. image::  /.resources/bot-guide/discord_create_app_form.png
         :alt: The new application form filled in.
 
-5. Navigate to the "Install" tab on the left side of the screen.
+5. Open the "Overview" category and navigate to the "Installation" tab on the left side of the screen.
 
     .. image:: /.resources/bot-guide/discord_installation_tab.png
         :alt: The installation tab in the application page.
@@ -50,8 +50,6 @@ Creating a Bot account is a pretty straightforward process.
 
 9. Acquire the token using the "Reset Token" button, then "Copy" after it is revealed.
 
-    - **This is not the Client Secret at the General Information page**
-
     .. warning::
 
         Do not share your token as it is like your password.
@@ -74,7 +72,7 @@ Enabling Privileged Intents
 4. Navigate to the bot tab on the left side of the screen.
 
     .. image:: /.resources/bot-guide/discord_bot_tab.png
-        :alt: The bot tab in the application page.
+        :alt: The bot tab in the application overview page.
 
 5. Scroll down to the "Privileged Gateway Intents" section, enable all three privileged intents and save your changes.
 

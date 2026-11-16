@@ -1,4 +1,8 @@
 .. _install-raspberry-pi-os-12:
+.. os-image-location::
+
+    # cloud-init (which is required for install testing) is not available in Raspberry Pi OS 12
+    # https://www.raspberrypi.com/news/cloud-init-on-raspberry-pi-os/
 
 ======================================================
 Installing Red on Raspberry Pi OS (Legacy) 12 Bookworm
