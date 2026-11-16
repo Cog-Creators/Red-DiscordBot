@@ -4,9 +4,14 @@ import functools
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Final, Literal, Optional, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Final, Optional, Tuple, Union, cast
 
 from packaging.version import Version
+
+from redbot.core.utils._internal_utils import (
+    PRIVILEGED_INTENTS as PRIVILEGED_INTENTS,
+    PrivilegedIntentName,
+)
 
 from .log import log
 from .info_schemas import INSTALLABLE_SCHEMA, update_mixin
@@ -16,13 +21,7 @@ if TYPE_CHECKING:
     from .repo_manager import RepoManager, Repo
 
 
-PrivilegedIntentName = Literal["presences", "members", "message_content"]
 PrivilegedIntents = Dict[PrivilegedIntentName, str]
-PRIVILEGED_INTENTS: Final[Dict[PrivilegedIntentName, str]] = {
-    "presences": "Guild Presences",
-    "members": "Guild Members",
-    "message_content": "Message Content",
-}
 DEFAULT_REQUIRED_PRIVILEGED_INTENTS: Final = ("members", "message_content")
 
 

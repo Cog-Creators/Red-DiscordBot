@@ -23,10 +23,12 @@ from typing import (
     Awaitable,
     Callable,
     Dict,
+    Final,
     Generator,
     Iterable,
     Iterator,
     List,
+    Literal,
     Optional,
     Union,
     TypedDict,
@@ -91,7 +93,8 @@ _SIMPLE_API_URL = os.getenv("RED_SIMPLE_API_URL") or "https://pypi.org/simple/"
 # RED_SIMPLE_API_URL=http://localhost:8000 _RED_SIMPLE_API_ENDPOINT_PATH=Red-DiscordBot.json
 _SIMPLE_API_ENDPOINT_PATH = os.getenv("_RED_SIMPLE_API_ENDPOINT_PATH") or "Red-DiscordBot"
 
-PRIVILEGED_INTENTS = {
+PrivilegedIntentName = Literal["presences", "members", "message_content"]
+PRIVILEGED_INTENTS: Final[Dict[PrivilegedIntentName, str]] = {
     "presences": "Guild Presences",
     "members": "Guild Members",
     "message_content": "Message Content",
