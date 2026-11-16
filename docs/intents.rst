@@ -99,6 +99,8 @@ How to apply for Privileged Intents?
     .. image:: /.resources/intents/action_required_bot_tab.png
         :alt: The "Action Required" notification about Privileged Intents approval on the application's Bot tab.
 
+----
+
 Below you'll find sample answers for the questions in the review. Please note that these answers
 are based on our interpretation of Discord's requirements and, while we've successfully used them
 to receive the intents ourselves, it is not guaranteed that your application will be approved
@@ -339,3 +341,73 @@ Please provide links to screenshots and/or videos that demonstrate your use case
 | :doclink:`intent-examples/cleanup-text-example-before.png`
 | :doclink:`intent-examples/cleanup-text-example-triggered.png`
 | :doclink:`intent-examples/cleanup-text-example-after.png`
+
+----
+
+.. _intents-disabling:
+
+How to change my instance's enabled privileged intents?
+-------------------------------------------------------
+
+Windows
+~~~~~~~
+
+To change your instance's enabled privileged intents, you can follow these steps:
+
+#. Shut your bot down.
+#. Activate your venv with the following command:
+
+    .. prompt:: batch
+
+        "%userprofile%\redenv\Scripts\activate.bat"
+#. Edit your instance with this command:
+
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
+
+        redbot --edit <your instance name>
+
+    You'll be asked several questions. One of them will be about changing the enabled privileged intents,
+    answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
+
+    .. code::
+
+        Guild Presences privileged intent is currently disabled. Do you want to enable it?: [y/N] y
+        Guild Presences privileged intent has been enabled.
+        Guild Members privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+        Message Content privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+
+#. After you finish with the ``redbot --edit`` command, start your bot.
+
+Linux & Mac
+~~~~~~~~~~~
+
+To change your instance's enabled privileged intents, you can follow these steps:
+
+#. Shut your bot down.
+#. Activate your virtual environment.
+  
+    If you used ``venv`` for your virtual environment, use:
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
+
+#. Edit your instance with this command:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot --edit <your instance name>
+
+    You'll be asked several questions. One of them will be about changing the enabled privileged intents,
+    answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
+
+    .. code::
+
+        Guild Presences privileged intent is currently disabled. Do you want to enable it?: [y/N] y
+        Guild Presences privileged intent has been enabled.
+        Guild Members privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+        Message Content privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+
+#. After you finish with the ``redbot --edit`` command, start your bot.
