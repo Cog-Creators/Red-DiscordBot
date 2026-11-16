@@ -63,6 +63,7 @@ if TYPE_CHECKING:
 main_log = logging.getLogger("red")
 
 __all__ = (
+    "PRIVILEGED_INTENTS",
     "safe_delete",
     "fuzzy_command_search",
     "format_fuzzy_results",
@@ -89,6 +90,12 @@ _SIMPLE_API_URL = os.getenv("RED_SIMPLE_API_URL") or "https://pypi.org/simple/"
 # starting a server with `python -m http.server` and starting Red with the following env vars:
 # RED_SIMPLE_API_URL=http://localhost:8000 _RED_SIMPLE_API_ENDPOINT_PATH=Red-DiscordBot.json
 _SIMPLE_API_ENDPOINT_PATH = os.getenv("_RED_SIMPLE_API_ENDPOINT_PATH") or "Red-DiscordBot"
+
+PRIVILEGED_INTENTS = {
+    "presences": "Guild Presences",
+    "members": "Guild Members",
+    "message_content": "Message Content",
+}
 
 
 def safe_delete(pth: Path):
@@ -290,12 +297,13 @@ async def create_backup(dest: Path = Path.home()) -> Optional[Path]:
     ]
 
     # Avoiding circular imports
-    from redbot.core._downloader.repo_manager import RepoManager
+    from redbot.core import _downloader
+    from redbot.core._cog_manager import CogManager
 
-    repo_mgr = RepoManager()
-    await repo_mgr.initialize()
+    await _downloader._init_without_bot(CogManager())
+
     repo_output = []
-    for repo in repo_mgr.repos:
+    for repo in _downloader._repo_manager.repos:
         repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
 
     with rich.progress.Progress(

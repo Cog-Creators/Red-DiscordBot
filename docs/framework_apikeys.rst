@@ -39,13 +39,44 @@ Basic Usage
 
 .. code-block:: python
 
-    class MyCog:
+    class MyCog(commands.Cog):
         @commands.command()
         async def youtube(self, ctx, user: str):
             youtube_keys = await self.bot.get_shared_api_tokens("youtube")
             if youtube_keys.get("api_key") is None:
                 return await ctx.send("The YouTube API key has not been set.")
             # Use the API key to access content as you normally would
+
+
+**********************
+Prompting for API Keys
+**********************
+
+The primary way to set keys is ``[p]set api``. Run on its own, with no service or tokens, it opens a secure modal for the owner to fill in, so a cog does not need to add its own command for this.
+
+`SetApiView` is most useful as a fallback when a required key is missing. When a command needs a key that has not been set, a reply with the error message that includes this view will include a button that allows the owner to instantly open the secure modal. The parameters ``default_service`` and ``default_keys`` can be configured to pre-fill the modal with the service and key names the cog expects.
+
+.. code-block:: python
+
+    from redbot.core.utils.views import SetApiView
+
+    class MyCog(commands.Cog):
+        @commands.command()
+        async def weather(self, ctx: commands.Context, *, city: str):
+            tokens = await self.bot.get_shared_api_tokens("weather")
+            if tokens.get("api_key") is None:
+                view = SetApiView(default_service="weather", default_keys={"api_key": ""})
+                await ctx.send(
+                    "The weather API key has not been set. "
+                    "Use the button below to set it (bot owner only).",
+                    view=view,
+                )
+                return
+            # use tokens["api_key"] as normal
+
+``default_service`` pre-fills and locks the service name. ``default_keys`` is a mapping of the key names the service expects (values may be empty) and pre-populates the modal. The owner enters one ``key value`` pair per line, keeping the key label; for the example above the field is pre-filled with ``api_key YOUR_API_KEY``, and replacing the line with just the value is rejected. On submit the tokens are saved with `Red.set_shared_api_tokens`.
+
+To embed the prompt in a custom `discord.ui.View`, use `SetApiModal` directly and send it with ``interaction.response.send_modal(...)``. `SetApiView` and `SetApiModal` are both owner-only.
 
 
 ***************

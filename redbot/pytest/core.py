@@ -3,6 +3,7 @@ from collections import namedtuple
 from pathlib import Path
 import weakref
 
+import discord
 import pytest
 from redbot.core import Config
 from redbot.core.bot import Red
@@ -174,7 +175,7 @@ def red(config_fr):
 
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags=cli_flags)
+    red = Red(cli_flags=cli_flags, intents=discord.Intents.default())
 
     yield red
 

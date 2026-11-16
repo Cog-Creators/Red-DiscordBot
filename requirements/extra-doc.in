@@ -5,3 +5,4 @@ sphinx-markdown-builder>=0.6.10
 sphinx-prompt
 sphinx_rtd_theme>1
 sphinxcontrib-trio
+tomli

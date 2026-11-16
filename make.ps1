@@ -18,8 +18,6 @@ Command to execute. See Cmdlet's description for more information.
 
 #>
 
-# I'm too dumb for PowerShell, so $script:availableCommands needs to be defined in 2 places // Jack
-
 [CmdletBinding()]
 param (
     [Parameter(Mandatory=$false)]
@@ -68,7 +66,7 @@ function activateenv() {
     & $PSScriptRoot\.venv\Scripts\Activate.ps1
 }
 
-$script:availableCommands = @("reformat", "stylecheck", "stylediff", "newenv", "syncenv", "activateenv")
+$script:availableCommands = $MyInvocation.MyCommand.ParameterSets[0].Parameters[0].Attributes[0].ScriptBlock.Invoke()
 
 if (Test-Path -LiteralPath "$PSScriptRoot\.venv" -PathType Container) {
     $script:venvPython = "$PSScriptRoot\.venv\Scripts\python.exe"

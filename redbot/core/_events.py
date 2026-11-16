@@ -25,6 +25,7 @@ from .. import __version__ as red_version
 from . import commands
 from ._config import get_latest_confs
 from .utils._internal_utils import (
+    PRIVILEGED_INTENTS,
     fuzzy_command_search,
     format_fuzzy_results,
     fetch_latest_red_version,
@@ -112,6 +113,14 @@ def init_events(bot, cli_flags):
         prefixes = cli_flags.prefix or (await bot._config.prefix())
         lang = await bot._config.locale()
         dpy_version = discord.__version__
+        privileged_intents = (
+            ", ".join(
+                friendly_name
+                for intent, friendly_name in PRIVILEGED_INTENTS.items()
+                if getattr(bot.intents, intent)
+            )
+            or "None"
+        )
 
         table_general_info = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         table_general_info.add_row("Prefixes", ", ".join(prefixes))
@@ -119,6 +128,7 @@ def init_events(bot, cli_flags):
         table_general_info.add_row("Red version", red_version)
         table_general_info.add_row("Discord.py version", dpy_version)
         table_general_info.add_row("Storage type", data_manager.storage_type())
+        table_general_info.add_row("Privileged intents", privileged_intents)
 
         table_counts = Table(show_edge=False, show_header=False, box=box.MINIMAL)
         # String conversion is needed as Rich doesn't deal with ints
@@ -144,7 +154,7 @@ def init_events(bot, cli_flags):
                 Columns(
                     [Panel(table_general_info, title=bot.user.display_name), Panel(table_counts)],
                     equal=True,
-                    align="center",
+                    align="left",
                 )
             )
         else:

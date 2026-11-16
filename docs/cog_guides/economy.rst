@@ -38,11 +38,37 @@ bank
 
 .. code-block:: none
 
-    [p]bank 
+    [p]bank
 
 **Description**
 
 Base command to manage the bank.
+
+.. _economy-command-bank-add:
+
+""""""""
+bank add
+""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bank add <to> <creds>
+
+**Description**
+
+Add currency to a user's bank account.
+
+Example:
+    - ``[p]bank add @Twentysix 100`` - Increases balance by 100
+
+**Arguments**
+
+- ``<to>`` The user to give currency to.
+- ``<creds>`` The amount of currency to add.
 
 .. _economy-command-bank-balance:
 
@@ -98,6 +124,32 @@ Examples:
 - ``<to>`` The user to set the currency of.
 - ``<creds>`` The amount of currency to set their balance to.
 
+.. _economy-command-bank-sub:
+
+""""""""
+bank sub
+""""""""
+
+.. note:: |admin-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]bank sub <to> <creds>
+
+**Description**
+
+Remove currency from a user's bank account.
+
+Example:
+    - ``[p]bank sub @Twentysix 50`` - Decreases balance by 50
+
+**Arguments**
+
+- ``<to>`` The user to remove currency from.
+- ``<creds>`` The amount of currency to remove.
+
 .. _economy-command-bank-transfer:
 
 """""""""""""
@@ -136,7 +188,7 @@ economyset
 
 .. code-block:: none
 
-    [p]economyset 
+    [p]economyset
 
 **Description**
 
@@ -228,7 +280,7 @@ economyset showsettings
 
 .. code-block:: none
 
-    [p]economyset showsettings 
+    [p]economyset showsettings
 
 **Description**
 
@@ -343,7 +395,7 @@ payday
 
 .. code-block:: none
 
-    [p]payday 
+    [p]payday
 
 **Description**
 
@@ -361,7 +413,7 @@ payouts
 
 .. code-block:: none
 
-    [p]payouts 
+    [p]payouts
 
 **Description**
 

@@ -169,11 +169,12 @@ async def call(
         "redbot._update",
         *debug_args,
         CMD_NAME,
-        instance_name,
         arg_names.RED_VERSION,
         str(red_version),
         arg_names.PYTHON_VERSION,
         str(python_version),
+        "--",
+        instance_name,
     ]
     if ignore_prefix:
         args.append(arg_names.CHECK_OTHER_PYTHON_INSTALLS)

@@ -1,4 +1,55 @@
 .. _install-ubuntu-2404:
+.. os-image-location::
+
+    [ubuntu-2404]
+    download_type = 'html'
+    url = 'https://cloud-images.ubuntu.com/noble/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/noble-server-cloudimg-amd64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
+
+    [ubuntu-2404-arm]
+    download_type = 'html'
+    arch = 'aarch64'
+    url = 'https://cloud-images.ubuntu.com/noble/current/'
+    url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/noble-server-cloudimg-arm64.img"
+    )
+    '''
+    checksum_file_url_xpath = '''
+    concat(
+        "../",
+        substring-before(substring-after(/html/head/title, "daily ["), "]"),
+        "/SHA256SUMS"
+    )
+    '''
+
+    [ubuntu-2404-arm-raspi]
+    download_type = 'html'
+    arch = 'aarch64'
+    machine_type = 'raspi3b'
+    image_format = 'raw+xz'
+    url = 'https://cdimage.ubuntu.com/ubuntu-server/noble/daily-preinstalled/current/'
+    url_xpath = '''
+    concat(
+        /html/head/link[@rel="canonical"]/@href, "/noble-preinstalled-server-arm64+raspi.img.xz"
+    )
+    '''
+    checksum_file_url_xpath = '"SHA256SUMS"'
 
 ==================================
 Installing Red on Ubuntu 24.04 LTS
@@ -24,7 +75,7 @@ Now install the pre-requirements with apt:
 
 .. prompt:: bash
 
-    sudo apt -y install python3.11 python3.11-dev python3.11-venv git openjdk-17-jre-headless build-essential nano
+    sudo apt -y install python3.11 python3.11-dev python3.11-venv git openjdk-25-jre-headless build-essential nano
 
 .. Include common instructions:
 

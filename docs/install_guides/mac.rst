@@ -1,4 +1,20 @@
 .. _install-mac:
+.. os-image-location::
+
+    [macos-14]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-sonoma-vanilla:latest'
+
+    [macos-15]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-sequioa-vanilla:latest'
+
+    [macos-26]
+    os = 'darwin'
+    download_type = 'tart-image'
+    image = 'ghcr.io/cirruslabs/macos-tahoe-vanilla:latest'
 
 =======================
 Installing Red on macOS
@@ -28,7 +44,7 @@ one-by-one:
 
     brew install python@3.11
     brew install git
-    brew install temurin@17
+    brew install temurin@25
 
 By default, Python installed through Homebrew is not added to the load path.
 To fix this, you should run these commands:
