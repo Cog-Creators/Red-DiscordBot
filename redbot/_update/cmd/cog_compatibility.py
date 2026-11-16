@@ -92,6 +92,7 @@ async def _check_cog_compatibility_command_impl(
             latest = await fetch_latest_red_version(
                 include_prereleases=common.get_current_red_version().is_prerelease
             )
+            await latest.fetch_extra_info()
             red_version = latest.version
 
         python_version = Version(".".join(map(str, sys.version_info[:3])))

@@ -307,6 +307,7 @@ class Updater:
                 )
             )
             latest_major = available_versions[0]
+            await latest_major.fetch_extra_info()
 
         self.metadata = UpdaterMetadata(
             self.options,
@@ -355,6 +356,8 @@ class Updater:
                         "Could not find any version of Red that would not be a major update.",
                     )
                     raise SystemExit(1)
+
+        await self.metadata.latest.fetch_extra_info()
 
     async def _show_changelog(self) -> None:
         with self.console.status("Fetching changelogs..."):
