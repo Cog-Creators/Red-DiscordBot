@@ -455,6 +455,7 @@ class AudioAPIInterface:
         try:
             current_cache_level = CacheLevel(await self.config.cache_level())
             guild_data = await self.config.guild(ctx.guild).all()
+            can_skip = await self.cog._can_instaskip(ctx, ctx.author)
             enqueued_tracks = 0
             consecutive_fails = 0
             queue_dur = await self.cog.queue_duration(ctx)
@@ -624,7 +625,7 @@ class AudioAPIInterface:
                 if enqueue:
                     if len(player.queue) >= 10000:
                         continue
-                    if guild_data["maxlength"] > 0:
+                    if guild_data["maxlength"] > 0 and not can_skip:
                         if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
                             enqueued_tracks += 1
                             single_track.extras.update(

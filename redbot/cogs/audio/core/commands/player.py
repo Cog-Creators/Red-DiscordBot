@@ -295,7 +295,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("This track is not allowed in this server."),
             )
-        elif guild_data["maxlength"] > 0:
+        elif guild_data["maxlength"] > 0 and not can_skip:
             if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
                 single_track.requester = ctx.author
                 single_track.extras.update(
@@ -821,7 +821,7 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                     ):
                         log.debug("Query is not allowed in %r (%s)", ctx.guild.name, ctx.guild.id)
                         continue
-                    elif guild_data["maxlength"] > 0:
+                    elif guild_data["maxlength"] > 0 and not can_skip:
                         if self.is_track_length_allowed(track, guild_data["maxlength"]):
                             track_len += 1
                             track.extras.update(
