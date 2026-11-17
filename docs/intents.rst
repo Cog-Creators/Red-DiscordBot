@@ -264,7 +264,7 @@ Are you storing API Data for 30 days or less?
 
     The data is stored as long as it is relevant which generally is longer than 30 days.
     There should be no scenario in which you'd answer "Yes" to this question when it comes
-    to the Guild Members intent.
+    to the *Guild Members Intent*.
 
 No
 
@@ -323,7 +323,7 @@ Are you storing message content data off-platform (outside of Discord)?
 
     If any of the 3rd-party cogs that you are using store message content data, you should adjust
     this answer accordingly. Answering "Yes" will require answering extra questions analogous
-    to the ones that were asked for the Server Members Intent - you just need to enter
+    to the ones that were asked for the *Guild Members Intent* - you just need to enter
     the exact same answers as you did for that intent:
 
     -   `Are you storing user message content data for 30 days or less? <intents-members-30-days-or-less>`
@@ -396,7 +396,7 @@ Please provide links to screenshots and/or videos that demonstrate your use case
 What about the (Guild) Presences Intent?
 ----------------------------------------
 
-Red's core cogs do not require the Guild Presences Intent and as such we do not include
+Red's core cogs do not require the *Guild Presences Intent* and as such we do not include
 any sample answers for the questions about it. This intent is required to view the activities
 and statuses of users. Cogs which perform actions on users based on their activity or status
 will be unable to access this information if this intent is not enabled.
@@ -407,19 +407,19 @@ will be unable to access this information if this intent is not enabled.
 | The cog authors can also provide a statement with the reason that a privileged intent is needed,
   you can use it to figure out what to say when applying for it.
 
-While the use cases for the Guild Presences Intent are different from the Guild Members Intent,
-the questions for the Guild Presences Intent are analogous to the questions about
-the Guild Members Intent:
+While the use cases for the *Guild Presences Intent* are different from the *Guild Members Intent*,
+the questions for the *Guild Presences Intent* are analogous to the questions about
+the *Guild Members Intent*:
 
 -   **Why do you need the Guild Presences intent?**
 
     You'll need to include a description of relevant features from 3rd-party cogs you are using
-    that require the Guild Presences intent.
+    that require the *Guild Presences Intent*.
 
 -   **Please provide links to screenshots and/or videos that demonstrate your use case**
 
     You'll need to include links to a few screenshots or a video presenting the relevant features
-    from 3rd-party cogs you are using that require the Guild Presences intent.
+    from 3rd-party cogs you are using that require the *Guild Presences Intent*.
 
 -   **Can users opt-out of having their Presence data tracked?**
 
@@ -431,8 +431,8 @@ the Guild Members Intent:
 -   **Are you storing user activity data off-platform (outside of Discord)?**
     
     If yes, you'll also need to the same extra questions as the ones that were asked for
-    the Server Members Intent - for this part, you just need to enter the exact same answers as
-    you did for that intent since these questions are not specific to the Guild Presences Intent:
+    the *Guild Members Intent* - for this part, you just need to enter the exact same answers as
+    you did for that intent since these questions are not specific to the *Guild Presences Intent*:
 
     -   `Are you storing user activity data for 30 days or less? <intents-members-30-days-or-less>`
     -   `How do users contact you to request deletion of their activity data? <intents-members-deletion-request-contact>`
@@ -445,8 +445,8 @@ How to change my instance's enabled privileged intents?
 
 There are a few reasons to want to change the privileged intents that are enabled on your instance:
 
--   One of the 3rd-party cogs you want to use requires the Presences Intent to provide some
-    or all of its functionality.
+-   One of the 3rd-party cogs you want to use requires the *Guild Presences Intent*
+    to provide some or all of its functionality.
 -   You were denied some of the Privileged Intents you requested that are needed by your bot.
 -   You did not apply for the Privileged Intents before the request was due.
 -   Your request for Privileged Intents that you were previously denied has been approved.
