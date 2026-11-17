@@ -122,6 +122,12 @@ you might have to use different examples from the ones we've provided.
     Before the answer to each question, there's a box like this one with information on
     how you may need to adjust the answer to apply to your bot.
 
+..
+    In case the form ever changes, you should be able to see the up-to-date even
+    when you don't have a bot that requires you to send a form by going to this link
+    and choosing a bot application that never had to send the form:
+    https://discord.com/developers/applications/select/request-additional-intents
+
 Application Details
 ~~~~~~~~~~~~~~~~~~~
 
