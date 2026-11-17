@@ -12,7 +12,7 @@ To clarify:
   app verification process
 - **Public bots** (or big bots) are bots that have reached 100 servers. They need to be
   `verified <https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified>`_
-  by Discord to join more than 100 servers and gain privileged intents
+  by Discord to join more than 100 servers
 
 .. warning::
 
