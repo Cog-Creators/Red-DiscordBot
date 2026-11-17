@@ -434,9 +434,9 @@ the Guild Members Intent:
     the Server Members Intent - for this part, you just need to enter the exact same answers as
     you did for that intent since these questions are not specific to the Guild Presences Intent:
 
-    -   **Are you storing user activity data for 30 days or less?**
-    -   **How do users contact you to request deletion of their activity data?**
-    -   **Are you encrypting the data that you store at rest, as is required by our developer policy?**
+    -   `Are you storing user activity data for 30 days or less? <intents-members-30-days-or-less>`
+    -   `How do users contact you to request deletion of their activity data? <intents-members-deletion-request-contact>`
+    -   `Are you encrypting the data that you store at rest, as is required by our developer policy? <intents-members-encryption>`
 
 .. _intents-configuration:
 
