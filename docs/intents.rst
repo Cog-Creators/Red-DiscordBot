@@ -378,10 +378,67 @@ Please provide links to screenshots and/or videos that demonstrate your use case
 
 ----
 
-.. _intents-disabling:
+.. _intents-presences-intent:
+
+What about the (Guild) Presences Intent?
+----------------------------------------
+
+Red's core cogs do not require the Guild Presences Intent and as such we do not include
+any sample answers for the questions about it. This intent is required to view the activities
+and statuses of users. Cogs which perform actions on users based on their activity or status
+will be unable to access this information if this intent is not enabled.
+
+| There are a few 3rd-party cogs whose functionality depends on this intent to be enabled.
+  If authors of those cogs list them as required, the Downloader will not let you install them
+  without enabling the privileged intent first, as explained in the `intents-configuration` section.
+| The cog authors can also provide a statement with the reason that a privileged intent is needed,
+  you can use it to figure out what to say when applying for it.
+
+While the use cases for the Guild Presences Intent are different from the Guild Members Intent,
+the questions for the Guild Presences Intent are analogous to the questions about
+the Guild Members Intent:
+
+-   Why do you need the Guild Presences intent?
+
+    You'll need to include a description of relevant features from 3rd-party cogs you are using
+    that require the Guild Presences intent.
+
+-   Please provide links to screenshots and/or videos that demonstrate your use case
+
+    You'll need to include links to a few screenshots or a video presenting the relevant features
+    from 3rd-party cogs you are using that require the Guild Presences intent.
+
+-   Can users opt-out of having their Presence data tracked?
+
+    | If the user can opt-out (which in case of *some* 3rd-party cogs, they can), answer "Yes".
+    | If they can't, answer "No".
+    | If you think the user can opt-out, it's best to test that it actually works as expected
+      before applying.
+
+-   Are you storing user activity data off-platform (outside of Discord)?
+    
+    If yes, you'll also need to the same extra questions as the ones that were asked for
+    the Server Members Intent - for this part, you just need to enter the exact same answers as
+    you did for that intent since these questions are not specific to the Guild Presences Intent:
+
+    -   Are you storing user activity data for 30 days or less?
+    -   How do users contact you to request deletion of their activity data?
+    -   Are you encrypting the data that you store at rest, as is required by our developer policy?
+
+.. _intents-configuration:
 
 How to change my instance's enabled privileged intents?
 -------------------------------------------------------
+
+There are a few reasons to want to change the privileged intents that are enabled on your instance:
+
+-   One of the 3rd-party cogs you want to use requires the Presences Intent to provide some
+    or all of its functionality.
+-   You were denied some of the Privileged Intents you requested that are needed by your bot.
+-   You did not apply for the Privileged Intents before the request was due.
+-   Your request for Privileged Intents that you were previously denied has been approved.
+
+Below you'll find instructions on how to change your instance's enabled privileged intents.
 
 Windows
 ~~~~~~~
