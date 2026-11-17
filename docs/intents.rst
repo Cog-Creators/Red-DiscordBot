@@ -110,6 +110,13 @@ to receive the intents ourselves, it is not guaranteed that your application wil
 when using these verbatim. Depending on what core features of Red and what 3rd-party you are using,
 you might have to use different examples from the ones we've provided.
 
+.. tip::
+
+    If you need to create screenshots/videos with the example use of the Privileged Intents
+    required by your bot but you already lost access to those Privileged Intents,
+    you may need to create a second bot application and a Red instance
+    that **you only invite to a small server** to be able to present those examples.
+
 .. admonition:: Additional information
 
     Before answer to each question, there's a box like this one with information on
