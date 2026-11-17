@@ -44,10 +44,10 @@ you might have noticed that it asks for a privacy policy.
 Per `Discord Developer Terms of Service <https://support-dev.discord.com/hc/en-us/articles/8562894815383-Discord-Developer-Terms-of-Service>`__,
 Discord requires that you:
 
-    provide and adhere to a privacy policy for your Application that is compliant with
+    *provide and adhere to a privacy policy for your Application that is compliant with
     applicable privacy laws and clearly, accurately, and fully describes to users of
     your Application what data you collect, how you use and share such data with us
-    and third parties, and how users can request deletion of such data.
+    and third parties, and how users can request deletion of such data.*
 
 While we do provide some guidance and samples, you should keep in mind that in the end,
 **you are the one responsible** for the privacy policy you've published and need to ensure
