@@ -242,15 +242,20 @@ Are you storing any API Data off-platform (outside of Discord)?
 
 Yes
 
+.. _intents-members-30-days-or-less:
+
 Are you storing API Data for 30 days or less?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. admonition:: Additional information
 
     The data is stored as long as it is relevant which generally is longer than 30 days.
-    There should be no scenario in which you'd answer "Yes" to this question.
+    There should be no scenario in which you'd answer "Yes" to this question when it comes
+    to the Guild Members intent.
 
 No
+
+.. _intents-members-deletion-request-contact:
 
 How do users contact you to request deletion of their activity data?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -262,6 +267,8 @@ How do users contact you to request deletion of their activity data?
 
 Contact details are included as part of the bot's privacy policy:
 ``https://example.github.io/link-to-your-privacy-policy/``
+
+.. _intents-members-encryption:
 
 Are you encrypting the data that you store at rest, as is required by our developer policy?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -302,9 +309,13 @@ Are you storing message content data off-platform (outside of Discord)?
     None of the core cogs store message content data off-platform.
 
     If any of the 3rd-party cogs that you are using store message content data, you should adjust
-    this answer accordingly. Answering "Yes" will require answering the same extra questions
-    as the ones that were asked for the Server Members Intent - you just need to enter
-    the exact same answers as you did for that intent.
+    this answer accordingly. Answering "Yes" will require answering extra questions analogous
+    to the ones that were asked for the Server Members Intent - you just need to enter
+    the exact same answers as you did for that intent:
+
+    -   `Are you storing user message content data for 30 days or less? <intents-members-30-days-or-less>`
+    -   `How do users contact you to request deletion of their activity data? <intents-members-deletion-request-contact>`
+    -   `Are you encrypting the data that you store at rest, as is required by our developer policy? <intents-members-encryption>`
 
 No
 
