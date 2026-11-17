@@ -119,7 +119,7 @@ you might have to use different examples from the ones we've provided.
 
 .. admonition:: Additional information
 
-    Before answer to each question, there's a box like this one with information on
+    Before the answer to each question, there's a box like this one with information on
     how you may need to adjust the answer to apply to your bot.
 
 Application Details
