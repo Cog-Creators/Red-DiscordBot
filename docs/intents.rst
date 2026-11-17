@@ -252,6 +252,17 @@ Are you storing API Data for 30 days or less?
 
 No
 
+How do users contact you to request deletion of their activity data?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Replace ``https://example.github.io/link-to-your-privacy-policy/`` in this answer
+    with a link to your privacy policy.
+
+Contact details are included as part of the bot's privacy policy:
+``https://example.github.io/link-to-your-privacy-policy/``
+
 Are you encrypting the data that you store at rest, as is required by our developer policy?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
