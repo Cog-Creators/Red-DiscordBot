@@ -357,6 +357,15 @@ when using the "Block Suspected Spam Content" rule.
 Please provide links to screenshots and/or videos that demonstrate your use case
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. admonition:: Additional information
+
+    Same as for the previous answer:
+
+    These are based on the Cleanup core cog.
+
+    You may need to adjust this answer to include relevant features from 3rd-party cogs
+    you are using and exclude any features from the core cogs that are not loaded.
+
 | Example of cleaning duplicated messages manually by a moderator:
 | :doclink:`intent-examples/cleanup-spam-example-before.png`
 | :doclink:`intent-examples/cleanup-spam-example-triggered.png`
