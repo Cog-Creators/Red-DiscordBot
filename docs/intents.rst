@@ -8,8 +8,8 @@ About privileged intents
 
     It is **very** important that you fully read this page before applying for Privileged Intents.
 
-    If you plan on (or already are) using Red for hosting a public bot,
-    you should read `public-bots` as well.
+    If you plan on (or already are) using Red for hosting a public bot
+    (a bot that can be invited by any user), you should read `public-bots` as well.
 
 | If your bot is accessible to 10,000 or more users across all the servers it's in,
   Discord will ask you to submit a request for review of your bot's use of the Privileged Intents.
