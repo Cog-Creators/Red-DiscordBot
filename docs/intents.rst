@@ -73,7 +73,8 @@ in the next section.
 How to use the privacy policy repository template?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#.  Login to your GitHub account or register, if you don't have one already.
+#.  `Login to your GitHub account <https://github.com/login>`__
+    or register at https://github.com/signup, if you don't have an account already.
 #.  Go to https://github.com/Cog-Creators/Red-Privacy-Policy/generate.
 #.  Set a name for the repository. This name should probably contain something identifying
     the specific bot that this policy will apply to as a single repository created from
