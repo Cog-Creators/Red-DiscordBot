@@ -86,4 +86,6 @@ Enabling Privileged Intents
     Discord will ask you to submit a request for review of your bot's use of the Privileged Intents.
     This usually happens within 24 hours of your bot reaching the 10,000-user threshold.
 
+    We explain what Privileged Intents are and how to apply for them in the :doc:`intents` document.
+
 *Parts of this guide have been adapted from* `discord.py intro <https://discordpy.readthedocs.io/en/stable/discord.html#discord-intro>`_ *and* `discord.py privileged intents <https://discordpy.readthedocs.io/en/stable/intents.html#privileged-intents>`_.
