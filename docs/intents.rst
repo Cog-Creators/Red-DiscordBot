@@ -191,7 +191,7 @@ Which intents are you applying for, if any?
     Check the intents that you are actually applying for.
 
 | ☑️ Server Members Intent
-| ⃣ Presence Intent
+| ⃣️ Presence Intent
 | ☑️ Message Content Intent
 
 Server Members Intent
