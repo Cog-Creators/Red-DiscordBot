@@ -272,8 +272,8 @@ How do users contact you to request deletion of their activity data?
     Replace ``https://example.github.io/link-to-your-privacy-policy/`` in this answer
     with a link to your privacy policy.
 
-Contact details are included as part of the bot's privacy policy:
-``https://example.github.io/link-to-your-privacy-policy/``
+| Contact details are included as part of the bot's privacy policy:
+| ``https://example.github.io/link-to-your-privacy-policy/``
 
 .. _intents-members-encryption:
 
