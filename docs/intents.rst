@@ -64,7 +64,9 @@ This file is hosted as the main page on the generated GitHub Pages website.
 The sample privacy policy also links to the ``3rd-party.html`` file for information about data
 that's collected in addition to what's described in the main document. You can generate
 the ``3rd-party.html`` file for your own bot by running its ``[p]mydata 3rdparty`` command
-and uploading its result to the repository you created.
+and uploading its result to the repository you created. This will be explained in the step-by-step
+instructions that are provided once you generate a repository from our template per instructions
+in the next section.
 
 .. _intents-privacy-policy-template:
 
