@@ -411,32 +411,32 @@ While the use cases for the Guild Presences Intent are different from the Guild 
 the questions for the Guild Presences Intent are analogous to the questions about
 the Guild Members Intent:
 
--   Why do you need the Guild Presences intent?
+-   **Why do you need the Guild Presences intent?**
 
     You'll need to include a description of relevant features from 3rd-party cogs you are using
     that require the Guild Presences intent.
 
--   Please provide links to screenshots and/or videos that demonstrate your use case
+-   **Please provide links to screenshots and/or videos that demonstrate your use case**
 
     You'll need to include links to a few screenshots or a video presenting the relevant features
     from 3rd-party cogs you are using that require the Guild Presences intent.
 
--   Can users opt-out of having their Presence data tracked?
+-   **Can users opt-out of having their Presence data tracked?**
 
     | If the user can opt-out (which in case of *some* 3rd-party cogs, they can), answer "Yes".
     | If they can't, answer "No".
     | If you think the user can opt-out, it's best to test that it actually works as expected
       before applying.
 
--   Are you storing user activity data off-platform (outside of Discord)?
+-   **Are you storing user activity data off-platform (outside of Discord)?**
     
     If yes, you'll also need to the same extra questions as the ones that were asked for
     the Server Members Intent - for this part, you just need to enter the exact same answers as
     you did for that intent since these questions are not specific to the Guild Presences Intent:
 
-    -   Are you storing user activity data for 30 days or less?
-    -   How do users contact you to request deletion of their activity data?
-    -   Are you encrypting the data that you store at rest, as is required by our developer policy?
+    -   **Are you storing user activity data for 30 days or less?**
+    -   **How do users contact you to request deletion of their activity data?**
+    -   **Are you encrypting the data that you store at rest, as is required by our developer policy?**
 
 .. _intents-configuration:
 
