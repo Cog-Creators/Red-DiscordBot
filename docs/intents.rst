@@ -139,8 +139,8 @@ Application Details
 | - configure stream alerts (Twitch, YouTube, Picarto)
 | - setup custom commands in servers that display text (e.g. FAQ answers) which other users can run
 
-This is a self-hosted instance of the following open-source bot:
-https://github.com/Cog-Creators/Red-DiscordBot
+| This is a self-hosted instance of the following open-source bot:
+| https://github.com/Cog-Creators/Red-DiscordBot
 
 Do you have a public Privacy Policy telling your users about their data usage?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
