@@ -57,8 +57,4 @@ setup(
     # TODO: use [tool.setuptools.dynamic] table once this feature gets out of beta
     install_requires=install_requires,
     extras_require=extras_require,
-    # TODO: use [project] table once PEP 639 gets accepted
-    license_files=["LICENSE", "redbot/**/*.LICENSE"],
-    # TODO: use [tool.setuptools.packages] table once this feature gets out of beta
-    packages=find_namespace_packages(include=["redbot", "redbot.*"]),
 )
