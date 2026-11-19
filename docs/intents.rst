@@ -1,7 +1,7 @@
 .. _privileged-intents:
 
 ========================
-About privileged intents
+About Privileged Intents
 ========================
 
 .. warning::
@@ -403,8 +403,8 @@ will be unable to access this information if this intent is not enabled.
 
 | There are a few 3rd-party cogs whose functionality depends on this intent to be enabled.
   If authors of those cogs list them as required, the Downloader will not let you install them
-  without enabling the privileged intent first, as explained in the `intents-configuration` section.
-| The cog authors can also provide a statement with the reason that a privileged intent is needed,
+  without enabling the Privileged Intent first, as explained in the `intents-configuration` section.
+| The cog authors can also provide a statement with the reason that a Privileged Intent is needed,
   you can use it to figure out what to say when applying for it.
 
 While the use cases for the *Guild Presences Intent* are different from the *Guild Members Intent*,
@@ -440,10 +440,10 @@ the *Guild Members Intent*:
 
 .. _intents-configuration:
 
-How to change my instance's enabled privileged intents?
+How to change my instance's enabled Privileged Intents?
 -------------------------------------------------------
 
-There are a few reasons to want to change the privileged intents that are enabled on your instance:
+There are a few reasons to want to change the Privileged Intents that are enabled on your instance:
 
 -   One of the 3rd-party cogs you want to use requires the *Guild Presences Intent*
     to provide some or all of its functionality.
@@ -451,18 +451,18 @@ There are a few reasons to want to change the privileged intents that are enable
 -   You did not apply for the Privileged Intents before the request was due.
 -   Your request for Privileged Intents that you were previously denied has been approved.
 
-Below you'll find instructions on how to change your instance's enabled privileged intents.
+Below you'll find instructions on how to change your instance's enabled Privileged Intents.
 
 .. attention::
 
-    Before enabling privileged intents that were previously disabled on your instance,
+    Before enabling Privileged Intents that were previously disabled on your instance,
     make sure that they are enabled on Discord's application page as explained in
     `enabling-privileged-intents`.
 
 Windows
 ~~~~~~~
 
-To change your instance's enabled privileged intents, you can follow these steps:
+To change your instance's enabled Privileged Intents, you can follow these steps:
 
 #. Shut your bot down.
 #. Activate your venv with the following command:
@@ -477,7 +477,7 @@ To change your instance's enabled privileged intents, you can follow these steps
 
         redbot --edit <your instance name>
 
-    You'll be asked several questions. One of them will be about changing the enabled privileged intents,
+    You'll be asked several questions. One of them will be about changing the enabled Privileged Intents,
     answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
 
     .. code::
@@ -492,7 +492,7 @@ To change your instance's enabled privileged intents, you can follow these steps
 Linux & Mac
 ~~~~~~~~~~~
 
-To change your instance's enabled privileged intents, you can follow these steps:
+To change your instance's enabled Privileged Intents, you can follow these steps:
 
 #. Shut your bot down.
 #. Activate your virtual environment.
@@ -510,7 +510,7 @@ To change your instance's enabled privileged intents, you can follow these steps
 
         redbot --edit <your instance name>
 
-    You'll be asked several questions. One of them will be about changing the enabled privileged intents,
+    You'll be asked several questions. One of them will be about changing the enabled Privileged Intents,
     answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
 
     .. code::
