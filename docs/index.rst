@@ -30,7 +30,7 @@ Welcome to Red - Discord Bot's documentation!
     guide_trivia_list_creation
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: User guides:
 
     getting_started
@@ -58,14 +58,21 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/warnings
     red_core_data_statement
 
-.. toctree::
+.. toctree:: 
     :maxdepth: 2
-    :caption: Red Development Framework Reference:
+    :caption: Cog Creation Guides:
 
     guide_cog_creation
     guide_slash_and_interactions
     guide_publish_cogs
     guide_cog_creators
+    guide_migration
+    version_guarantees
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Cog Development Framework Reference:
+
     framework_apikeys
     framework_bank
     framework_bot
@@ -80,10 +87,15 @@ Welcome to Red - Discord Bot's documentation!
     framework_rpc
     framework_tree
     framework_utils
-    version_guarantees
+
+.. toctree:: 
+    :maxdepth: 2
+    :caption: Red Developer Docs:
+
+    
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Others
 
     changelog
