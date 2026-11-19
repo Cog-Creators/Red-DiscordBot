@@ -35,6 +35,7 @@ Welcome to Red - Discord Bot's documentation!
 
     getting_started
     intents
+    public_bots
     cog_guides/admin
     cog_guides/alias
     cog_guides/audio
