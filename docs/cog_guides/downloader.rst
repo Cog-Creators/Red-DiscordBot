@@ -359,16 +359,94 @@ findcog
 
 **Description**
 
-Find which cog a command comes from.
+Find which cog package a command comes from.
 
 This will only work with loaded cogs.
 
 Example:
     - ``[p]findcog ping``
+    - ``[p]findcog command ping``
+    - ``[p]findcog cog Audio``
+    - ``[p]findcog package audio``
 
 **Arguments**
 
 - ``<command_name>`` The command to search for.
+
+.. _downloader-command-findcog-cog:
+
+"""""""""""
+findcog cog
+"""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]findcog cog <cog_name>
+
+**Description**
+
+Find which cog package a cog comes from.
+
+This will only work with loaded cogs.
+
+Example:
+    - ``[p]findcog cog Audio``
+
+**Arguments**
+
+- ``<cog_name>`` The cog to find the cog package for.
+
+.. _downloader-command-findcog-command:
+
+"""""""""""""""
+findcog command
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]findcog command <command_name>
+
+**Description**
+
+Find which cog package a command comes from.
+
+This will only work with loaded cogs.
+
+Example:
+    - ``[p]findcog command ping``
+
+**Arguments**
+
+- ``<command_name>`` The command to search for.
+
+.. _downloader-command-findcog-package:
+
+"""""""""""""""
+findcog package
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]findcog package <cog_pkg_name>
+
+**Description**
+
+Show details about a cog package.
+
+This will only work with loaded cogs.
+
+Example:
+    - ``[p]findcog package audio``
+
+**Arguments**
+
+- ``<cog_pkg_name>`` The package to show details for.
 
 .. _downloader-command-pipinstall:
 

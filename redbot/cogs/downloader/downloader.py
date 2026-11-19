@@ -1130,14 +1130,32 @@ class Downloader(commands.Cog):
         splitted = instance.__module__.split(".")
         return splitted[0]
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     async def findcog(self, ctx: commands.Context, command_name: str) -> None:
-        """Find which cog a command comes from.
+        """Find which cog package a command comes from.
+
+        This will only work with loaded cogs.
+
+        Examples:
+        - `[p]findcog ping`
+        - `[p]findcog command ping`
+        - `[p]findcog cog Audio`
+        - `[p]findcog package audio`
+
+        **Arguments**
+
+        - `<command_name>` The command to search for.
+        """
+        await self.findcog_command(ctx, command_name)
+
+    @findcog.command(name="command")
+    async def findcog_command(self, ctx: commands.Context, command_name: str) -> None:
+        """Find which cog package a command comes from.
 
         This will only work with loaded cogs.
 
         Example:
-        - `[p]findcog ping`
+        - `[p]findcog command ping`
 
         **Arguments**
 
@@ -1149,52 +1167,103 @@ class Downloader(commands.Cog):
             await ctx.send(_("That command doesn't seem to exist."))
             return
 
-        # Check if in installed cogs
         cog = command.cog
-        if cog:
-            cog_pkg_name = self.cog_name_from_instance(cog)
-            installed, cog_installable = await _downloader.is_installed(cog_pkg_name)
-            if installed:
-                made_by = (
-                    humanize_list(cog_installable.author)
-                    if cog_installable.author
-                    else _("Missing from info.json")
-                )
-                repo_url = (
-                    _("Missing from installed repos")
-                    if cog_installable.repo is None
-                    else cog_installable.repo.clean_url
-                )
-                repo_name = (
-                    _("Missing from installed repos")
-                    if cog_installable.repo is None
-                    else cog_installable.repo.name
-                )
-                cog_pkg_name = cog_installable.name
-            elif cog.__module__.startswith("redbot."):  # core commands or core cog
-                made_by = "Cog Creators"
-                repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
-                module_fragments = cog.__module__.split(".")
-                if module_fragments[1] == "core":
-                    cog_pkg_name = "N/A - Built-in commands"
-                else:
-                    cog_pkg_name = module_fragments[2]
-                repo_name = "Red-DiscordBot"
-            else:  # assume not installed via downloader
-                made_by = _("Unknown")
-                repo_url = _("None - this cog wasn't installed via downloader")
-                repo_name = _("Unknown")
-            cog_name = cog.__class__.__name__
-        else:
-            msg = _("This command is not provided by a cog.")
+        await self._show_cog_package_info(
+            ctx, cog.__module__, cog_name=cog.__class__.__name__, command_name=command_name
+        )
+
+    @findcog.command(name="cog")
+    async def findcog_cog(self, ctx: commands.Context, cog_name: str) -> None:
+        """Find which cog package a cog comes from.
+
+        This will only work with loaded cogs.
+
+        Example:
+        - `[p]findcog cog Audio`
+
+        **Arguments**
+
+        - `<cog_name>` The cog to find the cog package for.
+        """
+        cog = ctx.bot.cogs.get(cog_name)
+
+        if cog is None:
+            await ctx.send(_("That cog doesn't seem to exist."))
+            return
+
+        await self._show_cog_package_info(ctx, cog.__module__, cog_name=cog.__class__.__name__)
+
+    @findcog.command(name="package", aliases=["cogpackage"])
+    async def findcog_package(self, ctx: commands.Context, cog_pkg_name: str) -> None:
+        """Show details about a cog package.
+
+        This will only work with loaded cogs.
+
+        Example:
+        - `[p]findcog package audio`
+
+        **Arguments**
+
+        - `<cog_pkg_name>` The cog package to show details for.
+        """
+        module = ctx.bot.extensions.get(cog_pkg_name)
+
+        if module is None:
+            await ctx.send(_("That cog package doesn't seem to exist."))
+            return
+
+        await self._show_cog_package_info(ctx, module.__name__)
+
+    async def _show_cog_package_info(
+        self, ctx, module_name: Optional[str], *, cog_name: str = "", command_name: str = ""
+    ) -> None:
+        if not module_name:
+            msg = _("This is not provided by a cog package.")
             await ctx.send(msg)
             return
 
+        # Check if in installed cogs
+        splitted = module_name.split(".")
+        installed, cog_installable = await _downloader.is_installed(splitted[0])
+        if installed:
+            made_by = (
+                humanize_list(cog_installable.author)
+                if cog_installable.author
+                else _("Missing from info.json")
+            )
+            repo_url = (
+                _("Missing from installed repos")
+                if cog_installable.repo is None
+                else cog_installable.repo.clean_url
+            )
+            repo_name = (
+                _("Missing from installed repos")
+                if cog_installable.repo is None
+                else cog_installable.repo.name
+            )
+            cog_pkg_name = cog_installable.name
+        elif module_name.startswith("redbot."):  # core commands or core cog
+            made_by = "Cog Creators"
+            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
+            module_fragments = module_name.split(".")
+            if module_fragments[1] == "core":
+                cog_pkg_name = "N/A - Built-in commands"
+            else:
+                cog_pkg_name = module_fragments[2]
+            repo_name = "Red-DiscordBot"
+        else:  # assume not installed via downloader
+            made_by = _("Unknown")
+            repo_url = _("None - this cog wasn't installed via downloader")
+            repo_name = _("Unknown")
+            cog_pkg_name = module_name
+
         if await ctx.embed_requested():
             embed = discord.Embed(color=(await ctx.embed_colour()))
-            embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            if command_name:
+                embed.add_field(name=_("Command:"), value=command_name, inline=False)
+            if cog_name:
+                embed.add_field(name=_("Cog name:"), value=cog_name, inline=True)
             embed.add_field(name=_("Cog package name:"), value=cog_pkg_name, inline=True)
-            embed.add_field(name=_("Cog name:"), value=cog_name, inline=True)
             embed.add_field(name=_("Made by:"), value=made_by, inline=False)
             embed.add_field(name=_("Repo name:"), value=repo_name, inline=False)
             embed.add_field(name=_("Repo URL:"), value=repo_url, inline=False)
@@ -1205,17 +1274,18 @@ class Downloader(commands.Cog):
             await ctx.send(embed=embed)
 
         else:
-            msg = _(
-                "Command:          {command}\n"
+            msg = ""
+            if command_name:
+                msg += _("Command:          {command}\n").format(command=command_name)
+            if cog_name:
+                msg += _("Cog name:         {cog}\n").format(cog=cog_name)
+            msg += _(
                 "Cog package name: {cog_pkg}\n"
-                "Cog name:         {cog}\n"
                 "Made by:          {author}\n"
                 "Repo name:        {repo_name}\n"
                 "Repo URL:         {repo_url}\n"
             ).format(
-                command=command_name,
                 cog_pkg=cog_pkg_name,
-                cog=cog_name,
                 author=made_by,
                 repo_url=repo_url,
                 repo_name=repo_name,
