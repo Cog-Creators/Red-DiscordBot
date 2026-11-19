@@ -24,6 +24,7 @@ from .errors import (
     OfflineStream,
     StreamNotFound,
     YoutubeQuotaExceeded,
+    YoutubeStreamNotFound,
 )
 
 TWITCH_BASE_URL = "https://api.twitch.tv"
@@ -213,6 +214,8 @@ class YoutubeStream(Stream):
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
+            if len(data["items"]) == 0:
+                raise YoutubeStreamNotFound()
             return await self.make_embed(data)
         raise OfflineStream()
 
