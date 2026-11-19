@@ -11,7 +11,8 @@ are considered End of Life and will not receive any security updates.
 | < 2.0         | master     | :x:                | :white_check_mark: |
 | >= 2.0, < 3.0 | develop    | :x:                | :white_check_mark: |
 | >= 3.0, < 3.5 | V3/develop | :x:                | :white_check_mark: |
-| >= 3.5        | V3/develop | :white_check_mark: | :x:                |
+| >= 3.5, < 3.6 | V3/develop | :x:                | TBD                |
+| >= 3.6        | V3/develop | :white_check_mark: | :x:                |
 
 
 ## Reporting a Vulnerability
