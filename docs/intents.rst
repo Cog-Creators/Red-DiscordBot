@@ -453,6 +453,12 @@ There are a few reasons to want to change the privileged intents that are enable
 
 Below you'll find instructions on how to change your instance's enabled privileged intents.
 
+.. attention::
+
+    Before enabling privileged intents that were previously disabled on your instance,
+    make sure that they are enabled on Discord's application page as explained in
+    `enabling-privileged-intents`.
+
 Windows
 ~~~~~~~
 
