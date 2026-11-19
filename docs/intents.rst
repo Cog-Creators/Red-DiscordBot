@@ -85,6 +85,55 @@ How to use the privacy policy repository template?
     Wait about 20 seconds, then refresh the page. You should now see a new README page.
 #.  Continue by following the step-by-step instructions in the new repository's README.
 
+.. _intents-how-my-cogs-use-intents:
+
+How can I know how my instance's cogs use the Privileged Intents?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When applying for Privileged Intents, you'll be asked to explain why your bot needs each of them
+and whether it stores any data off-platform (outside Discord). Additionally, in order to write
+a privacy policy, you also need to know what user data your bot stores.
+
+Unless you happen to be interested in software development and have read code of all cogs you have
+installed, you may not really know how it works under the hood - what data those cogs store,
+what intents they need to function, and why. That's completely fine! Red has always been
+designed not to require technical knowledge and this is no different.
+
+When it comes to core cogs, the Privileged Intent use cases are described in the sample answers
+listed in the `intents-how-to` section. The information about data that is collected by
+Red and its core cogs is provided in the `red_core_data_statement` document and we also
+provide a sample privacy policy as we've described already in the earlier `intents-privacy-policy`
+section.
+
+When it comes to 3rd-party cogs, we've also got you covered! Red allows cogs to specify a statement
+explaining what end user data the cog is storing and statements explaining the reasons that
+they need each Privileged Intent for.
+
+The end user data statements can be accessed in a few ways:
+
+-   before installing the cog through the ``[p]cog info`` command
+    or on the `Red Index <https://index.discord.red>`__ listing
+-   for loaded cogs, all available statements are listed by the ``[p]mydata 3rdparty`` command
+
+The statements explaining the reasons that each Privileged Intent is needed can be accessed
+as follows:
+
+-   before installing the cog through the ``[p]cog info`` command
+
+By reading the information provided in the aforementioned statements, you should have
+a better grasp of what functionality of the cogs requires these intents which should help you
+list the use cases when applying for Privileged Intents and create necessary screenshots/videos.
+
+It should also be noted that you are not required to list *all* the features that your bot uses
+each of the Privileged Intents for - you need at least one motivating use case for each intent
+and you should make sure that this use case is described thoroughly and properly demonstrated
+through screenshots and/or videos.
+
+If you're unsure how to answer any of the questions in the review, feel free to ask in the
+`Red support server <https://discord.gg/red>`__.
+If Discord rejected your request already, we'd also love to learn about your experience
+to hopefully improve this document for others in the future.
+
 .. _intents-how-to:
 
 How to apply for Privileged Intents?
@@ -109,6 +158,7 @@ are based on our interpretation of Discord's requirements and, while we've succe
 to receive the intents ourselves, it is not guaranteed that your application will be approved
 when using these verbatim. Depending on what core features of Red and what 3rd-party you are using,
 you might have to use different examples from the ones we've provided.
+See the earlier `intents-how-my-cogs-use-intents` section for more information about that.
 
 .. tip::
 
