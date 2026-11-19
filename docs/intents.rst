@@ -119,6 +119,10 @@ The statements explaining the reasons that each Privileged Intent is needed can 
 as follows:
 
 -   before installing the cog through the ``[p]cog info`` command
+    or on the `Red Index <https://index.discord.red>`__ listing
+-   for cogs installed through Downloader, ``[p]cog intents`` command can be used to
+    list statements grouped by the Privileged Intent and whether they refer to an intent
+    that is required for the cog to function or just to provide *some* of its features
 
 By reading the information provided in the aforementioned statements, you should have
 a better grasp of what functionality of the cogs requires these intents which should help you
