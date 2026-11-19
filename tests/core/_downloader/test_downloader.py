@@ -44,7 +44,7 @@ def _mock_setup_repo(mocker: MockFixture, repo: Repo, commit: str):
 
 
 def test_existing_git_repo(tmp_path):
-    repo_folder = tmp_path / "repos" / "squid" / ".git"
+    repo_folder = tmp_path / "repos.v2" / "squid" / ".git"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     r = Repo(
