@@ -102,7 +102,7 @@ async def _init(bot: Red):
         guild = entry.guild
         if guild.unavailable:
             return
-        if entry.action not in (discord.AuditLogAction.ban, discord.AuditLogAction.unban):
+        if entry.action not in (discord.AuditLogAction.ban, discord.AuditLogAction.unban, discord.AuditLogAction.kick):
             return
 
         try:
