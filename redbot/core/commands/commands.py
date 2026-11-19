@@ -44,7 +44,6 @@ from discord.ext.commands import (
 )
 
 from .requires import PermState, PrivilegeLevel, Requires, PermStateAllowedStates
-from .. import app_commands
 from ..i18n import Translator
 
 _T = TypeVar("_T")
@@ -54,6 +53,7 @@ _CogT = TypeVar("_CogT", bound="Cog")
 if TYPE_CHECKING:
     # circular import avoidance
     from .context import Context
+    from redbot.core import app_commands
     from typing_extensions import ParamSpec, Concatenate
     from discord.ext.commands._types import ContextT, Coro
 
