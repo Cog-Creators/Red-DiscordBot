@@ -295,29 +295,15 @@ class PlayerCommands(MixinMeta, metaclass=CompositeMetaClass):
                 title=_("Unable To Play Tracks"),
                 description=_("This track is not allowed in this server."),
             )
-        elif guild_data["maxlength"] > 0:
-            if self.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                single_track.requester = ctx.author
-                single_track.extras.update(
-                    {
-                        "enqueue_time": int(time.time()),
-                        "vc": player.channel.id,
-                        "requester": ctx.author.id,
-                    }
-                )
-                player.queue.insert(0, single_track)
-                player.maybe_shuffle()
-                self.bot.dispatch(
-                    "red_audio_track_enqueue", player.guild, single_track, ctx.author
-                )
-            else:
-                self.update_player_lock(ctx, False)
-                return await self.send_embed_msg(
-                    ctx,
-                    title=_("Unable To Play Tracks"),
-                    description=_("Track exceeds maximum length."),
-                )
-
+        elif guild_data["maxlength"] > 0 and not self.is_track_length_allowed(
+            single_track, guild_data["maxlength"]
+        ):
+            self.update_player_lock(ctx, False)
+            return await self.send_embed_msg(
+                ctx,
+                title=_("Unable To Play Tracks"),
+                description=_("Track exceeds maximum length."),
+            )
         else:
             single_track.requester = ctx.author
             single_track.extras["bumped"] = True

@@ -624,39 +624,26 @@ class AudioAPIInterface:
                 if enqueue:
                     if len(player.queue) >= 10000:
                         continue
-                    if guild_data["maxlength"] > 0:
-                        if self.cog.is_track_length_allowed(single_track, guild_data["maxlength"]):
-                            enqueued_tracks += 1
-                            single_track.extras.update(
-                                {
-                                    "enqueue_time": int(time.time()),
-                                    "vc": player.channel.id,
-                                    "requester": ctx.author.id,
-                                }
-                            )
-                            player.add(ctx.author, single_track)
-                            self.bot.dispatch(
-                                "red_audio_track_enqueue",
-                                player.guild,
-                                single_track,
-                                ctx.author,
-                            )
-                    else:
-                        enqueued_tracks += 1
-                        single_track.extras.update(
-                            {
-                                "enqueue_time": int(time.time()),
-                                "vc": player.channel.id,
-                                "requester": ctx.author.id,
-                            }
-                        )
-                        player.add(ctx.author, single_track)
-                        self.bot.dispatch(
-                            "red_audio_track_enqueue",
-                            player.guild,
-                            single_track,
-                            ctx.author,
-                        )
+                    if guild_data["maxlength"] > 0 and not self.cog.is_track_length_allowed(
+                        single_track, guild_data["maxlength"]
+                    ):
+                        continue
+
+                    enqueued_tracks += 1
+                    single_track.extras.update(
+                        {
+                            "enqueue_time": int(time.time()),
+                            "vc": player.channel.id,
+                            "requester": ctx.author.id,
+                        }
+                    )
+                    player.add(ctx.author, single_track)
+                    self.bot.dispatch(
+                        "red_audio_track_enqueue",
+                        player.guild,
+                        single_track,
+                        ctx.author,
+                    )
 
                     if not player.current:
                         await player.play()
