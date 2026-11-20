@@ -1,6 +1,6 @@
 AUTHOR: JennJenn, Eternalll
 DESCRIPTION: >-
-  A trivia about Dota 2 abilities as of patch 7.41f. In this trivia, identify the ability
+  A trivia about Dota 2 abilities as of patch 7.42. In this trivia, identify the ability
   from the image sent. Dota 2 is a multiplayer online battle arena (MOBA) video game by Valve.
 # Abaddon
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
@@ -110,7 +110,7 @@ What ability is this? https://i.imgur.com/3BaLwBw.png: # [2]
 What ability is this? https://i.imgur.com/GaGZzRK.png: # [3]
 - Summon Raptors
 # What ability is this? https://i.imgur.com/0000000: # [4]
-# - Drums of Slom
+# - Summon Ancient Thunderhide
 What ability is this? https://i.imgur.com/Lh00eYb.png: # [ULT]
 - Primal Roar
 # Bloodseeker
@@ -192,7 +192,8 @@ What ability is this? https://i.imgur.com/i1JiCuX.png: # [ULT]
 - Stampede
 # Chaos Knight
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
-# - Fundamental Forging
+# - Ahead, Armageddon
+# - Ahead Armageddon
 What ability is this? https://i.imgur.com/VEY99cQ.png: # [1]
 - Chaos Bolt
 What ability is this? https://i.imgur.com/nlhSakJ.png: # [2]
@@ -302,6 +303,8 @@ What ability is this? https://i.imgur.com/XcI5kLq.png: # [2]
 - Shallow Grave
 What ability is this? https://i.imgur.com/cjnqKID.png: # [3]
 - Shadow Wave
+# What ability is this? https://i.imgur.com/0000000: # [4]
+# - Through the Realm
 # What ability is this? https://i.imgur.com/0000000: # [ULT]
 # - Nothl Projection
 # Death Prophet
@@ -588,8 +591,6 @@ What ability is this? https://i.imgur.com/PtqRyJI.png: # [2]
 - Healing Ward
 What ability is this? https://i.imgur.com/4Mmu9H3.png: # [3]
 - Blade Dance
-# What ability is this? https://i.imgur.com/0000000: # [4]
-# - Swiftslash
 What ability is this? https://i.imgur.com/uANCZtn.png: # [ULT]
 - Omnislash
 # Keeper of the Light
@@ -692,6 +693,7 @@ What ability is this? https://i.imgur.com/gLmeW4r.png: # [ULT]
 # Lich
 What innate ability is this? https://i.imgur.com/rxOnMrk.png: # [IN]
 - Sacrifice
+- Sacrafice
 What ability is this? https://i.imgur.com/CCGIDJA.png: # [1]
 - Frost Blast
 # What ability is this? https://i.imgur.com/0000000: # [2]
@@ -750,6 +752,16 @@ What ability is this? https://i.imgur.com/32Nw3yf.png: # [3]
 - Savage Roar
 What ability is this? https://i.imgur.com/MzcTM8h.png: # [ULT]
 - True Form
+# Lone Druid - Spirit Bear
+# What ability is this? https://i.imgur.com/0000000: # [IN]
+# - Demolish
+# What ability is this? https://i.imgur.com/0000000: # [1]
+# - Return
+# What ability is this? https://i.imgur.com/0000000: # [2]
+# - Entangling Claws
+# [3] & [4] - savage roar and spirit link - already on main lone druid, ask once
+# What ability is this? https://i.imgur.com/0000000: # [4]
+# - Fetch
 # Luna
 What innate ability is this? https://i.imgur.com/lUURpuL.png: # [IN]
 - Lunar Blessing
@@ -763,7 +775,7 @@ What ability is this? https://i.imgur.com/9pCeilj.png: # [ULT]
 - Eclipse
 # Lycan
 # What innate ability is this? https://i.imgur.com/0000000: # [IN]
-# - Apex Predator
+# - Pack Hunter
 What ability is this? https://i.imgur.com/uMmwQ1a.png: # [1]
 - Summon Wolves
 What ability is this? https://i.imgur.com/wEuOQZi.png: # [2]
@@ -835,10 +847,6 @@ What ability is this? https://i.imgur.com/2aGSLwK.png: # [2]
 # - Ransack
 # What ability is this? https://i.imgur.com/0000000: # [4]
 # - Dig
-# What ability is this? https://i.imgur.com/0000000: # [5]
-# - MegaMeepo
-# What ability is this? https://i.imgur.com/0000000: # [5](Alt)
-# - MegaMeepo Fling
 What ability is this? https://i.imgur.com/6aKdh41.png: # [ULT]
 - Divided We Stand
 # Mirana
@@ -957,8 +965,8 @@ What ability is this? https://i.imgur.com/0JGCqSu.png: # [2]
 # What ability is this? https://i.imgur.com/0000000: # [ULT]
 # - Dark Ascension
 # Nyx Assassin
-What innate ability is this? https://i.imgur.com/CNmLmD7.png: # [IN]
-- Mana Burn
+# What innate ability is this? https://i.imgur.com/CNmLmD7.png: # [IN]
+# - Scarab Metabolism
 What ability is this? https://i.imgur.com/MpTqSAJ.png: # [1]
 - Impale
 # What ability is this? https://i.imgur.com/0000000: # [2]
@@ -1574,6 +1582,8 @@ What ability is this? https://i.imgur.com/hNY3HEK.png: # [1]
 What ability is this? https://i.imgur.com/bUdXqyZ.png: # [3]
 - Tombstone
 - Tomb stone
+# What innate ability is this? https://i.imgur.com/0000000: # [4]
+# - Zombie Bite
 What ability is this? https://i.imgur.com/374iVtN.png: # [ULT]
 - Flesh Golem
 # Ursa
