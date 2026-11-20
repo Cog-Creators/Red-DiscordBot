@@ -341,8 +341,8 @@ async def run_bot(red: Red, cli_flags: Namespace) -> None:
                 "Using --disable-intent with a privileged intent is deprecated since Red 3.5.25"
                 " and will be removed in Red 3.6.0, you can use `redbot --edit` to configure"
                 " instance's privileged intents permanently instead.",
-                intent,
             )
+            break
 
     log.debug("====Basic Config====")
     log.debug("Data Path: %s", data_manager._base_data_path())
