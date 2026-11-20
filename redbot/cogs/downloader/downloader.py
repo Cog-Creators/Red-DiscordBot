@@ -982,13 +982,15 @@ class Downloader(commands.Cog):
             )
             return
 
-        required_privileged_intents = cog.required_privileged_intents or {
-            intent_name: _(
-                "The cog does not specify the privileged intents it requires."
-                " The intent is listed as required because most such cogs require this intent."
-            )
-            for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS
-        }
+        required_privileged_intents = cog.required_privileged_intents
+        if required_privileged_intents is None:
+            required_privileged_intents = {
+                intent_name: _(
+                    "The cog does not specify the privileged intents it requires."
+                    " The intent is listed as required because most such cogs require this intent."
+                )
+                for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS
+            }
         msg = _(
             "Information on {cog_name}:\n"
             "{description}\n\n"
