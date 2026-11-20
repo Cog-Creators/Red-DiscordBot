@@ -1010,15 +1010,17 @@ class Downloader(commands.Cog):
                 or _("Author of the cog didn't provide end user data statement.")
             ),
             author=", ".join(cog.author) or _("Missing from info.json"),
-            requirements=", ".join(cog.requirements) or "None",
+            requirements=", ".join(cog.requirements) or _("None"),
             optional_privileged_intents="\n".join(
                 f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
                 for intent_name, reason in cog.optional_privileged_intents
-            ),
+            )
+            or _("None"),
             required_privileged_intents="\n".join(
                 f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
                 for intent_name, reason in required_privileged_intents
-            ),
+            )
+            or _("None"),
         )
         for page in pagify(msg):
             await ctx.send(box(page))
