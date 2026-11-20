@@ -1025,6 +1025,56 @@ class Downloader(commands.Cog):
         for page in pagify(msg):
             await ctx.send(box(page))
 
+    @cog.command(name="intents")
+    async def _cog_intents(self, ctx: commands.Context) -> None:
+        """
+        List privileged intents required by installed cogs along with the reasons
+        grouped by the privileged intent and whether they are optional or required.
+        """
+        installed_cogs = await _downloader.installed_cogs()
+        if not installed_cogs:
+            await ctx.send(_("There are no cogs installed."))
+            return
+
+        GroupedPrivilegedIntents = Dict[PrivilegedIntentName, List[Tuple[str, str]]]
+        optional_privileged_intents: GroupedPrivilegedIntents = {}
+        required_privileged_intents: GroupedPrivilegedIntents = {}
+        required_privileged_intents_unknown_reason: List[str] = []
+
+        for cog in sorted(installed_cogs, key=lambda c: c.name.lower()):
+            for intent_name, reason in cog.optional_privileged_intents.items():
+                optional_privileged_intents.setdefault(intent_name, []).append((cog.name, reason))
+            for intent_name, reason in (cog.required_privileged_intents or {}).items():
+                required_privileged_intents.setdefault(intent_name, []).append((cog.name, reason))
+            if cog.required_privileged_intents is None:
+                required_privileged_intents_unknown_reason.append(cog.name)
+
+        parts = []
+
+        def _format_intents(privileged_intents: GroupedPrivilegedIntents) -> str:
+            return "\n".join(
+                f"### {PRIVILEGED_INTENTS[intent_name]}\n"
+                + "\n".join(f"- {cog_name} - {reason}" for cog_name, reason in cogs_with_reasons)
+                for intent_name, cogs_with_reasons in privileged_intents.items()
+            ) or _("None")
+
+        parts.append(_("## Privileged intents required by cogs to function"))
+        parts.append(_format_intents(required_privileged_intents))
+
+        parts.append(
+            _("## Cogs that likely require {intents} intents to function (reason unknown)").format(
+                intents=humanize_list(
+                    tuple(map(PRIVILEGED_INTENTS.__getitem__, DEFAULT_REQUIRED_PRIVILEGED_INTENTS))
+                )
+            )
+        )
+        parts.append(humanize_list(required_privileged_intents_unknown_reason) or _("None"))
+
+        parts.append(_("## Privileged intents that cogs can use to increase their functionality"))
+        parts.append(_format_intents(optional_privileged_intents))
+
+        await self.send_pagified(ctx, "\n".join(parts))
+
     def _format_invalid_cogs(
         self, repo: Repo, install_result: _downloader.CogInstallResult
     ) -> str:
