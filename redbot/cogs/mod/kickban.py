@@ -262,10 +262,10 @@ class KickBanMixin(MixinMeta):
             if await self.bot.cog_disabled_in_guild(self, guild):
                 continue
 
-            guild_tempbans = guild_data["current_tempbans"]
-            if not guild_tempbans:
+            if not guild_data["current_tempbans"]:
                 continue
             async with self.config.guild(guild).current_tempbans.get_lock():
+                guild_tempbans = await self.config.guild(guild).current_tempbans()
                 if await self._check_guild_tempban_expirations(guild, guild_tempbans):
                     await self.config.guild(guild).current_tempbans.set(guild_tempbans)
 
