@@ -285,7 +285,10 @@
 "Category: Docs - User Guides":
   - docs/getting_started.rst
   - docs/intents.rst
+  - docs/public_bots.rst
   - docs/red_core_data_statement.rst
+  - docs/_html/intent-examples/**/*
+  - docs/.resources/intents/**/*
   # TODO: move these to `docs/.resources/getting_started` subfolder
   - docs/.resources/red-console.png
   - docs/.resources/code-grant.png
@@ -308,7 +311,7 @@
   # documentation configuration, extensions, scripts, templates, etc.
   - docs/conf.py
   - docs/_ext/**/*
-  - docs/_html/**/*
+  - docs/_html/robots.txt
   - docs/make.bat
   - docs/Makefile
   - docs/prolog.txt

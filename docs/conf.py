@@ -234,9 +234,8 @@ linkcheck_retries = 3
 
 # -- Options for markdown builder ----------------------------------------
 
-markdown_http_base = os.environ.get(
-    "READTHEDOCS_CANONICAL_URL", "https://docs.discord.red/en/stable"
-)
+canonical_url = os.environ.get("READTHEDOCS_CANONICAL_URL", "https://docs.discord.red/en/stable/")
+markdown_http_base = canonical_url
 markdown_uri_doc_suffix = ".html"
 
 
@@ -259,9 +258,12 @@ intersphinx_mapping = {
 }
 
 # Extlinks
-# This allows to create links to d.py docs with
-# :dpy_docs:`link text <site_name.html>`
 extlinks = {
+    # This allows to create links to resources with
+    # :doclink`robots.txt` and :doclink:`link text <robots.txt>`
+    "doclink": (f"{canonical_url}%s", None),
+    # This allows to create links to d.py docs with
+    # :dpy_docs:`link text <site_name.html>`
     "dpy_docs": (f"{dpy_docs_url}%s", None),
     "issue": ("https://github.com/Cog-Creators/Red-DiscordBot/issues/%s", "#%s"),
     # below URL redirects to user page, if they don't have GH Sponsors set up,

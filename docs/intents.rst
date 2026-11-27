@@ -1,119 +1,577 @@
-.. _intents:
-.. |br| raw:: html
+.. _privileged-intents:
 
-   <br />
-
-==========================================
-About (privileged) intents and public bots
-==========================================
-
-This page aims to explain Red's current intents requirements,
-our stance regarding "public bots", and the discord bot verification process.
-
-To clarify:
-
-- **Small bots** are bots under 100 servers. They currently do not need to undergo Discord's
-  bot verification process
-- **Public bots** (or big bots) are bots that have reached 100 servers. They need to be
-  `verified <https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified>`_
-  by Discord to join more than 100 servers and gain privileged intents
+========================
+About Privileged Intents
+========================
 
 .. warning::
 
-  It is **very** important that you fully read this page if you're the owner of a public bot or strive to scale your bot at that level.
+    It is **very** important that you fully read this page before applying for Privileged Intents.
 
-.. _intents-public-bots:
+    If you plan on (or already are) using Red for hosting a public bot
+    (a bot that can be invited by any user), you should read `public-bots` as well.
 
------------
-Public bots
------------
+| If your bot is accessible to 10,000 or more users across all the servers it's in,
+  Discord will ask you to submit a request for review of your bot's use of the Privileged Intents.
+| **If your bot does not have that many users**, you can simply follow :ref:`these instructions <enabling-privileged-intents>`
+  to enable them.
 
-Public bots, or big bots, are not our target audience and we **do not** offer support for them.
+If your bot ever reaches the 10,000-user threshold, you will receive an official message from Discord
+in a direct message (DM) on Discord *and* in an e-mail message sent to the user that owns the bot application.
+This should generally happen within 24 hours of your bot reaching this threshold.
 
-Red was designed with one single goal in mind: a bot that you can host on your own hardware
-and customize to your needs, making it really *your* bot. **The target audience of Red are server
-owners with a few servers**, often with specific needs that can be covered by the vast cog ecosystem
-that the community has built over the years. |br| Red was never built with big bots in mind,
-bots with thousands upon thousands of servers: these bots face unique challenges. Large bots need
-to be extremely efficient to handle the large amount of requests they receive, and often need to
-distribute this work across multiple processes or machines to keep up.
-Such Red instances *do exist*, and it is not impossible to adapt Red and meet those criteria,
-but it requires work and bot owners with the technical knowledge to make it happen.
-It is **not** something that we support. |br|
-When your bot reaches the public bot scale and it is therefore required to be verified it
-is *expected* that you know what's in your bot and how it works: that doesn't just mean on the
-surface level, it means coding knowledge and the ability to maintain it on your own.
+| In its default (highly recommended) configuration, Red requires enabling the *Guild (Server) Members Intent*
+  and *Message Content Intent*.
+| *Guild Members Intent* is especially important as a large number of cogs,
+  both 1st-party and 3rd-party are not prepared to work without it, even in cases where they theoretically could.
+  Such cogs may either not work as expected or completely error out.
+| User experience without the *Message Content Intent* is also considerably worse as it prevents use of
+  bot's text-based commands using bot's prefix outside DMs. Instead, users have to use the bot mention as the prefix
+  to use the text-based commands. It's worth noting that Discord does not consider **this specific use case**
+  to be valid during Privileged Intents review and you **should avoid** using it as justification anywhere
+  in your request.
+| For both of these Privileged Intents, there are a lot of use cases that Discord will consider valid,
+  including some in core cogs. The use cases from core cogs can be found in the sample answers
+  listed in the `intents-how-to` section.
 
-.. _intents-bot-verification-process:
+.. _intents-privacy-policy:
 
-------------------------
-Bot verification process
-------------------------
+What about the privacy policy?
+------------------------------
 
-When your bot ceases to be a small bot Discord will require you to verify your bot before allowing
-it to join more servers and gain privileged intents. If you've read the previous section,
-you will know that we do **not** support public bots. Logically, we also do not provide help for
-the verification process.
+If you've already looked at the form for requesting Privileged Intents already,
+you might have noticed that it asks for a privacy policy.
+Per `Discord Developer Terms of Service <https://support-dev.discord.com/hc/en-us/articles/8562894815383-Discord-Developer-Terms-of-Service>`__,
+Discord requires that you:
 
-Regardless of our stance, we do feel the need to give some pointers: many bot owners reach this point
-and become fairly lost, as they've simply been *users* so far.
-They have installed their bot, some cogs, personalized it, but have not needed to write any code.
-Unless they also have an interest in development, they will likely not have a clue about
-what's going under the hood, much like you're not expected to be a mechanic to drive your car. And there's
-nothing wrong with that! Red has been designed to be as user friendly as possible. |br|
-The problem is this: Red is an outlier. Discord has built the bot verification process with the expectation
-that the owner knows *on a technical level* what their bot does and how it works. And this is because outside
-Red, the typical bot owner is also a developer who coded their own bot from scratch.
+    *provide and adhere to a privacy policy for your Application that is compliant with
+    applicable privacy laws and clearly, accurately, and fully describes to users of
+    your Application what data you collect, how you use and share such data with us
+    and third parties, and how users can request deletion of such data.*
 
-While, again, we *cannot* support you going forward we want to give you some pointers to follow when filling
-out your application:
+While we do provide some guidance and samples, you should keep in mind that in the end,
+**you are the one responsible** for the privacy policy you've published and need to ensure
+*yourself* that you're compliant with Discord Developer Terms of Service and any applicable laws.
 
-- Learn on a technical level what intents are and what's going on, under the hood, in your bot. Knowing its
-  features at a surface level is not enough. What features need intents to work and why?
-- Forget that you're hosting Red. You're hosting *a bot* and Discord wants to know what *your bot* does and why
-  you're requesting privileged intents. |br| A **very bad** answer is: *"Because Red needs them"*. |br|
-  A **good** answer is: *"My bot has X features and it needs Y intents to work properly"*. |br| We've had a fair share
-  of people that in their naivety went with the bad answer and it seems that at this point merely mentioning Red
-  is a guaranteed way to have your application rejected.
+The privacy policy needs to be hosted somewhere on the Internet. To make it easy for you,
+we provide a simple GitHub repository template that you can use to generate a repository
+that GitHub can turn into a live website for you with no separate hosting necessary.
 
-.. _intents-intents:
+The repository also comes with a sample privacy policy in the ``index.md`` file which describes data
+collected by Red's core cogs and can be used as a starting point for your own instance.
+This file is hosted as the main page on the generated GitHub Pages website.
 
--------
-Intents
--------
+The sample privacy policy also links to the ``3rd-party.html`` file for information about data
+that's collected in addition to what's described in the main document. You can generate
+the ``3rd-party.html`` file for your own bot by running its ``[p]mydata 3rdparty`` command
+and uploading its result to the repository you created. This will be explained in the step-by-step
+instructions that are provided once you generate a repository from our template per instructions
+in the next section.
 
-Red expects **all intents** to be active. It is possible, but not recommended, to disable
-specific intents using the ``--disable-intent`` flag. If an intent is missing, you may
-experience errors due to Red expecting information provided by the intent to be present.
+.. _intents-privacy-policy-template:
 
-Discord currently considers 3 intents to be
-`privileged <https://support-dev.discord.com/hc/en-us/articles/6205754771351-How-do-I-get-Privileged-Intents-for-my-bot>`_,
-and requires large bots to additionally apply for access to these intents. **If you have a small
-bot**, you can simply follow :ref:`these instructions <enabling-privileged-intents>` to enable them.
+How to use the privacy policy repository template?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A breakdown of how privileged intents are used in Red is provided below.
+#.  `Login to your GitHub account <https://github.com/login>`__
+    or register at https://github.com/signup, if you don't have an account already.
+#.  Go to https://github.com/Cog-Creators/Red-Privacy-Policy/generate.
+#.  Set a name for the repository. This name should probably contain something identifying
+    the specific bot that this policy will apply to as a single repository created from
+    this template can only represent one bot.
+#.  Keep visibility set to "Public".
+#.  Click on "Create repository".
+#.  After the repository is created, you'll be presented with the repository page.
+    Wait about 20 seconds, then refresh the page. You should now see a new README page.
+#.  Continue by following the step-by-step instructions in the new repository's README.
 
-The **Message Content** intent is required to use text based commands and inputs for
-configuration and all built in functionality. App commands (also known as slash commands)
-are limited to a total of 100 top level commands, which is difficult to manage on
-a modular bot. The approach we have taken to address this issue is to allow 3rd party
-cogs to provide slash commands, but require bot owners to pick which slash commands
-they actually want to use with the ``[p]slash`` command.
-Under this system, bot management commands that are not exposed to users are still
-expected to be provided as text commands, which requires the bot to be able to access
-message content. There are no current plans to provide slash versions of core commands.
+.. _intents-how-my-cogs-use-intents:
 
-.. note::
-  It is possible to work around this intent by using the ``--mentionable``
-  flag, and using the bot mention as a prefix to use text based commands.
+How can I know how my instance's cogs use the Privileged Intents?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The **Guild Members** intent is required to properly cache member information, including
-what users are in each server, what roles they have, what their name is, etc. It is also
-required to receive events corresponding to when members join or leave a server, and when
-they change their nickname or other server options. Almost all cogs expect to be able
-to reference the member cache in order to avoid making API requests, and are not set
-up to check if the intent is present before doing so.
+When applying for Privileged Intents, you'll be asked to explain why your bot needs each of them
+and whether it stores any data off-platform (outside Discord). Additionally, in order to write
+a privacy policy, you also need to know what user data your bot stores.
 
-The **Guild Presences** intent is required to view the activities and status of
-users. Cogs which perform actions on users based on their activity or status will
-be unable to access this information if this intent is not enabled.
+Unless you happen to be interested in software development and have read code of all cogs you have
+installed, you may not really know how it works under the hood - what data those cogs store,
+what intents they need to function, and why. That's completely fine! Red has always been
+designed not to require technical knowledge and this is no different.
+
+When it comes to core cogs, the Privileged Intent use cases are described in the sample answers
+listed in the `intents-how-to` section. The information about data that is collected by
+Red and its core cogs is provided in the `red_core_data_statement` document and we also
+provide a sample privacy policy as we've described already in the earlier `intents-privacy-policy`
+section.
+
+When it comes to 3rd-party cogs, we've also got you covered! Red allows cogs to specify a statement
+explaining what end user data the cog is storing and statements explaining the reasons that
+they need each Privileged Intent for.
+
+The end user data statements can be accessed in a few ways:
+
+-   before installing the cog through the ``[p]cog info`` command
+    or on the `Red Index <https://index.discord.red>`__ listing
+-   for loaded cogs, all available statements are listed by the ``[p]mydata 3rdparty`` command
+
+The statements explaining the reasons that each Privileged Intent is needed can be accessed
+as follows:
+
+-   before installing the cog through the ``[p]cog info`` command
+    or on the `Red Index <https://index.discord.red>`__ listing
+-   for cogs installed through Downloader, ``[p]cog intents`` command can be used to
+    list statements grouped by the Privileged Intent and whether they refer to an intent
+    that is required for the cog to function or just to provide *some* of its features
+
+By reading the information provided in the aforementioned statements, you should have
+a better grasp of what functionality of the cogs requires these intents which should help you
+list the use cases when applying for Privileged Intents and create necessary screenshots/videos.
+
+It should also be noted that you are not required to list *all* the features that your bot uses
+each of the Privileged Intents for - you need at least one motivating use case for each intent
+and you should make sure that this use case is described thoroughly and properly demonstrated
+through screenshots and/or videos.
+
+If you're unsure how to answer any of the questions in the review, feel free to ask in the
+`Red support server <https://discord.gg/red>`__.
+If Discord rejected your request already, we'd also love to learn about your experience
+to hopefully improve this document for others in the future.
+
+.. _intents-how-to:
+
+How to apply for Privileged Intents?
+------------------------------------
+
+#.  Go to the `Discord Developer Portal <https://discord.com/developers/applications>`__.
+    You should see a notification about required Privileged Intents approval at the top:
+
+    .. image:: /.resources/intents/action_required_app_list.png
+        :alt: The "Action Required" notification about Privileged Intents approval in the application list.
+
+#.  Click on the notification to open that application's Bot page.
+#.  Click the "Get Started" button:
+
+    .. image:: /.resources/intents/action_required_bot_tab.png
+        :alt: The "Action Required" notification about Privileged Intents approval on the application's Bot tab.
+
+----
+
+Below you'll find sample answers for the questions in the review. Please note that these answers
+are based on our interpretation of Discord's requirements and, while we've successfully used them
+to receive the intents ourselves, it is not guaranteed that your application will be approved
+when using these verbatim. Depending on what core features of Red and what 3rd-party you are using,
+you might have to use different examples from the ones we've provided.
+See the earlier `intents-how-my-cogs-use-intents` section for more information about that.
+
+.. tip::
+
+    If you need to create screenshots/videos with the example use of the Privileged Intents
+    required by your bot but you already lost access to those Privileged Intents,
+    you may need to create a second bot application and a Red instance
+    that **you only invite to a small server** to be able to present those examples.
+
+.. admonition:: Additional information
+
+    Before the answer to each question, there's a box like this one with information on
+    how you may need to adjust the answer to apply to your bot.
+
+..
+    In case the form ever changes, you should be able to see the up-to-date even
+    when you don't have a bot that requires you to send a form by going to this link
+    and choosing a bot application that never had to send the form:
+    https://discord.com/developers/applications/select/request-additional-intents
+
+Application Details
+~~~~~~~~~~~~~~~~~~~
+
+"What does your application do? Please be as detailed as possible [...]"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    | This answer lists features from many core cogs:
+    | Audio, Cleanup, Economy, Filter, Mod, ModLog, Reports, Streams, Trivia, and Warnings
+
+    This answer may need to be adjusted to include features from 3rd-party cogs you are using
+    and exclude any features from the core cogs that are not loaded.
+
+| Red is a multi-function bot that allows its users to:
+| - carry out moderation actions (warnings, kick, ban, softban, hackban, chat cleanup, viewing information about members)
+| - keep records of infractions through its moderation log
+| - perform automated moderation actions - message, nickname, and user status filtering/warning
+| - maintain a user report system for their server (mod-mail)
+| - play games with others - trivia, slots
+| - play music in voice channels from online audio streams
+| - configure stream alerts (Twitch, YouTube, Picarto)
+| - setup custom commands in servers that display text (e.g. FAQ answers) which other users can run
+
+| This is a self-hosted instance of the following open-source bot:
+| https://github.com/Cog-Creators/Red-DiscordBot
+
+Do you have a public Privacy Policy telling your users about their data usage?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    You are required to have a privacy policy so this must be "Yes".
+
+Yes
+
+Where is your Privacy Policy available?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    This answer can be kept as is, just make sure to include a link to your privacy policy in the
+    description of your application to have it show in the About Me section of your bot's profile.
+
+    This can be done in the "General Information" tab of your bot application.
+
+The link to privacy policy is included within the bot's bio.
+
+Please share a link to your Privacy Policy.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Replace ``https://example.github.io/link-to-your-privacy-policy/`` in this answer
+    with a link to your privacy policy.
+
+``https://example.github.io/link-to-your-privacy-policy/``
+
+Privileged Gateway Intents
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Which intents are you applying for, if any?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Check the intents that you are actually applying for.
+
+| ☑️ Server Members Intent
+| ⬛ Presence Intent
+| ☑️ Message Content Intent
+
+Server Members Intent
+~~~~~~~~~~~~~~~~~~~~~
+
+Why do you need the Guild Members intent?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    The examples in this answer are based on specific core cogs:
+
+    - Mod - tracking username changes (``[p]userinfo``, ``[p]names``, ``[p]modset trackallnames/tracknicknames``)
+    - Mutes - tracking when member rejoins a server to reapply roles
+    - Filter - auto-moderation of user's nicknames (``[p]filter names``, ``[p]filterset defaultname``)
+
+    The first two should stand on their own, while the last is likely to be considered
+    as something that Discord's native AutoMod API supports and would not be enough
+    without presenting other examples.
+
+    You may need to adjust this answer to include relevant features from 3rd-party cogs
+    you are using and exclude any features from the core cogs that are not loaded.
+
+| The bot has a few features that depend on guild member data:
+| - tracking when user's username, global display name, or nickname changes to keep a short history of them that can be viewed by server staff
+| - tracking when member rejoins a server to reapply relevant roles to them
+| - auto-moderation of user's nicknames
+
+Please provide links to screenshots and/or videos that demonstrate your use case
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Same as for the previous answer:
+
+    These are based on Mod and Mutes core cogs.
+
+    You may need to adjust this answer to include relevant features from 3rd-party cogs
+    you are using and exclude any features from the core cogs that are not loaded.
+
+| Example use of a command that shows member's previous names:
+| :doclink:`intent-examples/userinfo-previous-names.png`
+
+| Example from audit log of roles being applied on rejoin:
+| :doclink:`intent-examples/mutes-role-reapply-audit-log.png`
+
+Are you storing any API Data off-platform (outside of Discord)?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Since user IDs likely fall under "API Data", you may end up storing API Data
+    even without having a single cog loaded so there should be no scenario
+    in which you'd answer "No" to this question.
+
+Yes
+
+.. _intents-members-30-days-or-less:
+
+Are you storing API Data for 30 days or less?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    The data is stored as long as it is relevant which generally is longer than 30 days.
+    There should be no scenario in which you'd answer "Yes" to this question when it comes
+    to the *Guild Members Intent*.
+
+No
+
+.. _intents-members-deletion-request-contact:
+
+How do users contact you to request deletion of their activity data?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Replace ``https://example.github.io/link-to-your-privacy-policy/`` in this answer
+    with a link to your privacy policy.
+
+| Contact details are included as part of the bot's privacy policy:
+| ``https://example.github.io/link-to-your-privacy-policy/``
+
+.. _intents-members-encryption:
+
+Are you encrypting the data that you store at rest, as is required by our developer policy?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Discord Developer Terms of Service require that the data that you store is encrypted at rest,
+    so you'll be automatically denied the intents, if you answer "No" to this.
+
+    If you're hosting your bot at a respectable server provider, it's likely that your server's
+    data is already encrypted at rest. You can consult your provider's documentation to make sure.
+
+    If you're hosting your bot on your own system, you'll need to handle this yourself.
+    Generally, data-at-rest encryption means using full disk encryption on your system.
+    The details are beyond this documentation but you should be able to search for these terms
+    combined with the OS you are using to get some information on this topic.
+
+Yes
+
+Message Content Intent
+~~~~~~~~~~~~~~~~~~~~~~
+
+Can users opt-out of having their message content data tracked?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Discord does not require you to provide an option to opt-out of tracking message content data
+    and this data is often needed for moderation purposes, where opting-out would allow for abuse.
+
+No
+
+Are you storing message content data off-platform (outside of Discord)?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    None of the core cogs store message content data off-platform.
+
+    If any of the 3rd-party cogs that you are using store message content data, you should adjust
+    this answer accordingly. Answering "Yes" will require answering extra questions analogous
+    to the ones that were asked for the *Guild Members Intent* - you just need to enter
+    the exact same answers as you did for that intent:
+
+    -   `Are you storing user message content data for 30 days or less? <intents-members-30-days-or-less>`
+    -   `How do users contact you to request deletion of their activity data? <intents-members-deletion-request-contact>`
+    -   `Are you encrypting the data that you store at rest, as is required by our developer policy? <intents-members-encryption>`
+
+No
+
+Will the message content data be used to train machine learning or AI Models?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    None of the core cogs use message content data to train machine learning or AI Models.
+
+    If any of the 3rd-party cogs that you are using do this, you should adjust this answer
+    accordingly. Answering "Yes" will require that you include information on how such models
+    would be used in the next two questions.
+
+No
+
+Why do you need the Message Content intent?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    The examples in this answer are based on specific core cog functionality:
+
+    - Cleanup - features that allow users to cleanup messages (``[p]cleanup duplicates``, ``[p]cleanup text``)
+    - Mod - auto-deletion of repeated messages (``[p]modset deleterepeats``)
+
+    You may need to adjust this answer to include relevant features from 3rd-party cogs
+    you are using and exclude any features from the core cogs that are not loaded.
+
+| The bot includes features that allow users to cleanup messages in a channel.
+  Some of those commands have to filter by the message's content:
+| - cleaning up spam (duplicate messages sent recently in a channel)
+| - cleaning up messages containing the specified text
+
+Other features that also need the message content intent include automatic message moderation - in particular,
+preventing a user from spamming the same message many times which Discord's AutoMod does not reliably block
+when using the "Block Suspected Spam Content" rule.
+
+Please provide links to screenshots and/or videos that demonstrate your use case
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Additional information
+
+    Same as for the previous answer:
+
+    These are based on the Cleanup core cog.
+
+    You may need to adjust this answer to include relevant features from 3rd-party cogs
+    you are using and exclude any features from the core cogs that are not loaded.
+
+| Example of cleaning duplicated messages manually by a moderator:
+| :doclink:`intent-examples/cleanup-spam-example-before.png`
+| :doclink:`intent-examples/cleanup-spam-example-triggered.png`
+| :doclink:`intent-examples/cleanup-spam-example-after.png`
+
+| Example of cleaning messages containing specified text:
+| :doclink:`intent-examples/cleanup-text-example-before.png`
+| :doclink:`intent-examples/cleanup-text-example-triggered.png`
+| :doclink:`intent-examples/cleanup-text-example-after.png`
+
+----
+
+.. _intents-presences-intent:
+
+What about the (Guild) Presences Intent?
+----------------------------------------
+
+Red's core cogs do not require the *Guild Presences Intent* and as such we do not include
+any sample answers for the questions about it. This intent is required to view the activities
+and statuses of users. Cogs which perform actions on users based on their activity or status
+will be unable to access this information if this intent is not enabled.
+
+| There are a few 3rd-party cogs whose functionality depends on this intent to be enabled.
+  If authors of those cogs list them as required, the Downloader will not let you install them
+  without enabling the Privileged Intent first, as explained in the `intents-configuration` section.
+| The cog authors can also provide a statement with the reason that a Privileged Intent is needed,
+  you can use it to figure out what to say when applying for it.
+
+While the use cases for the *Guild Presences Intent* are different from the *Guild Members Intent*,
+the questions for the *Guild Presences Intent* are analogous to the questions about
+the *Guild Members Intent*:
+
+-   **Why do you need the Guild Presences intent?**
+
+    You'll need to include a description of relevant features from 3rd-party cogs you are using
+    that require the *Guild Presences Intent*.
+
+-   **Please provide links to screenshots and/or videos that demonstrate your use case**
+
+    You'll need to include links to a few screenshots or a video presenting the relevant features
+    from 3rd-party cogs you are using that require the *Guild Presences Intent*.
+
+-   **Can users opt-out of having their Presence data tracked?**
+
+    | If the user can opt-out (which in case of *some* 3rd-party cogs, they can), answer "Yes".
+    | If they can't, answer "No".
+    | If you think the user can opt-out, it's best to test that it actually works as expected
+      before applying.
+
+-   **Are you storing user activity data off-platform (outside of Discord)?**
+    
+    If yes, you'll also need to the same extra questions as the ones that were asked for
+    the *Guild Members Intent* - for this part, you just need to enter the exact same answers as
+    you did for that intent since these questions are not specific to the *Guild Presences Intent*:
+
+    -   `Are you storing user activity data for 30 days or less? <intents-members-30-days-or-less>`
+    -   `How do users contact you to request deletion of their activity data? <intents-members-deletion-request-contact>`
+    -   `Are you encrypting the data that you store at rest, as is required by our developer policy? <intents-members-encryption>`
+
+.. _intents-configuration:
+
+How to change my instance's enabled Privileged Intents?
+-------------------------------------------------------
+
+There are a few reasons to want to change the Privileged Intents that are enabled on your instance:
+
+-   One of the 3rd-party cogs you want to use requires the *Guild Presences Intent*
+    to provide some or all of its functionality.
+-   You were denied some of the Privileged Intents you requested that are needed by your bot.
+-   You did not apply for the Privileged Intents before the request was due.
+-   Your request for Privileged Intents that you were previously denied has been approved.
+
+Below you'll find instructions on how to change your instance's enabled Privileged Intents.
+
+.. attention::
+
+    Before enabling Privileged Intents that were previously disabled on your instance,
+    make sure that they are enabled on Discord's application page as explained in
+    `enabling-privileged-intents`.
+
+Windows
+~~~~~~~
+
+To change your instance's enabled Privileged Intents, you can follow these steps:
+
+#. Shut your bot down.
+#. Activate your venv with the following command:
+
+    .. prompt:: batch
+
+        "%userprofile%\redenv\Scripts\activate.bat"
+#. Edit your instance with this command:
+
+    .. prompt:: batch
+        :prompts: (redenv) C:\\>
+
+        redbot --edit <your instance name>
+
+    You'll be asked several questions. One of them will be about changing the enabled Privileged Intents,
+    answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
+
+    .. code::
+
+        Guild Presences privileged intent is currently disabled. Do you want to enable it?: [y/N] y
+        Guild Presences privileged intent has been enabled.
+        Guild Members privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+        Message Content privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+
+#. After you finish with the ``redbot --edit`` command, start your bot.
+
+Linux & Mac
+~~~~~~~~~~~
+
+To change your instance's enabled Privileged Intents, you can follow these steps:
+
+#. Shut your bot down.
+#. Activate your virtual environment.
+  
+    If you used ``venv`` for your virtual environment, use:
+
+    .. prompt:: bash
+
+        source ~/redenv/bin/activate
+
+#. Edit your instance with this command:
+
+    .. prompt:: bash
+        :prompts: (redenv) $
+
+        redbot --edit <your instance name>
+
+    You'll be asked several questions. One of them will be about changing the enabled Privileged Intents,
+    answer "yes" to it and then answer "yes" to questions about the intents whose current state you want to change:
+
+    .. code::
+
+        Guild Presences privileged intent is currently disabled. Do you want to enable it?: [y/N] y
+        Guild Presences privileged intent has been enabled.
+        Guild Members privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+        Message Content privileged intent is currently enabled. Do you want to disable it?: [y/N] 
+
+#. After you finish with the ``redbot --edit`` command, start your bot.
