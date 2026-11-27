@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, IO, List, NoReturn, Optional, Set, Tuple, Union
 
 import click
+import discord
 
 import redbot.logging
 from redbot.core._cli import confirm
@@ -29,10 +30,10 @@ from redbot.core.utils._internal_utils import (
     detailed_progress,
 )
 from redbot.core import config, data_manager, _downloader
-from redbot.core.bot import _get_core_config
+from redbot.core.bot import _create_bot, _get_core_config
 from redbot.core._cog_manager import CogManager
 from redbot.core._config import migrate
-from redbot.core._cli import ExitCodes, asyncio_run
+from redbot.core._cli import ExitCodes, asyncio_run, parse_cli_flags
 from redbot.core.data_manager import appdir, config_dir, config_file
 from redbot.core._drivers import (
     BackendType,
@@ -680,8 +681,9 @@ class RestoreInfo:
         if self.restore_downloader:
             driver_cls = get_driver_class(self.storage_type)
             await driver_cls.initialize(**self.storage_details)
+            red = await _create_bot(parse_cli_flags([self.name]), intents=discord.Intents.all())
             try:
-                await _downloader._init_without_bot(CogManager())
+                await _downloader._init(red)
                 await _downloader._restore_from_backup()
             finally:
                 await driver_cls.teardown()

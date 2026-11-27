@@ -1,13 +1,19 @@
 import asyncio
 import contextlib
+import itertools
 import re
-from typing import Tuple, Iterable, Collection, Optional, Set, List
+from typing import Tuple, Iterable, Collection, Dict, Optional, Set, List
 
 import discord
 from redbot import __version__
 from redbot.core import _downloader, commands
 from redbot.core._downloader import errors
-from redbot.core._downloader.installable import InstalledModule
+from redbot.core._downloader.installable import (
+    DEFAULT_REQUIRED_PRIVILEGED_INTENTS,
+    PRIVILEGED_INTENTS,
+    InstalledModule,
+    PrivilegedIntentName,
+)
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import can_user_react_in
@@ -487,6 +493,85 @@ class Downloader(commands.Cog):
                     + message
                 )
 
+                missing_required_intents: Dict[PrivilegedIntentName, List[str]] = {
+                    intent_name: []
+                    for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS
+                    if not getattr(self.bot.intents, intent_name)
+                }
+                missing_optional_intents: Dict[PrivilegedIntentName, List[str]] = {
+                    intent_name: []
+                    for intent_name in PRIVILEGED_INTENTS
+                    if not getattr(self.bot.intents, intent_name)
+                }
+                for cog in install_result.installed_cogs:
+                    for intent_name in cog.optional_privileged_intents:
+                        if intent_name in missing_optional_intents:
+                            missing_optional_intents[intent_name].append(cog.name)
+                    if cog.required_privileged_intents is not None:
+                        continue
+                    for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS:
+                        if intent_name in missing_required_intents:
+                            missing_required_intents[intent_name].append(cog.name)
+
+                # "required" intents
+                intents = {
+                    PRIVILEGED_INTENTS[intent_name]: cog_names
+                    for intent_name, cog_names in missing_required_intents.items()
+                    if cog_names
+                }
+                cogs_with_missing_intents = {
+                    cog_name for cog_names in intents.values() for cog_name in cog_names
+                }
+                if cogs_with_missing_intents:
+                    message += (
+                        (
+                            _(
+                                "\nThe following cogs do not specify the privileged intents"
+                                " they require: "
+                            )
+                            if len(cogs_with_missing_intents) > 1
+                            else _(
+                                "\nThe following cog does not specify the privileged intents"
+                                " it requires: "
+                            )
+                        )
+                        + humanize_list(tuple(map(inline, cogs_with_missing_intents)))
+                        + _(
+                            "They may not work correctly as your instance has {intent_names}"
+                            " privileged intents disabled which most of such cogs require."
+                        ).format(intent_names=humanize_list(tuple(map(inline, intents))))
+                    )
+
+                # optional intents
+                intents = {
+                    PRIVILEGED_INTENTS[intent_name]: cog_names
+                    for intent_name, cog_names in missing_optional_intents.items()
+                    if cog_names
+                }
+                cogs_with_missing_intents = {
+                    cog_name for cog_names in intents.values() for cog_name in cog_names
+                }
+                if cogs_with_missing_intents:
+                    message += (
+                        (
+                            _(
+                                "\nThe following cogs specify some optional privileged intents"
+                                " that are disabled on your instance ({intent_names}): "
+                            ).format(intent_names=humanize_list(tuple(map(inline, intents))))
+                            if len(cogs_with_missing_intents) > 1
+                            else _(
+                                "\nThe following cog specifies some optional privileged intents"
+                                " that are disabled on your instance ({intent_names}): "
+                            ).format(intent_names=humanize_list(tuple(map(inline, intents))))
+                        )
+                        + humanize_list(tuple(map(inline, cogs_with_missing_intents)))
+                        + _(
+                            "Some of the functionality of those cogs may be unavailable"
+                            " without them. You can use {command} to find what the specified cog"
+                            " can use those privileged intents for."
+                        ).format(command=inline(f"{ctx.clean_prefix}cog info <repo> <cog>"))
+                    )
+
         message += deprecation_notice
         cogs_with_install_msg = [cog for cog in install_result.installed_cogs if cog.install_msg]
         if cogs_with_install_msg:
@@ -897,13 +982,26 @@ class Downloader(commands.Cog):
             )
             return
 
+        required_privileged_intents = cog.required_privileged_intents
+        if required_privileged_intents is None:
+            required_privileged_intents = {
+                intent_name: _(
+                    "The cog does not specify the privileged intents it requires."
+                    " The intent is listed as required because most such cogs require this intent."
+                )
+                for intent_name in DEFAULT_REQUIRED_PRIVILEGED_INTENTS
+            }
         msg = _(
             "Information on {cog_name}:\n"
             "{description}\n\n"
             "End user data statement:\n"
             "{end_user_data_statement}\n\n"
             "Made by: {author}\n"
-            "Requirements: {requirements}"
+            "Requirements: {requirements}\n"
+            "Optional privileged intents:\n"
+            "{optional_privileged_intents}\n\n"
+            "Required privileged intents:\n"
+            "{required_privileged_intents}"
         ).format(
             cog_name=cog.name,
             description=cog.description or "",
@@ -912,10 +1010,70 @@ class Downloader(commands.Cog):
                 or _("Author of the cog didn't provide end user data statement.")
             ),
             author=", ".join(cog.author) or _("Missing from info.json"),
-            requirements=", ".join(cog.requirements) or "None",
+            requirements=", ".join(cog.requirements) or _("None"),
+            optional_privileged_intents="\n".join(
+                f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
+                for intent_name, reason in cog.optional_privileged_intents
+            )
+            or _("None"),
+            required_privileged_intents="\n".join(
+                f"- {PRIVILEGED_INTENTS[intent_name]} - {reason}"
+                for intent_name, reason in required_privileged_intents
+            )
+            or _("None"),
         )
         for page in pagify(msg):
             await ctx.send(box(page))
+
+    @cog.command(name="intents")
+    async def _cog_intents(self, ctx: commands.Context) -> None:
+        """
+        List privileged intents required by installed cogs along with the reasons
+        grouped by the privileged intent and whether they are optional or required.
+        """
+        installed_cogs = await _downloader.installed_cogs()
+        if not installed_cogs:
+            await ctx.send(_("There are no cogs installed."))
+            return
+
+        GroupedPrivilegedIntents = Dict[PrivilegedIntentName, List[Tuple[str, str]]]
+        optional_privileged_intents: GroupedPrivilegedIntents = {}
+        required_privileged_intents: GroupedPrivilegedIntents = {}
+        required_privileged_intents_unknown_reason: List[str] = []
+
+        for cog in sorted(installed_cogs, key=lambda c: c.name.lower()):
+            for intent_name, reason in cog.optional_privileged_intents.items():
+                optional_privileged_intents.setdefault(intent_name, []).append((cog.name, reason))
+            for intent_name, reason in (cog.required_privileged_intents or {}).items():
+                required_privileged_intents.setdefault(intent_name, []).append((cog.name, reason))
+            if cog.required_privileged_intents is None:
+                required_privileged_intents_unknown_reason.append(cog.name)
+
+        parts = []
+
+        def _format_intents(privileged_intents: GroupedPrivilegedIntents) -> str:
+            return "\n".join(
+                f"### {PRIVILEGED_INTENTS[intent_name]}\n"
+                + "\n".join(f"- {cog_name} - {reason}" for cog_name, reason in cogs_with_reasons)
+                for intent_name, cogs_with_reasons in privileged_intents.items()
+            ) or _("None")
+
+        parts.append(_("## Privileged intents required by cogs to function"))
+        parts.append(_format_intents(required_privileged_intents))
+
+        parts.append(
+            _("## Cogs that likely require {intents} intents to function (reason unknown)").format(
+                intents=humanize_list(
+                    tuple(map(PRIVILEGED_INTENTS.__getitem__, DEFAULT_REQUIRED_PRIVILEGED_INTENTS))
+                )
+            )
+        )
+        parts.append(humanize_list(required_privileged_intents_unknown_reason) or _("None"))
+
+        parts.append(_("## Privileged intents that cogs can use to increase their functionality"))
+        parts.append(_format_intents(optional_privileged_intents))
+
+        await self.send_pagified(ctx, "\n".join(parts))
 
     def _format_invalid_cogs(
         self, repo: Repo, install_result: _downloader.CogInstallResult
@@ -985,6 +1143,32 @@ class Downloader(commands.Cog):
                     for cog in update_check_result.incompatible_bot_version
                 ]
             )
+        if update_check_result.missing_required_privileged_intents:
+            message += (
+                _("\nThese cogs require privileged intents that are disabled on your instance: ")
+                if len(update_check_result.missing_required_privileged_intents) > 1
+                else _(
+                    "\nThis cog requires privileged intents that are disabled on your instance: "
+                )
+            ) + humanize_list(
+                [
+                    inline(cog.name)
+                    + " ("
+                    + humanize_list(
+                        [
+                            _("{intent_name} (reason: {reason})").format(
+                                intent_name=PRIVILEGED_INTENTS[intent_name],
+                                reason=cog.min_bot_version,
+                            )
+                            for intent_name, reason in _downloader.get_missing_intents(
+                                cog.required_privileged_intents
+                            ).items()
+                        ]
+                    )
+                    + ")"
+                    for cog in update_check_result.incompatible_bot_version
+                ]
+            )
 
         return message
 
@@ -1007,6 +1191,8 @@ class Downloader(commands.Cog):
                 current_eud_statement = current_cog_versions_map[cog.name].end_user_data_statement
                 if current_eud_statement != cog.end_user_data_statement:
                     cogs_with_changed_eud_statement.add(cog.name)
+                # TODO: decide, if we want to let the user know when the required (or optional)
+                # privileged intents changed, even if the bot has them enabled
             message += _("\nUpdated: ") + humanize_list(
                 [inline(cog.name) for cog in update_result.updated_cogs]
             )

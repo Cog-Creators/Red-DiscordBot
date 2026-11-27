@@ -205,6 +205,45 @@ def ensure_installable_type(
     return installable.InstallableType.UNKNOWN
 
 
+def ensure_privileged_intents(
+    info_file: Path, key_name: str, value: Union[Any, UseDefault]
+) -> Union[installable.PrivilegedIntents, None]:
+    default = None
+    if value is USE_DEFAULT:
+        return default
+    if not isinstance(value, dict):
+        log.warning(
+            "Invalid value of '%s' key (expected dict, got %s)"
+            " in JSON information file at path: %s",
+            key_name,
+            type(value).__name__,
+            info_file,
+        )
+        return default
+    valid_privileged_intents: installable.PrivilegedIntents = {}
+    for intent_name, reason in value.items():
+        if intent_name not in installable.PRIVILEGED_INTENTS:
+            log.warning(
+                "Invalid item in '%s' dict (expected a privileged intent name, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                intent_name,
+                info_file,
+            )
+            return default
+        if not isinstance(reason, str):
+            log.warning(
+                "Invalid item in '%s' dict (expected str, got %s)"
+                " in JSON information file at path: %s",
+                key_name,
+                type(reason).__name__,
+                info_file,
+            )
+            return default
+        valid_privileged_intents[intent_name] = reason
+    return valid_privileged_intents
+
+
 def ensure_tags(info_file: Path, key_name: str, value: Union[Any, UseDefault]) -> Tuple[str, ...]:
     default: Tuple[str, ...] = ()
     if value is USE_DEFAULT:
@@ -268,6 +307,8 @@ INSTALLABLE_SCHEMA: SchemaType = {
     "disabled": ensure_bool,
     "required_cogs": ensure_required_cogs_mapping,
     "requirements": ensure_tuple_of_str,
+    "optional_privileged_intents": ensure_privileged_intents,
+    "required_privileged_intents": ensure_privileged_intents,
     "tags": ensure_tags,
     "type": ensure_installable_type,
     "end_user_data_statement": ensure_str,
